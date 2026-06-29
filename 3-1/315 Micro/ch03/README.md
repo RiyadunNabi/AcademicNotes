@@ -135,6 +135,7 @@ This is the most important section of Chapter 3. It explains segmented memory â€
 ### The Problem
 
 The 8086 uses **20-bit physical addresses** (to address 1 MB). But all registers are only **16 bits**. A 16-bit register can only hold values up to FFFFh = 65,535. You can't fit a 20-bit address into a 16-bit register.
+[See Why?](01.md)
 
 ### The Solution: Memory Segments
 
