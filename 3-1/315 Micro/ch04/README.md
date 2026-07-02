@@ -551,13 +551,15 @@ The **last line** must be `END MAIN` — tells the assembler where the program s
 
 ---
 
-## 4.8 Input and Output Instructions
+## 4.8 Input and Output Instructions 
+[See Context](e.md)
 
 Two ways to do I/O:
 1. **Direct I/O** — using `IN` and `OUT` instructions. Fast but port addresses vary per machine. Not recommended for general use.
 2. **BIOS/DOS service routines** — easier, portable. This is what the book uses.
 
 ### The INT Instruction
+[See Details](f.md)
 
 To call a DOS or BIOS routine:
 
