@@ -288,6 +288,7 @@ Binary version:
 - **SF = 0, PF = 1, ZF = 1**
 - **CF is unaffected by INC** — stays whatever it was before (if it was 0 before, it's still 0 — even though there technically WAS a carry out!) This is the special INC/DEC exception.
 - **OF = 0** — we added FFh (−1 signed) and 1h (+1 signed), which are **different signs** → signed overflow is impossible by the rule above
+[See explanation](a.md)
 
 **Example 5.5 — MOV AX, −5**
 
