@@ -268,7 +268,7 @@ Raw jumps are powerful but messy to reason about directly. This section shows ho
 
 ## 6.4.1 Branching Structures
 
-### IF-THEN
+### 1. IF-THEN
 
 Pseudocode:
 ```
@@ -277,6 +277,7 @@ IF condition is true
   execute true-branch statements
 END_IF
 ```
+
 
 **Pattern:** if condition is false, jump *around* the THEN block, straight to `END_IF`.
 
@@ -304,7 +305,7 @@ Notice the pattern: we test the **opposite** condition and jump past the block i
 
 ---
 
-### IF-THEN-ELSE
+### 2. IF-THEN-ELSE
 
 Pseudocode:
 ```
@@ -371,7 +372,7 @@ END_IF:
 
 
 
-### But why don't people usually write it this way?
+#### But why don't people usually write it this way?
 
 
 
@@ -425,7 +426,7 @@ The second version uses one less instruction, so it's more efficient.
 
 
 
-### For learning, though...
+#### For learning, though...
 
 
 
@@ -451,7 +452,7 @@ It's a perfectly reasonable way to think about the control flow while you're lea
 
 ---
 
-### CASE
+### 3. CASE
 
 A multi-way branch — like a chain of IF-ELSE-IF, testing one expression against several possible value sets.
 
@@ -516,7 +517,7 @@ Here multiple values map to the same branch — you just chain multiple CMP+JE p
 
 ---
 
-### Branches with Compound Conditions
+### 4. Branches with Compound Conditions
 
 Sometimes an IF condition isn't a single comparison but a combination:
 
@@ -599,7 +600,9 @@ END_IF:
 **Pattern for OR:** test each sub-condition; the moment *any one* succeeds, jump directly into the THEN block. Only fall through to ELSE if every single check fails.
 
 ---
-
+---
+# LOOP
+---
 ## 6.4.2 Looping Structures
 
 A **loop** repeats a block of instructions. Three flavors, differing in *when* and *how* the repeat count/condition is checked.
