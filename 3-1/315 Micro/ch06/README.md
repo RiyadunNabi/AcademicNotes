@@ -210,6 +210,15 @@ Standard ASCII character codes (0–127) always have their sign bit = 0, so sign
 
 ### Example 6.1 — Put the bigger of two signed numbers in CX
 
+**Pseudocode:**
+```
+CX = AX
+IF BX > CX
+THEN
+    CX = BX
+END_IF
+```
+
 ```asm
 MOV CX, AX     ; put AX in CX
 CMP BX, CX     ; is BX bigger?
@@ -219,6 +228,21 @@ NEXT:
 ```
 
 Logic: assume AX is the answer by default (copy it to CX). Then check if BX is actually bigger — if BX ≤ CX, skip the replacement; otherwise replace CX with BX.
+
+
+
+**My preferred explicit double-jump style:**
+```
+    MOV CX, AX       ; assume AX is the maximum for now
+;if BX > CX
+    CMP BX, CX
+    JG  THEN_        ; BX > CX → go to THEN
+    JLE END_IF       ; BX <= CX → skip, CX already holds the max
+THEN_:               ;then
+    MOV CX, BX       ; BX is bigger → update CX
+END_IF:
+```
+
 
 ---
 
@@ -302,6 +326,18 @@ END_IF:
 ```
 
 Notice the pattern: we test the **opposite** condition and jump past the block if that opposite is true. "AX < 0" → test with `JNL` (jump if **not** less) to skip when the original condition is false.
+
+MyVersion:
+```asm
+;if AX < 0
+    CMP AX, 0
+    JL  THEN_        ; AX < 0 → go to THEN
+    JNL END_IF       ; AX >= 0 → skip, nothing to do
+THEN_:
+;then
+    NEG AX           ; AX < 0 → negate it
+END_IF:
+```
 
 ---
 
