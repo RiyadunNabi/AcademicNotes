@@ -232,7 +232,7 @@ Logic: assume AX is the answer by default (copy it to CX). Then check if BX is a
 
 
 **My preferred explicit double-jump style:**
-```
+```asm
     MOV CX, AX       ; assume AX is the maximum for now
 ;if BX > CX
     CMP BX, CX
@@ -699,7 +699,7 @@ A **loop** repeats a block of instructions. Three flavors, differing in *when* a
 
 ---
 
-### FOR LOOP — repeat a known number of times
+### 1. FOR LOOP — repeat a known number of times
 
 Pseudocode:
 ```
@@ -724,6 +724,18 @@ TOP:
     LOOP TOP
 ```
 
+**What `LOOP` does under the hood:**
+`LOOP label` is a single instruction that secretly does two things every time it executes:
+1. `DEC CX` (decrement CX by 1)
+2. If `CX != 0` after that decrement, jump to `label`. If `CX == 0`, fall through to the next instruction.
+
+So `LOOP TOP` is basically shorthand for:
+```
+DEC CX
+JNZ TOP
+```
+## ***"it always decrements first, then checks."***
+
 **Example 6.8** — display a row of 80 stars
 
 ```asm
@@ -738,6 +750,7 @@ TOP:
 ### ⚠️ Important gotcha: LOOP with CX = 0
 
 If CX happens to be **0** when you enter the loop, `LOOP` will decrement it to **FFFFh** (since it wraps around, being unsigned) and treat that as "not zero" — so the loop runs **65,535 more times** instead of zero times! This is a classic bug.
+[See Details](LoopGotcha.md)
 
 **Fix — use JCXZ (Jump if CX is Zero) before entering the loop:**
 
@@ -756,7 +769,7 @@ SKIP:
 
 ---
 
-### WHILE LOOP — condition checked at the TOP
+### 2. WHILE LOOP — condition checked at the TOP
 
 Pseudocode:
 ```
@@ -793,13 +806,29 @@ WHILE_:
 END_WHILE:
 ```
 
+MyVersion: (Not Recommended)
+```asm
+    MOV DX, 0
+    MOV AH, 1
+    INT 21H
+WHILE_:
+    CMP AL, 0DH
+    JNE BODY_
+    JE  END_WHILE
+BODY_:
+    INC DX
+    INT 21H
+    JMP WHILE_
+END_WHILE:
+```
+
 **Important detail:** because the condition is checked at the *top*, you must **prime** the loop — read the very first character *before* entering the loop, so there's something to test right away. Then read the *next* character at the *bottom* of the loop body, right before looping back.
 
 (`WHILE_:` has a trailing underscore because `WHILE` is a reserved word.)
 
 ---
 
-### REPEAT LOOP — condition checked at the BOTTOM
+### 3. REPEAT LOOP — condition checked at the BOTTOM
 
 Pseudocode:
 ```
@@ -1060,6 +1089,79 @@ MAIN ENDP
 ```
 
 **The takeaway method:** break the problem into refinements, translate each piece to pseudocode first, then mechanically convert pseudocode patterns (IF/CASE/WHILE/REPEAT) using the fixed templates from section 6.4. This is exactly how you should approach any assembly problem you're given.
+
+MyVersion:
+```asm
+TITLE PGM6_2: FIRST AND LAST CAPITALS
+.MODEL SMALL
+.STACK 100H
+.DATA
+PROMPT DB 'Type a line of text', 0DH, 0AH, '$'
+NOCAP_MSG DB 0DH, 0AH, 'No capitals $'
+CAP_MSG   DB 0DH, 0AH, 'First capital = '
+FIRST DB ']'
+      DB ' Last capital = '
+LAST  DB '@ $'
+.CODE
+MAIN PROC
+    MOV AX, @DATA
+    MOV DS, AX
+    
+    MOV AH, 9
+    LEA DX, PROMPT
+    INT 21H
+    
+    MOV AH, 1
+    INT 21H
+
+WHILE_:
+    CMP AL, 0DH
+    JNE BODY_
+    JE  END_WHILE
+BODY_:
+    CMP AL, 'A'
+    JGE COND2
+    JL  END_IF
+COND2:
+    CMP AL, 'Z'
+    JLE SET_FIRST
+    JG  END_IF
+
+SET_FIRST:
+    CMP AL, FIRST      ; Compare current char with the lowest recorded capital
+    JL  UPDATE_FIRST   ; If smaller (alphabetically prior), update it
+    JGE SET_LAST       ; Else, skip to checking the last capital
+UPDATE_FIRST:
+    MOV FIRST, AL
+SET_LAST:
+    CMP AL, LAST       ; Compare current char with the highest recorded capital
+    JG  UPDATE_LAST    ; If greater (alphabetically later), update it
+    JLE END_IF         ; Else, do nothing
+UPDATE_LAST:
+    MOV LAST, AL
+
+END_IF:
+    INT 21H
+    JMP WHILE_
+
+END_WHILE:
+    MOV AH, 9
+    CMP FIRST, ']'
+    JNE CAPS
+    JE  NOCAPS
+NOCAPS:
+    LEA DX, NOCAP_MSG
+    JMP DISPLAY
+CAPS:
+    LEA DX, CAP_MSG
+DISPLAY:
+    INT 21H
+    MOV AH, 4CH
+    INT 21H
+MAIN ENDP
+    END MAIN
+```
+
 
 ---
 
