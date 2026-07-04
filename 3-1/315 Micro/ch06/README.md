@@ -559,6 +559,36 @@ END_IF:
 
 **Pattern for AND:** test each sub-condition one at a time; the moment *any one* fails, jump straight to the end (skip the THEN block).
 
+
+MyVersion:
+```asm
+;read a character
+    MOV AH, 1
+    INT 21H
+
+;if ('A' <= char) and (char <= 'Z')
+
+;-- condition 1: char >= 'A'
+    CMP AL, 'A'
+    JGE COND2       ; char >= 'A' → condition 1 true, check condition 2
+    JL  END_IF      ; char < 'A'  → condition 1 false, whole AND fails, bail
+
+COND2:
+;-- condition 2: char <= 'Z'
+    CMP AL, 'Z'
+    JLE THEN_       ; char <= 'Z' → condition 2 true, both conditions hold
+    JG  END_IF      ; char > 'Z'  → condition 2 false, bail
+
+THEN_:
+;then display char
+    MOV DL, AL
+    MOV AH, 2
+    INT 21H
+
+END_IF:
+```
+
+
 ### OR Conditions
 
 **At least one** condition needs to be true. Only false if **both** fail.
