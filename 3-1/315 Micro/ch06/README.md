@@ -565,26 +565,21 @@ MyVersion:
 ;read a character
     MOV AH, 1
     INT 21H
-
 ;if ('A' <= char) and (char <= 'Z')
-
 ;-- condition 1: char >= 'A'
     CMP AL, 'A'
     JGE COND2       ; char >= 'A' → condition 1 true, check condition 2
     JL  END_IF      ; char < 'A'  → condition 1 false, whole AND fails, bail
-
 COND2:
 ;-- condition 2: char <= 'Z'
     CMP AL, 'Z'
     JLE THEN_       ; char <= 'Z' → condition 2 true, both conditions hold
     JG  END_IF      ; char > 'Z'  → condition 2 false, bail
-
 THEN_:
 ;then display char
     MOV DL, AL
     MOV AH, 2
     INT 21H
-
 END_IF:
 ```
 
@@ -628,6 +623,35 @@ END_IF:
 ```
 
 **Pattern for OR:** test each sub-condition; the moment *any one* succeeds, jump directly into the THEN block. Only fall through to ELSE if every single check fails.
+
+
+MyVersion:
+```asm
+;read a character
+    MOV AH, 1
+    INT 21H
+;if (char = 'y') or (char = 'Y')
+;-- condition 1: char = 'y'
+    CMP AL, 'y'
+    JE  THEN_        ; char = 'y' → OR is already true, go straight to THEN
+    JNE CHECK2        ; char != 'y' → check the other condition
+CHECK2:
+;-- condition 2: char = 'Y'
+    CMP AL, 'Y'
+    JE  THEN_        ; char = 'Y' → OR is true, go to THEN
+    JNE ELSE_         ; neither matched → OR is false, go to ELSE
+THEN_:
+    MOV AH, 2
+    MOV DL, AL
+    INT 21H
+    JMP END_IF
+ELSE_:
+    MOV AH, 4CH
+    INT 21H          ; DOS exit
+END_IF:
+```
+
+
 
 ---
 ---
