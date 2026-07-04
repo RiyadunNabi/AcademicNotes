@@ -343,12 +343,111 @@ DISPLAY:
     INT 21h              ; display it
 END_IF:
 ```
-
 **Key difference from IF-THEN:** after the THEN block runs, you need an explicit `JMP` to **skip over** the ELSE block — otherwise execution would fall straight into it! High-level languages do this skip automatically; in assembly, you have to code it yourself.
 
 **Naming note:** the label can't literally be called `ELSE` because that's a reserved word in MASM — hence `ELSE_` with a trailing underscore.
 
 We used the **unsigned** jump `JNBE` here because we're comparing extended ASCII characters.
+
+
+MyVersion:
+```asm
+    MOV AH, 2          ; prepare to display
+;if AL <= BL (signed)
+    CMP AL, BL
+    JLE THEN_
+    JG  ELSE_
+THEN_:                 ;then
+    MOV DL, AL
+    JMP END_IF         ; skip the else branch
+ELSE_:                 ;else
+    MOV DL, BL
+END_IF:
+    INT 21h            ; display it
+```
+
+
+
+
+
+
+### But why don't people usually write it this way?
+
+
+
+Because the second jump is **unnecessary**.
+
+
+
+If `JLE` is **not** taken, then the condition **must** be `JG`.
+
+
+
+So this:
+
+
+
+```asm
+
+CMP AL, BL
+
+JLE THEN_
+
+JG  ELSE_
+
+```
+
+
+
+is equivalent to simply:
+
+
+
+```asm
+
+CMP AL, BL
+
+JG ELSE_
+
+
+
+THEN_:
+
+```
+
+
+
+The second version uses one less instruction, so it's more efficient.
+
+
+
+---
+
+
+
+### For learning, though...
+
+
+
+I actually like your version because it makes the logic crystal clear:
+
+
+
+```text
+
+IF AL <= BL
+
+    go to THEN
+
+IF AL > BL
+
+    go to ELSE
+
+```
+
+
+
+It's a perfectly reasonable way to think about the control flow while you're learning. Later, you'll naturally start removing the redundant jumps as you get comfortable with assembly.
 
 ---
 
