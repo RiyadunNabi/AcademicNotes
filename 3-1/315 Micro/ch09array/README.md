@@ -34,7 +34,7 @@ The address of the array's *name* (its first element) is called the **base addre
 
 **Point to remember:** each word = 2 bytes, so consecutive elements are 2 bytes apart in offset (`0200h → 0202h → 0204h...`). If this were a byte array (`DB`), elements would be 1 byte apart instead.
 
-### DUP operator — repeating values without typing them all out
+### DUP(Duplicate) operator — repeating values without typing them all out
 
 ```asm
 repeat_count DUP (value)
