@@ -1,7 +1,232 @@
 # 8086 Assembly — Full-Code Practice Cheatsheet
-*Topics ordered the way they should be learned: FLAGS → Jumps → IF/CASE → Loops → Full Program Design → Logic Ops → Shift/Rotate → MUL/DIV → Arrays & Addressing Modes.*
+*Topics ordered the way they should be learned: Foundations (syntax/data/DOS I/O) → FLAGS → Jumps → IF/CASE → Loops → Full Program Design → Logic Ops → Shift/Rotate → MUL/DIV → Arrays & Addressing Modes.*
 
 Copy each program by hand. Every block below is a **complete, standalone program** — practice writing the whole skeleton (`TITLE`, `.MODEL`, `.STACK`, `.DATA`, `.CODE`, `MAIN PROC/ENDP`, `END MAIN`) every single time, since that's exam muscle memory too.
+
+---
+
+## 0. Foundations — Syntax, Data, Basic Instructions, DOS I/O (Ch. 4)
+
+### 0.1 The Complete Program Template (memorize this cold)
+
+```asm
+TITLE TEMPLATE: BASIC PROGRAM SKELETON
+.MODEL SMALL
+.STACK 100H
+.DATA
+    ; variable definitions go here
+.CODE
+MAIN    PROC
+    MOV AX, @DATA    ; only needed if you have a .DATA segment
+    MOV DS, AX       ; can't move a constant directly into a segment register
+    ; instructions go here
+    MOV AH, 4CH      ; DOS exit function
+    INT 21H          ; return control to DOS
+MAIN    ENDP
+    END MAIN
+```
+
+### 0.2 Byte, Word, and Named Constants (DB, DW, EQU)
+
+```asm
+TITLE EX4_1_DATA_DEFS
+.MODEL SMALL
+.STACK 100H
+.DATA
+LF        EQU   0AH             ; named constant, no memory allocated
+CR        EQU   0DH
+ALPHA     DB    4                ; byte, initialized
+BYT       DB    ?                ; byte, uninitialized
+WRD       DW    -2               ; word, initialized
+SUM       DW    ?                ; word, uninitialized
+B_ARRAY   DB    10H, 20H, 30H    ; byte array
+W_ARRAY   DW    1000, 40, 29887, 329  ; word array
+LETTERS   DB    'ABC'            ; same as DB 41H, 42H, 43H
+MASK      EQU   10010010B        ; binary constant
+.CODE
+MAIN PROC
+    MOV AX, @DATA
+    MOV DS, AX
+    MOV DL, LF        ; identical machine code to MOV DL, 0AH
+    MOV AH, 4CH
+    INT 21H
+MAIN ENDP
+    END MAIN
+```
+
+### 0.3 MOV, XCHG — Rules and Restrictions
+
+```asm
+TITLE EX4_2_MOV_XCHG
+.MODEL SMALL
+.STACK 100H
+.DATA
+WORD1 DW 100
+WORD2 DW 200
+.CODE
+MAIN PROC
+    MOV AX, @DATA
+    MOV DS, AX
+    MOV AX, WORD1      ; copy WORD1 into AX (WORD1 unchanged)
+    XCHG AX, WORD2     ; swap AX and WORD2
+    ; MOV WORD1, WORD2  <-- ILLEGAL: no direct memory-to-memory
+    MOV AX, WORD2      ; must go through a register instead
+    MOV WORD1, AX
+    MOV AH, 4CH
+    INT 21H
+MAIN ENDP
+    END MAIN
+```
+
+### 0.4 ADD, SUB, INC, DEC, NEG
+
+```asm
+TITLE EX4_3_ARITHMETIC_BASICS
+.MODEL SMALL
+.STACK 100H
+.DATA
+WORD1 DW 10
+BYTE1 DB 5
+BYTE2 DB 3
+.CODE
+MAIN PROC
+    MOV AX, @DATA
+    MOV DS, AX
+    ADD WORD1, AX      ; WORD1 = WORD1 + AX
+    SUB AX, 4          ; AX = AX - 4
+    INC WORD1          ; WORD1 = WORD1 + 1
+    DEC AX             ; AX = AX - 1
+    ; ADD BYTE1, BYTE2  <-- ILLEGAL: no direct memory-to-memory
+    MOV AL, BYTE2      ; fix: go through a register
+    ADD BYTE1, AL
+    MOV BX, 2
+    NEG BX             ; BX = FFFEh (two's complement of 2, i.e. -2)
+    MOV AH, 4CH
+    INT 21H
+MAIN ENDP
+    END MAIN
+```
+
+### 0.5 High-Level Assignment Translations
+
+```asm
+TITLE EX4_4_HLL_TRANSLATIONS
+.MODEL SMALL
+.STACK 100H
+.DATA
+A DW 5
+B DW 12
+.CODE
+MAIN PROC
+    MOV AX, @DATA
+    MOV DS, AX
+    ; B = A
+    MOV AX, A
+    MOV B, AX
+    ; A = 5 - A   (shorter version using NEG)
+    NEG A
+    ADD A, 5
+    ; A = B - 2*A
+    MOV AX, B
+    SUB AX, A
+    SUB AX, A
+    MOV A, AX
+    MOV AH, 4CH
+    INT 21H
+MAIN ENDP
+    END MAIN
+```
+
+### 0.6 PGM4_1 — Echo Program (Function 1 read, Function 2 display)
+
+```asm
+TITLE PGM4_1: ECHO PROGRAM
+.MODEL SMALL
+.STACK 100H
+.CODE
+MAIN    PROC
+    ; display prompt
+    MOV AH, 2
+    MOV DL, '?'
+    INT 21H
+    ; input a character
+    MOV AH, 1
+    INT 21H
+    MOV BL, AL          ; save it (function 2 will overwrite AL)
+    ; go to new line
+    MOV AH, 2
+    MOV DL, 0DH
+    INT 21H
+    MOV DL, 0AH
+    INT 21H
+    ; display character
+    MOV DL, BL
+    INT 21H
+    ; return to DOS
+    MOV AH, 4CH
+    INT 21H
+MAIN    ENDP
+    END MAIN
+```
+
+### 0.7 PGM4_2 — Print String Program (Function 9, LEA, @DATA fix)
+
+```asm
+TITLE PGM4_2: PRINT STRING PROGRAM
+.MODEL SMALL
+.STACK 100H
+.DATA
+MSG    DB    'HELLO!$'
+.CODE
+MAIN    PROC
+    ; initialize DS (DOS points DS at the PSP, not your data, by default)
+    MOV AX, @DATA
+    MOV DS, AX
+    ; display message
+    LEA DX, MSG
+    MOV AH, 9
+    INT 21H
+    ; return to DOS
+    MOV AH, 4CH
+    INT 21H
+MAIN    ENDP
+    END MAIN
+```
+
+### 0.8 PGM4_3 — Case Conversion Program (full combined example)
+
+```asm
+TITLE PGM4_3: CASE CONVERSION PROGRAM
+.MODEL SMALL
+.STACK 100H
+.DATA
+MSG1    DB    'ENTER A LOWER CASE LETTER: $'
+MSG2    DB    0DH, 0AH, 'IN UPPER CASE IT IS: '
+CHAR    DB    ?, '$'
+.CODE
+MAIN    PROC
+    ; initialize DS
+    MOV AX, @DATA
+    MOV DS, AX
+    ; print user prompt
+    LEA DX, MSG1
+    MOV AH, 9
+    INT 21H
+    ; input character and convert to upper case
+    MOV AH, 1
+    INT 21H             ; read lowercase letter into AL
+    SUB AL, 20H         ; 'a'-'A' = 20h, so subtracting converts case
+    MOV CHAR, AL        ; store it in CHAR
+    ; display on next line (MSG2 + CHAR are consecutive in memory)
+    LEA DX, MSG2
+    MOV AH, 9
+    INT 21H
+    ; DOS exit
+    MOV AH, 4CH
+    INT 21H
+MAIN    ENDP
+    END MAIN
+```
 
 ---
 
