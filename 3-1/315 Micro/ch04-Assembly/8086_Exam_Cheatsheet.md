@@ -8,7 +8,6 @@ Copy each program by hand. Every block below is a **complete, standalone program
 ## 0. Foundations — Syntax, Data, Basic Instructions, DOS I/O (Ch. 4)
 
 ### 0.1 The Complete Program Template (memorize this cold)
-
 ```asm
 TITLE TEMPLATE: BASIC PROGRAM SKELETON
 .MODEL SMALL
@@ -19,7 +18,9 @@ TITLE TEMPLATE: BASIC PROGRAM SKELETON
 MAIN    PROC
     MOV AX, @DATA    ; only needed if you have a .DATA segment
     MOV DS, AX       ; can't move a constant directly into a segment register
+
     ; instructions go here
+
     MOV AH, 4CH      ; DOS exit function
     INT 21H          ; return control to DOS
 MAIN    ENDP
@@ -27,6 +28,8 @@ MAIN    ENDP
 ```
 
 ### 0.2 Byte, Word, and Named Constants (DB, DW, EQU)
+
+[See each line explanation](a.md)
 
 ```asm
 TITLE EX4_1_DATA_DEFS
@@ -47,7 +50,9 @@ MASK      EQU   10010010B        ; binary constant
 MAIN PROC
     MOV AX, @DATA
     MOV DS, AX
+
     MOV DL, LF        ; identical machine code to MOV DL, 0AH
+
     MOV AH, 4CH
     INT 21H
 MAIN ENDP
@@ -67,11 +72,13 @@ WORD2 DW 200
 MAIN PROC
     MOV AX, @DATA
     MOV DS, AX
+
     MOV AX, WORD1      ; copy WORD1 into AX (WORD1 unchanged)
     XCHG AX, WORD2     ; swap AX and WORD2
     ; MOV WORD1, WORD2  <-- ILLEGAL: no direct memory-to-memory
     MOV AX, WORD2      ; must go through a register instead
     MOV WORD1, AX
+
     MOV AH, 4CH
     INT 21H
 MAIN ENDP
@@ -92,6 +99,7 @@ BYTE2 DB 3
 MAIN PROC
     MOV AX, @DATA
     MOV DS, AX
+
     ADD WORD1, AX      ; WORD1 = WORD1 + AX
     SUB AX, 4          ; AX = AX - 4
     INC WORD1          ; WORD1 = WORD1 + 1
@@ -101,6 +109,7 @@ MAIN PROC
     ADD BYTE1, AL
     MOV BX, 2
     NEG BX             ; BX = FFFEh (two's complement of 2, i.e. -2)
+
     MOV AH, 4CH
     INT 21H
 MAIN ENDP
@@ -120,6 +129,7 @@ B DW 12
 MAIN PROC
     MOV AX, @DATA
     MOV DS, AX
+
     ; B = A
     MOV AX, A
     MOV B, AX
@@ -131,6 +141,7 @@ MAIN PROC
     SUB AX, A
     SUB AX, A
     MOV A, AX
+
     MOV AH, 4CH
     INT 21H
 MAIN ENDP
@@ -163,6 +174,7 @@ MAIN    PROC
     MOV DL, BL
     INT 21H
     ; return to DOS
+
     MOV AH, 4CH
     INT 21H
 MAIN    ENDP
@@ -182,11 +194,13 @@ MAIN    PROC
     ; initialize DS (DOS points DS at the PSP, not your data, by default)
     MOV AX, @DATA
     MOV DS, AX
+
     ; display message
     LEA DX, MSG
     MOV AH, 9
     INT 21H
     ; return to DOS
+
     MOV AH, 4CH
     INT 21H
 MAIN    ENDP
@@ -208,6 +222,7 @@ MAIN    PROC
     ; initialize DS
     MOV AX, @DATA
     MOV DS, AX
+
     ; print user prompt
     LEA DX, MSG1
     MOV AH, 9
@@ -222,6 +237,7 @@ MAIN    PROC
     MOV AH, 9
     INT 21H
     ; DOS exit
+
     MOV AH, 4CH
     INT 21H
 MAIN    ENDP
@@ -244,6 +260,7 @@ MAIN PROC
     SUB AX, 0FFFFH   ;AX = 8001h
     NEG AX           ;AX = 7FFFh
     INC AX           ;AX = 8000h
+
     MOV AH, 4CH
     INT 21H          ;DOS exit
 MAIN ENDP
@@ -261,6 +278,7 @@ MAIN PROC
     MOV AX, 0FFFFH
     MOV BX, 0FFFFH
     ADD AX, BX        ; AX = FFFEh, CF=1, OF=0, SF=1, ZF=0, PF=0
+
     MOV AH, 4CH
     INT 21H
 MAIN ENDP
@@ -278,6 +296,7 @@ MAIN PROC
     MOV AL, 80H
     MOV BL, 80H
     ADD AL, BL        ; AL = 00h, CF=1, OF=1, SF=0, ZF=1, PF=1
+
     MOV AH, 4CH
     INT 21H
 MAIN ENDP
@@ -295,6 +314,7 @@ MAIN PROC
     MOV AX, 8000H
     MOV BX, 0001H
     SUB AX, BX        ; AX = 7FFFh, CF=0, OF=1, SF=0, ZF=0, PF=1
+
     MOV AH, 4CH
     INT 21H
 MAIN ENDP
@@ -312,6 +332,7 @@ MAIN PROC
     MOV AL, 0FFH
     INC AL            ; AL = 00h, ZF=1, SF=0, PF=1, OF=0
                        ; CF is UNAFFECTED by INC (keeps whatever it was before)
+
     MOV AH, 4CH
     INT 21H
 MAIN ENDP
@@ -327,6 +348,7 @@ TITLE EX5_5: MOV NO FLAGS
 .CODE
 MAIN PROC
     MOV AX, -5         ; AX = FFFBh, NO flags touched at all
+
     MOV AH, 4CH
     INT 21H
 MAIN ENDP
@@ -343,6 +365,7 @@ TITLE EX5_6: NEG FLAGS TEST
 MAIN PROC
     MOV AX, 8000H
     NEG AX             ; AX = 8000h (wraps!), CF=1, OF=1, SF=1, ZF=0, PF=1
+
     MOV AH, 4CH
     INT 21H
 MAIN ENDP
@@ -369,6 +392,7 @@ PRINT_LOOP:
     INC DL            ; increment ASCII code
     DEC CX            ; decrement counter
     JNZ PRINT_LOOP    ; keep going if CX not 0
+
     MOV AH, 4CH
     INT 21H
 MAIN ENDP
@@ -392,6 +416,7 @@ MAIN PROC
 BELOW:
     MOV CX, 1          ; executed
 DONE:
+
     MOV AH, 4CH
     INT 21H
 MAIN ENDP
@@ -415,6 +440,7 @@ MAIN PROC
 BELOW:
     MOV CX, 1
 DONE:
+
     MOV AH, 4CH
     INT 21H
 MAIN ENDP
@@ -436,6 +462,7 @@ MAIN PROC
     JLE NEXT       ; BX <= CX, keep CX as is
     MOV CX, BX     ; BX is bigger, update CX
 NEXT:
+
     MOV AH, 4CH
     INT 21H
 MAIN ENDP
@@ -459,6 +486,7 @@ MAIN PROC
 THEN_:
     MOV CX, BX       ; BX is bigger -> update CX
 END_IF:
+
     MOV AH, 4CH
     INT 21H
 MAIN ENDP
@@ -483,6 +511,7 @@ TOP:
 BOTTOM:
     JMP TOP          ; unconditional jump, no range limit
 EXIT:
+
     MOV AH, 4CH
     INT 21H
 MAIN ENDP
@@ -506,6 +535,7 @@ MAIN PROC
     JNL END_IF       ; not less than 0 -> skip
     NEG AX           ; AX < 0 -> negate it
 END_IF:
+
     MOV AH, 4CH
     INT 21H
 MAIN ENDP
@@ -531,6 +561,7 @@ ELSE_:
     MOV DL, BL
 DISPLAY:
     INT 21h            ; display it
+
     MOV AH, 4CH
     INT 21H
 MAIN ENDP
@@ -559,6 +590,7 @@ ZERO:
 POSITIVE:
     MOV BX, 1
 END_CASE:
+
     MOV AH, 4CH
     INT 21H
 MAIN ENDP
@@ -592,6 +624,7 @@ DISPLAY:
     MOV AH, 2
     INT 21H
 END_CASE:
+
     MOV AH, 4CH
     INT 21H
 MAIN ENDP
@@ -616,6 +649,7 @@ MAIN PROC
     MOV AH, 2
     INT 21H            ; display char
 END_IF:
+
     MOV AH, 4CH
     INT 21H
 MAIN ENDP
@@ -643,9 +677,11 @@ THEN_:
     INT 21H
     JMP END_IF
 ELSE_:
+
     MOV AH, 4CH
     INT 21H            ; DOS exit
 END_IF:
+
     MOV AH, 4CH
     INT 21H
 MAIN ENDP
@@ -670,6 +706,7 @@ MAIN PROC
 TOP:
     INT 21h            ; display a star
     LOOP TOP           ; DEC CX, jump to TOP if CX != 0
+
     MOV AH, 4CH
     INT 21H
 MAIN ENDP
@@ -692,6 +729,7 @@ TOP:
     INT 21h
     LOOP TOP
 SKIP:
+
     MOV AH, 4CH
     INT 21H
 MAIN ENDP
@@ -716,6 +754,7 @@ WHILE_:
     INT 21H            ; read next character
     JMP WHILE_         ; loop back to check condition again
 END_WHILE:
+
     MOV AH, 4CH
     INT 21H
 MAIN ENDP
@@ -735,6 +774,7 @@ REPEAT_:
     INT 21H            ; read a character into AL
     CMP AL, ' '        ; is it a blank?
     JNE REPEAT_        ; not blank -> loop back
+
     MOV AH, 4CH
     INT 21H
 MAIN ENDP
@@ -762,6 +802,7 @@ LAST      DB '@ $'
 MAIN PROC
     MOV AX, @DATA
     MOV DS, AX
+
     ; display opening message
     MOV AH, 9
     LEA DX, PROMPT
@@ -797,6 +838,7 @@ CAPS:
     LEA DX, CAP_MSG
 DISPLAY:
     INT 21H
+
     MOV AH, 4CH
     INT 21H
 MAIN ENDP
@@ -820,6 +862,7 @@ MAIN PROC
     OR  AL, 81H        ; sets MSB and LSB, AL = 81h
     MOV AL, 0FFH
     AND AL, 7FH        ; clears sign bit, AL = 7Fh
+
     MOV AH, 4CH
     INT 21H
 MAIN ENDP
@@ -837,6 +880,7 @@ MAIN PROC
     MOV AL, '5'        ; AL = 35h
     AND AL, 0FH        ; AL = 05h (numeric value 5)
     ; reverse trick: OR AL, 30H  -> converts digit back to its ASCII char
+
     MOV AH, 4CH
     INT 21H
 MAIN ENDP
@@ -853,6 +897,7 @@ TITLE EX7_3_NOT
 MAIN PROC
     MOV AL, 0F0H
     NOT AL             ; AL = 0Fh (one's complement, flips every bit)
+
     MOV AH, 4CH
     INT 21H
 MAIN ENDP
@@ -877,6 +922,7 @@ EVEN_NUM:
 ODD_NUM:
     MOV BX, 1
 DONE:
+
     MOV AH, 4CH
     INT 21H
 MAIN ENDP
@@ -898,6 +944,7 @@ MAIN PROC
     MOV DH, 8AH
     MOV CL, 3
     SHL DH, CL         ; DH = 50h, CF=0 (bits fall off the top, gone forever)
+
     MOV AH, 4CH
     INT 21H
 MAIN ENDP
@@ -915,6 +962,7 @@ MAIN PROC
     MOV DX, 008AH
     MOV CX, 3
     SHL DX, CX         ; DX = 0450h (nowhere for bits to fall off, room in upper byte)
+
     MOV AH, 4CH
     INT 21H
 MAIN ENDP
@@ -934,6 +982,7 @@ MAIN PROC
     SHR AL, CL         ; AL = 78h (=120), CF=1, OF=1 (sign flipped: unsigned-style shift)
     MOV AL, -15        ; reset AL
     SAR AL, CL         ; AL = F8h (=-8), CF=1, OF=0 (sign preserved: signed-style shift)
+
     MOV AH, 4CH
     INT 21H
 MAIN ENDP
@@ -953,6 +1002,7 @@ MAIN PROC
     SHL DH, CL         ; true answer = 128*4 = 512 (needs 9 bits!)
                         ; but DH = 00h, CF=0, OF=0 -- flags LIE, real overflow occurred
                         ; (CF/OF only reflect the LAST of the internal single-bit shifts)
+
     MOV AH, 4CH
     INT 21H
 MAIN ENDP
@@ -974,6 +1024,7 @@ MAIN PROC
     MOV AX, 5
     MOV BX, 3
     MUL BX             ; DX:AX = AX * BX -> AX = 15, DX = 0
+
     MOV AH, 4CH
     INT 21H
 MAIN ENDP
@@ -993,6 +1044,7 @@ MAIN PROC
     MUL BX             ; unsigned: 1*65535 = 65535 -> DX=0000h AX=FFFFh
     MOV AX, 0001H      ; reset AX (MUL overwrote it)
     IMUL BX            ; signed: 1*(-1) = -1        -> DX=FFFFh AX=FFFFh
+
     MOV AH, 4CH
     INT 21H
 MAIN ENDP
@@ -1012,6 +1064,7 @@ MAIN PROC
     MUL BL             ; unsigned: 128*255 = 32640 -> AH=7Fh AL=80h, CF/OF=1
     MOV AL, 80H        ; reset AL
     IMUL BL            ; signed: (-128)*(-1) = 128  -> AH=00h AL=80h, CF/OF=1 (mismatch: AL negative but AH=00)
+
     MOV AH, 4CH
     INT 21H
 MAIN ENDP
@@ -1031,10 +1084,12 @@ Y DW 0FFFFH
 MAIN PROC
     MOV AX, @DATA
     MOV DS, AX
+
     MOV AX, X          ; x goes into AX
     MOV BX, Y          ; y goes into BX
     IMUL BX            ; AX = AX * BX  -> this IS "x = x*y" (signed)
     MOV X, AX          ; store result back into x
+
     MOV AH, 4CH
     INT 21H
 MAIN ENDP
@@ -1060,6 +1115,7 @@ MAIN PROC
     MOV AX, 0005H
     CWD                ; sign-extend AX into DX (DX=0000h since AX positive)
     IDIV BX            ; signed: 5/(-2) = -2 remainder 1  -> AX=FFFEh DX=0001h
+
     MOV AH, 4CH
     INT 21H
 MAIN ENDP
@@ -1078,6 +1134,7 @@ MAIN PROC
     CWD                ; DX = FFFFh, sign-extend AX (AX is negative)
     MOV BX, 7
     IDIV BX            ; -1250/7 = -178 remainder -4 (truncated toward 0, not -inf)
+
     MOV AH, 4CH
     INT 21H
 MAIN ENDP
@@ -1096,6 +1153,7 @@ MAIN PROC
     CBW                ; sign-extend AL into AH (fills upper half correctly)
     MOV BL, 8
     IDIV BL            ; -50/8 = -6 remainder -2 -> AL=quotient, AH=remainder
+
     MOV AH, 4CH
     INT 21H
 MAIN ENDP
@@ -1114,6 +1172,7 @@ MAIN PROC
     MOV AH, 0          ; clear upper half (unsigned dividend)
     MOV BL, 9
     DIV BL             ; 200/9 = 22 remainder 2 -> AL=22, AH=2
+
     MOV AH, 4CH
     INT 21H
 MAIN ENDP
@@ -1140,6 +1199,7 @@ LINE  DB 5, 4, 3 DUP (2, 3 DUP (0), 1)  ; nested DUP
 MAIN PROC
     MOV AX, @DATA
     MOV DS, AX
+
     MOV AH, 4CH
     INT 21H
 MAIN ENDP
@@ -1158,6 +1218,7 @@ W DW 10, 20, 30, 40, 50, 60, 70, 80, 90, 100
 MAIN PROC
     MOV AX, @DATA
     MOV DS, AX
+
     XOR  AX, AX        ; AX holds sum, start at 0
     LEA  SI, W         ; SI = offset address of W
     MOV  CX, 10        ; CX = number of elements to add
@@ -1166,6 +1227,7 @@ ADDNOS:
     ADD  SI, 2         ; move pointer forward by 2 bytes (1 word)
     LOOP ADDNOS        ; repeat until CX = 0
     ; final AX = 550
+
     MOV AH, 4CH
     INT 21H
 MAIN ENDP
@@ -1184,6 +1246,7 @@ W DW 10, 20, 30, 40, 50, 60
 MAIN PROC
     MOV AX, @DATA
     MOV DS, AX
+
     MOV BX, 4          ; (3-1)*2 = 4, byte-offset for 3rd element
     MOV AX, [BX + W]   ; AX = 30 (3rd element)
     ; all of these are equivalent:
@@ -1191,6 +1254,7 @@ MAIN PROC
     ; MOV AX, [BX] + W
     ; MOV AX, W + [BX]
     ; MOV AX, W[BX]
+
     MOV AH, 4CH
     INT 21H
 MAIN ENDP
@@ -1209,8 +1273,10 @@ W DW 10, 20, 30, 40, 50, 60
 MAIN PROC
     MOV AX, @DATA
     MOV DS, AX
+
     MOV SI, 4          ; byte-offset for 3rd element
     MOV AX, [SI + W]   ; AX = 30 (3rd element), same logic as Based mode
+
     MOV AH, 4CH
     INT 21H
 MAIN ENDP
@@ -1229,10 +1295,12 @@ ARR DB 10 DUP (0)
 MAIN PROC
     MOV AX, @DATA
     MOV DS, AX
+
     LEA BX, ARR
     MOV BYTE PTR [BX], 1     ; store 1 as a single byte
     MOV WORD PTR [BX], 1     ; store 1 as a full word (2 bytes)
     ; MOV [BX], 1  <-- NOT ALLOWED without PTR (assembler can't tell the size)
+
     MOV AH, 4CH
     INT 21H
 MAIN ENDP
