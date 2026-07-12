@@ -1,0 +1,1223 @@
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{tcolorbox}
+\tcbuselibrary{skins,breakable}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\hypersetup{colorlinks=true, linkcolor=blue!50!black, urlcolor=blue}
+\usepackage{titlesec}
+\usepackage{parskip}
+
+\newtcolorbox{qbox}{
+  breakable, enhanced,
+  colback=blue!4!white,
+  colframe=blue!40!black,
+  boxrule=0.6pt,
+  arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt
+}
+
+\titleformat{\section}{\normalfont\Large\bfseries}{\thesection}{1em}{}
+\titleformat{\subsection}{\normalfont\large\bfseries}{\thesubsection}{1em}{}
+
+\title{\textbf{Chapter 2: Conditional Probability}\\[4pt]\large Study Document --- Questions and Full Solutions}
+\author{}
+\date{}
+
+\begin{document}
+\maketitle
+\tableofcontents
+\newpage
+
+\section{Textbook Exercises: Conditioning on Evidence}
+
+\subsection*{Q1 --- Book Ch.2, Exercise 1}
+\begin{qbox}
+A spam filter is designed by looking at commonly occurring phrases in spam. Suppose that 80\% of email is spam. In 10\% of the spam emails, the phrase ``free money'' is used, whereas this phrase is only used in 1\% of non-spam emails. A new email has just arrived, which does mention ``free money''. What is the probability that it is spam?
+\end{qbox}
+\textbf{Solution.} Let $S$ be the event that an email is spam and $F$ be the event that an email has the ``free money'' phrase. By Bayes' rule,
+\begin{align*}
+P(S \mid F) &= \frac{P(F\mid S)P(S)}{P(F)} \\
+&= \frac{0.1 \cdot 0.8}{0.1\cdot 0.8 + 0.01 \cdot 0.2} \\
+&= \frac{0.08}{0.08 + 0.002} \\
+&= \frac{0.08}{0.082} \\
+&= \frac{80/1000}{82/1000} \\
+&= \frac{80}{82} \\
+&\approx 0.9756.
+\end{align*}
+
+\subsection*{Q2 --- Book Ch.2, Exercise 2}
+\begin{qbox}
+A woman is pregnant with twin boys. Twins may be either identical or fraternal (non-identical). In general, $1/3$ of twins born are identical. Obviously, identical twins must be of the same sex; fraternal twins may or may not be. Assume that identical twins are equally likely to be both boys or both girls, while for fraternal twins all possibilities are equally likely. Given the above information, what is the probability that the woman's twins are identical?
+\end{qbox}
+\textbf{Solution.} By Bayes' rule,
+\begin{align*}
+P(\text{identical} \mid BB) &= \frac{P(BB\mid \text{identical})P(\text{identical})}{P(BB)} \\
+&= \frac{\tfrac{1}{2}\cdot \tfrac{1}{3}}{\tfrac{1}{2}\cdot\tfrac{1}{3} + \tfrac{1}{4}\cdot\tfrac{2}{3}} \\
+&= \frac{\tfrac{1}{6}}{\tfrac{1}{6} + \tfrac{1}{6}} \\
+&= \frac{1/6}{2/6} \\
+&= \frac{1}{2}.
+\end{align*}
+
+\subsection*{Q3 --- Book Ch.2, Exercise 22}
+\begin{qbox}
+A bag contains one marble which is either green or blue, with equal probabilities. A green marble is put in the bag (so there are 2 marbles now), and then a random marble is taken out. The marble taken out is green. What is the probability that the remaining marble is also green?
+
+\textit{Historical note}: This problem was first posed by Lewis Carroll in 1893.
+\end{qbox}
+\textbf{Solution.} Let $A$ be the event that the initial marble is green, $B$ be the event that the removed marble is green, and $C$ be the event that the remaining marble is green. We need $P(C\mid B)$. Condition on whether the initial marble is green:
+\begin{align*}
+P(C\mid B) &= P(C\mid B,A)P(A\mid B) + P(C\mid B, A^c)P(A^c\mid B) \\
+&= 1\cdot P(A\mid B) + 0 \cdot P(A^c\mid B) \\
+&= P(A\mid B).
+\end{align*}
+To find $P(A\mid B)$, use Bayes' rule:
+\begin{align*}
+P(A\mid B) &= \frac{P(B\mid A)P(A)}{P(B\mid A)P(A) + P(B\mid A^c)P(A^c)} \\
+&= \frac{1 \cdot \tfrac{1}{2}}{1\cdot \tfrac12 + \tfrac12 \cdot \tfrac12} \\
+&= \frac{1/2}{1/2 + 1/4} \\
+&= \frac{1/2}{3/4} \\
+&= \frac{2}{3}.
+\end{align*}
+So $P(C\mid B) = 2/3$.
+
+\subsection*{Q4 --- Book Ch.2, Exercise 23}
+\begin{qbox}
+Let $G$ be the event that a certain individual is guilty of a certain robbery. In gathering evidence, it is learned that an event $E_1$ occurred, and a little later it is also learned that another event $E_2$ also occurred. Is it possible that individually, these pieces of evidence increase the chance of guilt (so $P(G|E_1) > P(G)$ and $P(G|E_2) > P(G)$), but together they decrease the chance of guilt (so $P(G|E_1, E_2) < P(G)$)?
+\end{qbox}
+\textbf{Solution.} Yes, this is possible. It is possible to have two events which separately provide evidence in favor of $G$, yet which together preclude $G$. For example, suppose the crime was committed between 1 pm and 3 pm on a certain day. Let $E_1$ be the event that the suspect was at a specific nearby coffeeshop from 1 pm to 2 pm that day, and let $E_2$ be the event that the suspect was at the nearby coffeeshop from 2 pm to 3 pm that day. Then
+\[
+P(G\mid E_1) > P(G), \qquad P(G\mid E_2) > P(G)
+\]
+(assuming that being in the vicinity helps show the suspect had the opportunity to commit the crime), yet
+\[
+P(G\mid E_1 \cap E_2) < P(G)
+\]
+since being in the coffeeshop from 1 pm to 3 pm gives the suspect an alibi for the full time.
+
+\subsection*{Q5 --- Book Ch.2, Exercise 25}
+\begin{qbox}
+A crime is committed by one of two suspects, $A$ and $B$. Initially, there is equal evidence against both of them. In further investigation at the crime scene, it is found that the guilty party had a blood type found in 10\% of the population. Suspect $A$ does match this blood type, whereas the blood type of Suspect $B$ is unknown.
+
+(a) Given this new information, what is the probability that $A$ is the guilty party?
+
+(b) Given this new information, what is the probability that $B$'s blood type matches that found at the crime scene?
+\end{qbox}
+\textbf{Solution.}
+
+(a) Let $M$ be the event that $A$'s blood type matches the guilty party's, and write $A$ for ``$A$ is guilty'' and $B$ for ``$B$ is guilty''. By Bayes' rule,
+\begin{align*}
+P(A\mid M) &= \frac{P(M\mid A)P(A)}{P(M\mid A)P(A) + P(M\mid B)P(B)} \\
+&= \frac{1 \cdot \tfrac12}{1\cdot \tfrac12 + \tfrac{1}{10}\cdot \tfrac12} \\
+&= \frac{1/2}{1/2 + 1/20} \\
+&= \frac{1/2}{11/20} \\
+&= \frac{10}{11}.
+\end{align*}
+(We used $P(M\mid B) = 1/10$ since, given $B$ is guilty, the probability that $A$'s blood type matches the guilty party's is the same as for the general population.)
+
+(b) Let $C$ be the event that $B$'s blood type matches, and condition on whether $B$ is guilty:
+\begin{align*}
+P(C\mid M) &= P(C\mid M, A)P(A\mid M) + P(C\mid M, B)P(B\mid M) \\
+&= \frac{1}{10}\cdot \frac{10}{11} + 1 \cdot \frac{1}{11} \\
+&= \frac{10}{110} + \frac{1}{11} \\
+&= \frac{1}{11} + \frac{1}{11} \\
+&= \frac{2}{11}.
+\end{align*}
+(Here $P(B\mid M) = 1 - P(A\mid M) = 1/11$, and $P(C\mid M, B) = 1$ since if $B$ is guilty, $B$'s blood type must match by definition.)
+
+\subsection*{Q6 --- Book Ch.2, Exercise 26}
+\begin{qbox}
+To battle against spam, Bob installs two anti-spam programs. An email arrives, which is either legitimate (event $L$) or spam (event $L^c$), and which program $j$ marks as legitimate (event $M_j$) or marks as spam (event $M_j^c$) for $j \in \{1,2\}$. Assume that 10\% of Bob's email is legitimate and that the two programs are each ``90\% accurate'' in the sense that $P(M_j|L) = P(M_j^c|L^c) = 9/10$. Also assume that given whether an email is spam, the two programs' outputs are conditionally independent.
+
+(a) Find the probability that the email is legitimate, given that the 1st program marks it as legitimate (simplify).
+
+(b) Find the probability that the email is legitimate, given that both programs mark it as legitimate (simplify).
+
+(c) Bob runs the 1st program and $M_1$ occurs. He updates his probabilities and then runs the 2nd program. Let $\tilde P(A) = P(A|M_1)$ be the updated probability function after running the 1st program. Explain briefly in words whether or not $\tilde P(L|M_2) = P(L|M_1 \cap M_2)$: is conditioning on $M_1 \cap M_2$ in one step equivalent to first conditioning on $M_1$, then updating probabilities, and then conditioning on $M_2$?
+\end{qbox}
+\textbf{Solution.}
+
+(a) By Bayes' rule,
+\begin{align*}
+P(L\mid M_1) &= \frac{P(M_1\mid L)P(L)}{P(M_1)} \\
+&= \frac{\tfrac{9}{10}\cdot \tfrac{1}{10}}{\tfrac{9}{10}\cdot \tfrac{1}{10} + \tfrac{1}{10}\cdot \tfrac{9}{10}} \\
+&= \frac{9/100}{9/100 + 9/100} \\
+&= \frac{9/100}{18/100} \\
+&= \frac{1}{2}.
+\end{align*}
+
+(b) By Bayes' rule,
+\begin{align*}
+P(L\mid M_1,M_2) &= \frac{P(M_1,M_2\mid L)P(L)}{P(M_1,M_2)} \\
+&= \frac{\left(\tfrac{9}{10}\right)^2 \cdot \tfrac{1}{10}}{\left(\tfrac{9}{10}\right)^2 \cdot \tfrac{1}{10} + \left(\tfrac{1}{10}\right)^2 \cdot \tfrac{9}{10}} \\
+&= \frac{\tfrac{81}{100}\cdot \tfrac{1}{10}}{\tfrac{81}{100}\cdot\tfrac{1}{10} + \tfrac{1}{100}\cdot\tfrac{9}{10}} \\
+&= \frac{81/1000}{81/1000 + 9/1000} \\
+&= \frac{81}{90} \\
+&= \frac{9}{10}.
+\end{align*}
+
+(c) Yes, they are the same, since Bayes' rule is coherent: the probability of an event given various pieces of evidence does not depend on the order in which the pieces of evidence are incorporated into the updated probabilities.
+
+\subsection{Independence and Conditional Independence}
+
+\subsection*{Q7 --- Book Ch.2, Exercise 30}
+\begin{qbox}
+A family has 3 children, creatively named $A$, $B$, and $C$.
+
+(a) Discuss intuitively (but clearly) whether the event ``$A$ is older than $B$'' is independent of the event ``$A$ is older than $C$''.
+
+(b) Find the probability that $A$ is older than $B$, given that $A$ is older than $C$.
+\end{qbox}
+\textbf{Solution.}
+
+(a) They are \emph{not} independent: knowing that $A$ is older than $B$ makes it more likely that $A$ is older than $C$. If $A$ is older than $B$, the only way $A$ can be younger than $C$ is if the birth order is $CAB$, whereas the birth orders $ABC$ and $ACB$ are both compatible with $A$ being older than $B$. As an extreme case, imagine 100 children $A_1,\dots,A_{100}$: given that $A_1$ is older than $A_2,\dots,A_{99}$, it is clear $A_1$ is very old (relatively), whereas there is no such evidence about $A_{100}$.
+
+(b) Writing $x > y$ to mean $x$ is older than $y$:
+\begin{align*}
+P(A>B \mid A>C) &= \frac{P(A>B, A>C)}{P(A>C)} \\
+&= \frac{P(A \text{ is eldest})}{P(A>C)} \\
+&= \frac{1/3}{1/2} \\
+&= \frac{2}{3},
+\end{align*}
+since $P(A>B, A>C) = P(A \text{ is the eldest child}) = 1/3$ (unconditionally, any of the 3 children is equally likely to be the eldest), and $P(A>C) = 1/2$ by symmetry.
+
+\subsection*{Q8 --- Book Ch.2, Exercise 31}
+\begin{qbox}
+Is it possible that an event is independent of itself? If so, when is this the case?
+\end{qbox}
+\textbf{Solution.} Let $A$ be an event. If $A$ is independent of itself, then
+\begin{align*}
+P(A) &= P(A \cap A) \\
+&= P(A)^2.
+\end{align*}
+Solving $P(A) = P(A)^2$, i.e., $P(A)(1-P(A)) = 0$, gives $P(A) = 0$ or $P(A) = 1$. So this is only possible in the extreme cases that the event has probability 0 or 1.
+
+\subsection*{Q9 --- Book Ch.2, Exercise 32}
+\begin{qbox}
+Consider four nonstandard dice (the \textit{Efron dice}), whose sides are labeled as follows (the 6 sides on each die are equally likely).
+
+A: 4, 4, 4, 4, 0, 0
+
+B: 3, 3, 3, 3, 3, 3
+
+C: 6, 6, 2, 2, 2, 2
+
+D: 5, 5, 5, 1, 1, 1
+
+These four dice are each rolled once. Let $A$ be the result for die A, $B$ be the result for die B, etc.
+
+(a) Find $P(A>B), P(B>C), P(C>D)$, and $P(D>A)$.
+
+(b) Is the event $A>B$ independent of the event $B>C$? Is the event $B>C$ independent of the event $C>D$? Explain.
+\end{qbox}
+\textbf{Solution.}
+
+(a)
+\begin{align*}
+P(A>B) &= P(A=4) = \frac{4}{6} = \frac{2}{3} \\
+P(B>C) &= P(C=2) = \frac{4}{6} = \frac{2}{3} \\
+P(C>D) &= P(C=6) + P(C=2,D=1) \\
+&= \frac{2}{6} + \frac{4}{6}\cdot\frac{3}{6} \\
+&= \frac{2}{6} + \frac{12}{36} \\
+&= \frac{12}{36} + \frac{12}{36} \\
+&= \frac{24}{36} = \frac{2}{3} \\
+P(D>A) &= P(D=5) + P(D=1,A=0) \\
+&= \frac{3}{6} + \frac{3}{6}\cdot\frac{2}{6} \\
+&= \frac{18}{36} + \frac{6}{36} \\
+&= \frac{24}{36} = \frac{2}{3}
+\end{align*}
+
+(b) The event $A>B$ is independent of the event $B>C$, since $A>B$ is the same event as $A=4$, knowledge of which gives no information about $B>C$ (which is the same event as $C=2$, entirely about die $C$). Formally $P(A>B \mid B>C) = P(A=4) = 2/3 = P(A>B)$.
+
+On the other hand, $B>C$ is \emph{not} independent of $C>D$, since
+\begin{align*}
+P(C>D \mid C=2) &= P(D=1 \mid C=2) = \frac{3}{6} = \frac{1}{2},
+\end{align*}
+while
+\begin{align*}
+P(C>D \mid C\neq 2) &= P(C=6\mid C\neq 2) = 1,
+\end{align*}
+and $1/2 \neq 1$.
+
+\subsection*{Q10 --- Book Ch.2, Exercise 35}
+\begin{qbox}
+You are going to play 2 games of chess with an opponent whom you have never played against before (for the sake of this problem). Your opponent is equally likely to be a beginner, intermediate, or a master. Depending on which, your chances of winning an individual game are 90\%, 50\%, or 30\%, respectively.
+
+(a) What is your probability of winning the first game?
+
+(b) Congratulations: you won the first game! Given this information, what is the probability that you will also win the second game (assume that, given the skill level of your opponent, the outcomes of the games are independent)?
+
+(c) Explain the distinction between assuming that the outcomes of the games are independent and assuming that they are conditionally independent given the opponent's skill level. Which of these assumptions seems more reasonable, and why?
+\end{qbox}
+\textbf{Solution.}
+
+(a) Let $W_i$ be the event of winning the $i$th game. By the law of total probability,
+\begin{align*}
+P(W_1) &= \frac{1}{3}(0.9) + \frac13(0.5) + \frac13(0.3) \\
+&= \frac{0.9+0.5+0.3}{3} \\
+&= \frac{1.7}{3} = \frac{17}{30}.
+\end{align*}
+
+(b) We have $P(W_2\mid W_1) = P(W_2,W_1)/P(W_1)$. The denominator is known from (a). For the numerator, condition on skill level:
+\begin{align*}
+P(W_1,W_2) &= \frac13 P(W_1,W_2\mid \text{beginner}) + \frac13 P(W_1,W_2\mid\text{intermediate}) + \frac13 P(W_1,W_2\mid\text{expert}).
+\end{align*}
+By conditional independence given skill level, $P(W_1,W_2\mid\text{level}) = P(W_1\mid\text{level})^2$, so
+\begin{align*}
+P(W_1,W_2) &= \frac{0.9^2 + 0.5^2 + 0.3^2}{3} \\
+&= \frac{0.81 + 0.25 + 0.09}{3} \\
+&= \frac{1.15}{3} = \frac{23}{60}.
+\end{align*}
+Therefore,
+\begin{align*}
+P(W_2\mid W_1) &= \frac{23/60}{17/30} \\
+&= \frac{23}{60}\cdot\frac{30}{17} \\
+&= \frac{23\cdot 30}{60\cdot 17} \\
+&= \frac{690}{1020} \\
+&= \frac{23}{34}.
+\end{align*}
+
+(c) Independence would mean that knowing one game's outcome gives no information about the other game's outcome. Conditional independence given skill level means this holds only after fixing the opponent's skill level. Conditional independence is the more reasonable assumption: winning the first game gives information about the opponent's skill level (e.g., makes ``beginner'' more likely), which in turn changes the probability of winning the second game. If skill level were treated as fixed and known, independence of games given that level would be reasonable; but with skill level random and unknown, earlier games help infer skill level, affecting predictions for later games.
+
+\subsection{Monty Hall}
+
+\subsection*{Q11 --- Book Ch.2, Exercise 38}
+\begin{qbox}
+(a) Consider the following 7-door version of the Monty Hall problem. There are 7 doors, behind one of which there is a car (which you want), and behind the rest of which there are goats (which you don't want). Initially, all possibilities are equally likely for where the car is. You choose a door. Monty Hall then opens 3 goat doors, and offers you the option of switching to any of the remaining 3 doors.
+Assume that Monty Hall knows which door has the car, will always open 3 goat doors and offer the option of switching, and that Monty chooses with equal probabilities from all his choices of which goat doors to open. Should you switch? What is your probability of success if you switch to one of the remaining 3 doors?
+
+(b) Generalize the above to a Monty Hall problem where there are $n \geq 3$ doors, of which Monty opens $m$ goat doors, with $1 \leq m \leq n-2$.
+\end{qbox}
+\textbf{Solution.}
+
+(a) Assume you choose door 1. Let $S$ be the event of success under the ``stick to your original choice'' strategy, and $C_j$ the event the car is behind door $j$. Conditioning on which door has the car:
+\begin{align*}
+P(S) &= P(S\mid C_1)P(C_1) + \cdots + P(S\mid C_7)P(C_7) \\
+&= P(C_1) = \frac{1}{7}.
+\end{align*}
+Let $M_{ijk}$ be the event Monty opens doors $i,j,k$. Then
+\begin{align*}
+P(S) &= \sum_{i,j,k} P(S\mid M_{ijk})P(M_{ijk})
+\end{align*}
+summed over $2 \le i<j<k\le 7$. By symmetry, $P(S\mid M_{ijk}) = P(S) = 1/7$ for all such $i,j,k$. So the conditional probability the car is behind one of the remaining 3 doors is
+\begin{align*}
+1 - \frac{1}{7} &= \frac{6}{7},
+\end{align*}
+which gives $\dfrac{6/7}{3} = \dfrac{2}{7}$ for each remaining door. So you should switch: probability of success $2/7$ (versus $1/7$ if you stick).
+
+(b) By the same reasoning, ``stick to your original choice'' succeeds with probability $\dfrac1n$, both unconditionally and conditionally. There are $n-m-1$ remaining doors, and by symmetry each has conditional probability of having the car equal to
+\begin{align*}
+\frac{1 - \tfrac1n}{n-m-1} &= \frac{\tfrac{n-1}{n}}{n-m-1} \\
+&= \frac{n-1}{(n-m-1)n}.
+\end{align*}
+Since $\dfrac{n-1}{(n-m-1)n} > \dfrac1n$ (as $n - 1 > n - m -1$ for $m\ge 1$), you should switch, obtaining probability of success $\dfrac{n-1}{(n-m-1)n}$.
+
+\subsection*{Q12 --- Book Ch.2, Exercise 39}
+\begin{qbox}
+Consider the Monty Hall problem, except that Monty enjoys opening door 2 more than he enjoys opening door 3, and if he has a choice between opening these two doors, he opens door 2 with probability $p$, where $\frac12 \leq p \leq 1$.
+To recap: there are three doors, behind one of which there is a car (which you want), and behind the other two of which there are goats (which you don't want). Initially, all possibilities are equally likely for where the car is. You choose a door, which for concreteness we assume is door 1. Monty Hall then opens a door to reveal a goat, and offers you the option of switching. Assume that Monty Hall knows which door has the car, will always open a goat door and offer the option of switching, and as above assume that if Monty Hall has a choice between opening door 2 and door 3, he chooses door 2 with probability $p$ (with $\frac12 \leq p \leq 1$).
+
+(a) Find the unconditional probability that the strategy of always switching succeeds (unconditional in the sense that we do not condition on which of doors 2 or 3 Monty opens).
+
+(b) Find the probability that the strategy of always switching succeeds, given that Monty opens door 2.
+
+(c) Find the probability that the strategy of always switching succeeds, given that Monty opens door 3.
+\end{qbox}
+\textbf{Solution.}
+
+(a) Let $C_j$ be the event the car is behind door $j$ and $W$ the event of winning via switching. By the law of total probability:
+\begin{align*}
+P(W) &= P(W\mid C_1)P(C_1) + P(W\mid C_2)P(C_2) + P(W\mid C_3)P(C_3) \\
+&= 0\cdot\frac13 + 1\cdot\frac13 + 1\cdot\frac13 \\
+&= \frac{2}{3}.
+\end{align*}
+
+(b) Let $D_i$ be the event Monty opens door $i$. We want $P(W\mid D_2) = P(C_3\mid D_2)$ (win via switching to door 3 given Monty opened door 2). By Bayes' rule and total probability:
+\begin{align*}
+P(C_3\mid D_2) &= \frac{P(D_2\mid C_3)P(C_3)}{P(D_2\mid C_1)P(C_1) + P(D_2\mid C_2)P(C_2) + P(D_2\mid C_3)P(C_3)} \\
+&= \frac{1 \cdot \tfrac13}{p\cdot\tfrac13 + 0\cdot\tfrac13 + 1\cdot\tfrac13} \\
+&= \frac{1/3}{(p+1)/3} \\
+&= \frac{1}{1+p}.
+\end{align*}
+(Here $P(D_2\mid C_1) = p$ since if the car is behind door 1, Monty must choose between doors 2 and 3, opening door 2 with probability $p$; $P(D_2\mid C_2)=0$ since Monty never opens the door with the car; $P(D_2\mid C_3)=1$ since if the car is behind door 3, Monty must open door 2.)
+
+(c) The structure mirrors part (b) with doors 2 and 3 relabeled (swap $p \leftrightarrow 1-p$):
+\begin{align*}
+P(C_2\mid D_3) &= \frac{1}{1+(1-p)} \\
+&= \frac{1}{2-p}.
+\end{align*}
+
+\section{First-Step Analysis and Gambler's Ruin}
+
+\subsection*{Q13 --- Book Ch.2, Exercise 42}
+\begin{qbox}
+A fair die is rolled repeatedly, and a running total is kept (which is, at each time, the total of all the rolls up until that time). Let $p_n$ be the probability that the running total is ever \textit{exactly} $n$ (assume the die will always be rolled enough times so that the running total will eventually exceed $n$, but it may or may not ever equal $n$).
+
+(a) Write down a recursive equation for $p_n$ (relating $p_n$ to earlier terms $p_k$ in a simple way). Your equation should be true for all positive integers $n$, so give a definition of $p_0$ and $p_k$ for $k<0$ so that the recursive equation is true for small values of $n$.
+
+(b) Find $p_7$.
+
+(c) Give an intuitive explanation for the fact that $p_n \to 1/3.5 = 2/7$ as $n \to \infty$.
+\end{qbox}
+\textbf{Solution.}
+
+(a) By first-step analysis: if the first throw is $k$ (for $k=1,\dots,6$), the probability of reaching $n$ exactly is $p_{n-k}$, since we then need a total of $n-k$ exactly from that point on. So
+\begin{align*}
+p_n &= \frac16\left(p_{n-1}+p_{n-2}+p_{n-3}+p_{n-4}+p_{n-5}+p_{n-6}\right),
+\end{align*}
+where we define $p_0 = 1$ (the running total is 0 before the first toss) and $p_k = 0$ for $k<0$.
+
+(b) Using the recursion,
+\begin{align*}
+p_1 &= \frac16(p_0) = \frac16 \\
+p_2 &= \frac16(p_1+p_0) = \frac16\left(\frac16+1\right) = \frac16\left(1+\frac16\right) \\
+p_3 &= \frac16(p_2+p_1+p_0) = \frac16\left(1+\frac16\right)^2 \\
+p_4 &= \frac16\left(1+\frac16\right)^3 \\
+p_5 &= \frac16\left(1+\frac16\right)^4 \\
+p_6 &= \frac16\left(1+\frac16\right)^5
+\end{align*}
+(each obtained by noting $p_{k} = \tfrac16\!\left(1+\sum_{j=1}^{k-1}p_j\right)$ telescopes into this geometric-like pattern for $k \le 6$).
+Hence,
+\begin{align*}
+p_7 &= \frac16(p_1+p_2+p_3+p_4+p_5+p_6) \\
+&= \frac16\left[\frac16\left(1+\left(1+\tfrac16\right)+\left(1+\tfrac16\right)^2+\left(1+\tfrac16\right)^3+\left(1+\tfrac16\right)^4+\left(1+\tfrac16\right)^5\right)\right] \\
+&= \frac16\left[\left(1+\frac16\right)^6 - 1\right] \qquad \text{(geometric series sum)} \\
+&= \frac16\left[\left(\frac76\right)^6 - 1\right] \\
+&= \frac16\left[\frac{117649}{46656} - 1\right] \\
+&= \frac16\left[\frac{117649 - 46656}{46656}\right] \\
+&= \frac16\cdot\frac{70993}{46656} \\
+&= \frac{70993}{279936} \\
+&\approx 0.2536.
+\end{align*}
+
+(c) The average number thrown by the die is $(1+2+3+4+5+6)/6 = 21/6 = 7/2$, so every throw adds $7/2$ on average. We can therefore expect to land exactly on 2 out of every 7 numbers, so the probability of landing on any particular large $n$ is $2/7$. (A full derivation uses the identity $p_{n+1}+2p_{n+2}+\cdots+6p_{n+6}=6$ for all $n\ge -5$, obtained by repeatedly using the recursion, and taking $n\to\infty$ gives $(1+2+\cdots+6)\lim_{n\to\infty}p_n = 6$, i.e. $21\lim p_n = 6$, so $\lim_{n\to\infty}p_n = 6/21 = 2/7$.)
+
+\subsection*{Q14 --- Book Ch.2, Exercise 44}
+\begin{qbox}
+Calvin and Hobbes play a match consisting of a series of games, where Calvin has probability $p$ of winning each game (independently). They play with a ``win by two'' rule: the first player to win two games more than his opponent wins the match. Find the probability that Calvin wins the match (in terms of $p$), in two different ways:
+
+(a) by conditioning, using the law of total probability.
+
+(b) by interpreting the problem as a gambler's ruin problem.
+\end{qbox}
+\textbf{Solution.}
+
+(a) Let $C$ be the event Calvin wins the match, $X \sim \text{Bin}(2,p)$ the number of the first 2 games he wins, and $q=1-p$. Conditioning on $X$:
+\begin{align*}
+P(C) &= P(C\mid X=0)q^2 + P(C\mid X=1)(2pq) + P(C\mid X=2)p^2.
+\end{align*}
+If $X=0$ or $X=2$, one player is already ahead by 2, so the match is over: $P(C\mid X=0)=0$, $P(C\mid X=2)=1$. If $X=1$, the match is tied after 2 games, so by memorylessness $P(C\mid X=1) = P(C)$. Thus
+\begin{align*}
+P(C) &= 0\cdot q^2 + P(C)\cdot(2pq) + 1\cdot p^2 \\
+&= 2pq\,P(C) + p^2.
+\end{align*}
+Solving for $P(C)$:
+\begin{align*}
+P(C) - 2pq\,P(C) &= p^2 \\
+P(C)(1-2pq) &= p^2 \\
+P(C) &= \frac{p^2}{1-2pq}.
+\end{align*}
+Since $p+q=1$, we have $1 = (p+q)^2 = p^2+2pq+q^2$, so $1-2pq = p^2+q^2$. Thus
+\begin{align*}
+P(C) &= \frac{p^2}{p^2+q^2}.
+\end{align*}
+\textit{Check}: at $p=1$, $P(C) = 1/(1+0)=1$; at $p=0$, $P(C)=0/(0+1)=0$; at $p=1/2$, $P(C) = (1/4)/(1/4+1/4) = 1/2$. All correct. Also, $P(\text{Hobbes wins}) = 1-P(C) = q^2/(p^2+q^2)$, matching the formula with $p,q$ swapped.
+
+(b) This is a gambler's ruin where each player starts with \$2 (win by two means first to be up \$2 wins). Using the standard gambler's ruin formula with $N=4$ (target of $+2$ starting from $0$, i.e., ruin at $-2$, win at $+2$), the probability Calvin (moving $+1$ with prob $p$, $-1$ with prob $q$) reaches $+2$ before $-2$ starting at $0$ is
+\begin{align*}
+\frac{1-(q/p)^2}{1-(q/p)^4} &= \frac{(p^2-q^2)/p^2}{(p^4-q^4)/p^4} \\
+&= \frac{(p^2-q^2)/p^2}{(p^2-q^2)(p^2+q^2)/p^4} \\
+&= \frac{p^4}{p^2(p^2+q^2)} \\
+&= \frac{p^2}{p^2+q^2},
+\end{align*}
+which agrees with part (a).
+
+\section{Simpson's Paradox}
+
+\subsection*{Q15 --- Book Ch.2, Exercise 49}
+\begin{qbox}
+(a) Is it possible to have events $A,B,C$ such that $P(A|C) < P(B|C)$ and $P(A|C^c) < P(B|C^c)$, yet $P(A) > P(B)$? That is, $A$ is less likely than $B$ given that $C$ is true, and also less likely than $B$ given that $C$ is false, yet $A$ is more likely than $B$ if we're given no information about $C$. Show this is impossible (with a short proof) or find a counterexample (with a story interpreting $A,B,C$).
+
+(b) If the scenario in (a) is possible, is it a special case of Simpson's paradox, equivalent to Simpson's paradox, or neither? If it is impossible, explain intuitively why it is impossible even though Simpson's paradox is possible.
+\end{qbox}
+\textbf{Solution.}
+
+(a) It is \emph{not} possible. By the law of total probability:
+\begin{align*}
+P(A) &= P(A\mid C)P(C) + P(A\mid C^c)P(C^c) \\
+&< P(B\mid C)P(C) + P(B\mid C^c)P(C^c) \\
+&= P(B),
+\end{align*}
+where the strict inequality follows term-by-term from $P(A\mid C) < P(B\mid C)$ and $P(A\mid C^c)<P(B\mid C^c)$ (with $P(C), P(C^c) \ge 0$ and not both terms zero-weighted). This contradicts $P(A) > P(B)$, so the scenario is impossible.
+
+(b) In Simpson's paradox, expanding $P(A\mid B)$ and $P(A\mid B^c)$ using LOTP to condition on $C$ involves \emph{different} weights ($P(C\mid B)$ vs.\ $P(C\mid B^c)$) on each side, so the inequality can flip (e.g., Dr.\ Nick performs far more Band-Aid removals than Dr.\ Hibbert). In this problem, the weights $P(C)$ and $P(C^c)$ are the \emph{same} in both expansions of $P(A)$ and $P(B)$, so the inequality is preserved — this is why Simpson's-paradox-type reversal is impossible here.
+
+\subsection*{Q16 --- Book Ch.2, Exercise 50}
+\begin{qbox}
+Consider the following conversation from an episode of \textit{The Simpsons}:
+
+Lisa: \textit{Dad, I think he's an ivory dealer! His boots are ivory, his hat is ivory, and I'm pretty sure that check is ivory.}
+
+Homer: \textit{Lisa, a guy who has lots of ivory is less likely to hurt Stampy than a guy whose ivory supplies are low.}
+
+Here Homer and Lisa are debating the question of whether or not the man (named Blackheart) is likely to hurt Stampy the Elephant if they sell Stampy to him. They clearly disagree about how to use their observations about Blackheart to learn about the probability (conditional on the evidence) that Blackheart will hurt Stampy.
+
+(a) Define clear notation for the various events of interest here.
+
+(b) Express Lisa's and Homer's arguments (Lisa's is partly implicit) as conditional probability statements in terms of your notation from (a).
+
+(c) Assume it is true that someone who has a lot of a commodity will have less desire to acquire more of the commodity. Explain what is wrong with Homer's reasoning that the evidence about Blackheart makes it less likely that he will harm Stampy.
+\end{qbox}
+\textbf{Solution.}
+
+(a) Let $H$ be the event that the man will hurt Stampy, $L$ the event that a man has lots of ivory, and $D$ the event that the man is an ivory dealer.
+
+(b) Lisa observes that $L$ is true, and argues (reasonably) that this makes $D$ more likely:
+\[
+P(D\mid L) > P(D).
+\]
+Implicitly, she suggests this makes it likely the man will hurt Stampy:
+\[
+P(H\mid L) > P(H\mid L^c).
+\]
+Homer argues the opposite:
+\[
+P(H\mid L) < P(H\mid L^c).
+\]
+
+(c) Homer does not realize that observing Blackheart has so much ivory makes it much more likely Blackheart is an ivory dealer, which in turn makes it more likely he will hurt Stampy. This is an instance of Simpson's paradox: it may be true that, \emph{controlling for whether Blackheart is a dealer},
+\[
+P(H\mid L, D) < P(H\mid L^c, D) \quad \text{and} \quad P(H\mid L, D^c) < P(H\mid L^c, D^c),
+\]
+(having more ivory makes a dealer or non-dealer individually less eager to acquire more), but this does \emph{not} imply the unconditional statement $P(H\mid L) < P(H\mid L^c)$, because the weight $P(D\mid L)$ is much larger than $P(D\mid L^c)$, and dealers are far more dangerous to Stampy overall.
+
+\subsection*{Q17 --- Book Ch.2, Exercise 53}
+\begin{qbox}
+The book \textit{Red State, Blue State, Rich State, Poor State} by Andrew Gelman [13] discusses the following election phenomenon: within any U.S. state, a wealthy voter is more likely to vote for a Republican than a poor voter, yet the wealthier states tend to favor Democratic candidates! In short: rich individuals (in any state) tend to vote for Republicans, while states with a higher percentage of rich people tend to favor Democrats.
+
+(a) Assume for simplicity that there are only 2 states (called Red and Blue), each of which has 100 people, and that each person is either rich or poor, and either a Democrat or a Republican. Make up numbers consistent with the above, showing how this phenomenon is possible, by giving a $2\times 2$ table for each state (listing how many people in each state are rich Democrats, etc.).
+
+(b) In the setup of (a) (not necessarily with the numbers you made up there), let $D$ be the event that a randomly chosen person is a Democrat (with all 200 people equally likely), and $B$ be the event that the person lives in the Blue State. Suppose that 10 people move from the Blue State to the Red State. Write $P_{\text{old}}$ and $P_{\text{new}}$ for probabilities before and after they move. Assume that people do not change parties, so we have $P_{\text{new}}(D) = P_{\text{old}}(D)$. Is it possible that \textit{both} $P_{\text{new}}(D|B) > P_{\text{old}}(D|B)$ and $P_{\text{new}}(D|B^c) > P_{\text{old}}(D|B^c)$ are true? If so, explain how it is possible and why it does not contradict the law of total probability $P(D) = P(D|B)P(B) + P(D|B^c)P(B^c)$; if not, show that it is impossible.
+\end{qbox}
+\textbf{Solution.}
+
+(a) Here are two tables that work:
+
+\medskip
+\noindent
+\begin{tabular}{l|ccc}
+Red & Dem & Rep & Total \\\hline
+Rich & 5 & 25 & 30 \\
+Poor & 20 & 50 & 70 \\\hline
+Total & 25 & 75 & 100
+\end{tabular}
+\qquad
+\begin{tabular}{l|ccc}
+Blue & Dem & Rep & Total \\\hline
+Rich & 45 & 15 & 60 \\
+Poor & 35 & 5 & 40 \\\hline
+Total & 80 & 20 & 100
+\end{tabular}
+
+\medskip
+Check within Red: rich Democrat rate $= 5/30 \approx 0.167$, poor Democrat rate $=20/70\approx 0.286$; a poor person is more likely to be Democrat than a rich person in each state, i.e. rich people lean Republican relative to poor people:
+\begin{align*}
+P(\text{Rep}\mid\text{Rich, Red}) &= \frac{25}{30} = \frac56 \approx 0.833, &
+P(\text{Rep}\mid\text{Poor, Red}) &= \frac{50}{70} = \frac57 \approx 0.714,\\
+P(\text{Rep}\mid\text{Rich, Blue}) &= \frac{15}{60} = \frac14 = 0.25, &
+P(\text{Rep}\mid\text{Poor, Blue}) &= \frac{5}{40} = \frac18 = 0.125.
+\end{align*}
+In each state, rich people vote Republican at a higher rate than poor people ($5/6 > 5/7$ and $1/4 > 1/8$). But the aggregate Democrat share is $25/100=0.25$ in Red versus $80/100 = 0.80$ in Blue — the state with more rich people (Blue has 60 rich vs.\ Red's 30) is more Democratic overall. This is Simpson's paradox: aggregating gives a different conclusion than conditioning on state.
+
+(b) Yes, it is possible. Suppose (using the numbers from (a)) that 10 people move from Blue to Red, of whom 5 are Democrats and 5 are Republicans. Then:
+\begin{align*}
+P_{\text{old}}(D\mid B) &= \frac{80}{100} = 0.80, &
+P_{\text{new}}(D\mid B) &= \frac{75}{90} = \frac{5}{6} \approx 0.833,
+\end{align*}
+so $P_{\text{new}}(D\mid B) > P_{\text{old}}(D\mid B)$. Also:
+\begin{align*}
+P_{\text{old}}(D\mid B^c) &= \frac{25}{100} = 0.25, &
+P_{\text{new}}(D\mid B^c) &= \frac{30}{110} = \frac{3}{11} \approx 0.273,
+\end{align*}
+so $P_{\text{new}}(D\mid B^c) > P_{\text{old}}(D\mid B^c)$ too. Intuitively, this makes sense because the Blue State's Democrat percentage (80\%) is higher than the Red State's (25\%), and the movers' Democrat percentage (50\%) is between these two values — so removing them raises Blue's remaining percentage, and adding them raises Red's percentage.
+
+This does \emph{not} contradict the law of total probability, since the weights $P(B), P(B^c)$ also change:
+\begin{align*}
+P_{\text{old}}(B) &= \frac{100}{200} = \frac12, &
+P_{\text{new}}(B) &= \frac{90}{200} = 0.45.
+\end{align*}
+The phenomenon requires this shift in weights; it could not occur if an equal number of people also moved the opposite direction, keeping $P(B)$ constant.
+
+\section{Strategic Practice}
+
+\subsection{SP 2 \S2: Independence}
+
+\subsection*{Q18 --- SP 2 \S2 \textperiodcentered\ Problem 1}
+\begin{qbox}
+Is it possible that an event is independent of itself? If so, when?
+\end{qbox}
+\textbf{Solution.} Let $A$ be an event. If $A$ is independent of itself, then
+\begin{align*}
+P(A) &= P(A\cap A) = P(A)^2.
+\end{align*}
+So $P(A)$ satisfies $P(A) = P(A)^2$, giving $P(A)(1-P(A))=0$, so $P(A) \in \{0,1\}$. This is only possible in the extreme cases that the event has probability 0 or 1.
+
+\subsection*{Q19 --- SP 2 \S2 \textperiodcentered\ Problem 2}
+\begin{qbox}
+Is it always true that if $A$ and $B$ are independent events, then $A^c$ and $B^c$ are independent events? Show that it is, or give a counterexample.
+\end{qbox}
+\textbf{Solution.} Yes. We have
+\begin{align*}
+P(A^c\cap B^c) &= 1-P(A\cup B) \\
+&= 1-\big(P(A)+P(B)-P(A\cap B)\big).
+\end{align*}
+Since $A,B$ independent, $P(A\cap B) = P(A)P(B)$, so
+\begin{align*}
+P(A^c\cap B^c) &= 1-P(A)-P(B)+P(A)P(B) \\
+&= (1-P(A))(1-P(B)) \\
+&= P(A^c)P(B^c).
+\end{align*}
+Hence $A^c$ and $B^c$ are independent.
+
+\subsection*{Q20 --- SP 2 \S2 \textperiodcentered\ Problem 3}
+\begin{qbox}
+Give an example of 3 events $A, B, C$ which are pairwise independent but not independent. \textit{Hint}: find an example where whether $C$ occurs is completely determined if we know whether $A$ occurred and whether $B$ occurred, but completely undetermined if we know only one of these things.
+\end{qbox}
+\textbf{Solution.} Consider two fair, independent coin tosses. Let $A$ be the event the first toss is Heads, $B$ the event the second toss is Heads, and $C$ the event the two tosses have the same result.
+
+Then $A,B,C$ are pairwise independent:
+\begin{itemize}
+\item $A,B$ independent by construction: $P(A\cap B) = 1/4 = P(A)P(B)$.
+\item $A,C$: $A\cap C$ is the event ``first is H and both match,'' i.e. both are H, which equals $A\cap B$, so $P(A\cap C) = P(A\cap B) = 1/4$. Also $P(A)P(C) = \tfrac12\cdot\tfrac12 = \tfrac14$. So $P(A\cap C)=P(A)P(C)$.
+\item Similarly $B,C$ independent.
+\end{itemize}
+But they are \emph{not} jointly independent, since $A\cap B \cap C = A \cap B$ (if both are Heads, they automatically match), so
+\begin{align*}
+P(A\cap B\cap C) &= P(A\cap B) = \frac14,
+\end{align*}
+while
+\begin{align*}
+P(A)P(B)P(C) &= \frac12\cdot\frac12\cdot\frac12 = \frac18.
+\end{align*}
+Since $\tfrac14 \ne \tfrac18$, $A,B,C$ are not independent.
+
+\subsection*{Q21 --- SP 2 \S2 \textperiodcentered\ Problem 4}
+\begin{qbox}
+Give an example of 3 events $A, B, C$ which are not independent, yet satisfy $P(A \cap B \cap C) = P(A)P(B)P(C)$. \textit{Hint}: consider simple and extreme cases.
+\end{qbox}
+\textbf{Solution.} Consider the extreme case $P(A) = 0$. Then automatically
+\begin{align*}
+P(A)P(B)P(C) &= 0,
+\end{align*}
+and also $P(A\cap B\cap C) = 0$ since $A\cap B\cap C \subseteq A$ and $P(A)=0$ (in general, if $A_1 \subseteq A_2$ then $P(A_1)\le P(A_2)$). So the displayed equation holds automatically:
+\begin{align*}
+P(A\cap B\cap C) = 0 = P(A)P(B)P(C).
+\end{align*}
+Now choose $B$ and $C$ to be dependent, e.g. $B=C$ with $0<P(B)<1$. Then $P(B\cap C) = P(B) \ne P(B)^2 = P(B)P(C)$ (since $0<P(B)<1$), so $B,C$ are dependent, hence $A,B,C$ are not (jointly) independent — yet the triple-intersection equation holds.
+
+\subsection{SP 2 \S3: Thinking Conditionally}
+
+\subsection*{Q22 --- SP 2 \S3 \textperiodcentered\ Problem 1}
+\begin{qbox}
+A bag contains one marble which is either green or blue, with equal probabilities. A green marble is put in the bag (so there are 2 marbles now), and then a random marble is taken out. The marble taken out is green. What is the probability that the remaining marble is also green?
+
+\textit{Historical note}: this problem was first posed by Lewis Carroll in 1893.
+\end{qbox}
+\textbf{Solution.} Let $A$ be the event the initial marble is green, $B$ the event the removed marble is green, and $C$ the event the remaining marble is green. We need $P(C\mid B)$. Condition on whether the initial marble is green:
+\begin{align*}
+P(C\mid B) &= P(C\mid B,A)P(A\mid B) + P(C\mid B,A^c)P(A^c\mid B) \\
+&= 1\cdot P(A\mid B) + 0\cdot P(A^c\mid B) \\
+&= P(A\mid B).
+\end{align*}
+By Bayes' rule:
+\begin{align*}
+P(A\mid B) &= \frac{P(B\mid A)P(A)}{P(B\mid A)P(A) + P(B\mid A^c)P(A^c)} \\
+&= \frac{1\cdot \tfrac12}{1\cdot\tfrac12 + \tfrac12\cdot\tfrac12} \\
+&= \frac{1/2}{1/2+1/4} \\
+&= \frac{1/2}{3/4} \\
+&= \frac23.
+\end{align*}
+So $P(C\mid B) = 2/3$.
+
+\subsection*{Q23 --- SP 2 \S3 \textperiodcentered\ Problem 2}
+\begin{qbox}
+A spam filter is designed by looking at commonly occurring phrases in spam. Suppose that 80\% of email is spam. In 10\% of the spam emails, the phrase ``free money'' is used, whereas this phrase is only used in 1\% of non-spam emails. A new email has just arrived, which does mention ``free money''. What is the probability that it is spam?
+\end{qbox}
+\textbf{Solution.} Let $S$ be spam, $F$ the event of the ``free money'' phrase. By Bayes' rule,
+\begin{align*}
+P(S\mid F) &= \frac{P(F\mid S)P(S)}{P(F)} \\
+&= \frac{0.1\cdot 0.8}{0.1\cdot 0.8 + 0.01\cdot 0.2} \\
+&= \frac{0.08}{0.08+0.002} \\
+&= \frac{80/1000}{82/1000} \\
+&= \frac{80}{82} \\
+&\approx 0.9756.
+\end{align*}
+
+\subsection*{Q24 --- SP 2 \S3 \textperiodcentered\ Problem 3}
+\begin{qbox}
+Let $G$ be the event that a certain individual is guilty of a certain robbery. In gathering evidence, it is learned that an event $E_1$ occurred, and a little later it is also learned that another event $E_2$ also occurred.
+
+(a) Is it possible that individually, these pieces of evidence increase the chance of guilt (so $P(G|E_1) > P(G)$ and $P(G|E_2) > P(G)$), but together they decrease the chance of guilt (so $P(G|E_1, E_2) < P(G)$)?
+
+(b) Show that the probability of guilt given the evidence is the same regardless of whether we update our probabilities all at once, or in two steps (after getting the first piece of evidence, and again after getting the second piece of evidence). That is, we can either update all at once (computing $P(G|E_1, E_2)$ in one step), or we can first update based on $E_1$, so that our new probability function is $P_{\text{new}}(A) = P(A|E_1)$, and then update based on $E_2$ by computing $P_{\text{new}}(G|E_2)$.
+\end{qbox}
+\textbf{Solution.}
+
+(a) Yes, this is possible. Suppose the crime was committed between 1 pm and 3 pm on a certain day. Let $E_1$ be the event that the suspect was at a nearby coffeeshop from 1 pm to 2 pm that day, and $E_2$ the event that the suspect was at the nearby coffeeshop from 2 pm to 3 pm that day. Then
+\[
+P(G\mid E_1) > P(G), \qquad P(G\mid E_2) > P(G)
+\]
+(being in the vicinity suggests opportunity), yet
+\[
+P(G\mid E_1\cap E_2) < P(G)
+\]
+since being at the coffeeshop for the \emph{entire} 1--3 pm window gives the suspect a full alibi.
+
+(b) By the definition of conditional probability:
+\begin{align*}
+P_{\text{new}}(G\mid E_2) &= \frac{P_{\text{new}}(G, E_2)}{P_{\text{new}}(E_2)} \\
+&= \frac{P(G,E_2\mid E_1)}{P(E_2\mid E_1)} \\
+&= \frac{P(G,E_1,E_2)/P(E_1)}{P(E_1,E_2)/P(E_1)} \\
+&= \frac{P(G,E_1,E_2)}{P(E_1,E_2)} \\
+&= P(G\mid E_1,E_2).
+\end{align*}
+So the two update procedures give the same result.
+
+\subsection*{Q25 --- SP 2 \S3 \textperiodcentered\ Problem 4}
+\begin{qbox}
+A crime is committed by one of two suspects, $A$ and $B$. Initially, there is equal evidence against both of them. In further investigation at the crime scene, it is found that the guilty party had a blood type found in 10\% of the population. Suspect $A$ does match this blood type, whereas the blood type of Suspect $B$ is unknown.
+
+(a) Given this new information, what is the probability that $A$ is the guilty party?
+
+(b) Given this new information, what is the probability that $B$'s blood type matches that found at the crime scene?
+\end{qbox}
+\textbf{Solution.}
+
+(a) Let $M$ be the event $A$'s blood type matches; write $A,B$ for ``$A$/$B$ is guilty''. By Bayes' rule:
+\begin{align*}
+P(A\mid M) &= \frac{P(M\mid A)P(A)}{P(M\mid A)P(A)+P(M\mid B)P(B)} \\
+&= \frac{1\cdot \tfrac12}{1\cdot\tfrac12 + \tfrac{1}{10}\cdot\tfrac12} \\
+&= \frac{1/2}{1/2+1/20} \\
+&= \frac{1/2}{11/20} \\
+&= \frac{10}{11}.
+\end{align*}
+
+(b) Let $C$ be the event $B$'s blood type matches. Condition on whether $B$ is guilty:
+\begin{align*}
+P(C\mid M) &= P(C\mid M,A)P(A\mid M) + P(C\mid M,B)P(B\mid M) \\
+&= \frac{1}{10}\cdot\frac{10}{11} + 1\cdot\frac{1}{11} \\
+&= \frac{1}{11}+\frac{1}{11} \\
+&= \frac{2}{11}.
+\end{align*}
+
+\subsection*{Q26 --- SP 2 \S3 \textperiodcentered\ Problem 5}
+\begin{qbox}
+You are going to play 2 games of chess with an opponent whom you have never played against before (for the sake of this problem). Your opponent is equally likely to be a beginner, intermediate, or a master. Depending on which, your chances of winning an individual game are 90\%, 50\%, or 30\%, respectively.
+
+(a) What is your probability of winning the first game?
+
+(b) Congratulations: you won the first game! Given this information, what is the probability that you will also win the second game (assume that, given the skill level of your opponent, the outcomes of the games are independent)?
+
+(c) Explain the distinction between assuming that the outcomes of the games are independent and assuming that they are conditionally independent given the opponent's skill level. Which of these assumptions seems more reasonable, and why?
+\end{qbox}
+\textbf{Solution.}
+
+(a)
+\begin{align*}
+P(W_1) &= \frac{0.9+0.5+0.3}{3} = \frac{1.7}{3} = \frac{17}{30}.
+\end{align*}
+
+(b)
+\begin{align*}
+P(W_1,W_2) &= \frac{0.9^2+0.5^2+0.3^2}{3} = \frac{0.81+0.25+0.09}{3} = \frac{1.15}{3} = \frac{23}{60},
+\end{align*}
+so
+\begin{align*}
+P(W_2\mid W_1) &= \frac{23/60}{17/30} = \frac{23}{60}\cdot\frac{30}{17} = \frac{23}{34}.
+\end{align*}
+
+(c) Independence means knowing one game's outcome gives no information about the other's; conditional independence given skill level is the analogous statement after conditioning on skill level. Conditional independence is more reasonable, since winning game 1 gives information about the opponent's skill level, which then affects predictions for game 2.
+
+\section{SP 3: Continuing with Conditioning}
+
+\subsection{SP 3 \S1: Continuing with Conditioning}
+
+\subsection*{Q27 --- SP 3 \S1 \textperiodcentered\ Problem 1}
+\begin{qbox}
+Consider the Monty Hall problem, except that Monty enjoys opening Door 2 more than he enjoys opening Door 3, and if he has a choice between opening these two doors, he opens Door 2 with probability $p$, where $\frac12 \leq p \leq 1$.
+
+To recap: there are three doors, behind one of which there is a car (which you want), and behind the other two of which there are goats (which you don't want). Initially, all possibilities are equally likely for where the car is. You choose a door, which for concreteness we assume is Door 1. Monty Hall then opens a door to reveal a goat, and offers you the option of switching. Assume that Monty Hall knows which door has the car, will always open a goat door and offer the option of switching, and as above assume that if Monty Hall has a choice between opening Door 2 and Door 3, he chooses Door 2 with probability $p$ (with $\frac12 \leq p \leq 1$).
+
+(a) Find the unconditional probability that the strategy of always switching succeeds (unconditional in the sense that we do not condition on which of Doors 2,3 Monty opens).
+
+(b) Find the probability that the strategy of always switching succeeds, given that Monty opens Door 2.
+
+(c) Find the probability that the strategy of always switching succeeds, given that Monty opens Door 3.
+\end{qbox}
+\textbf{Solution.}
+
+(a)
+\begin{align*}
+P(W) &= P(W\mid C_1)P(C_1)+P(W\mid C_2)P(C_2)+P(W\mid C_3)P(C_3) \\
+&= 0\cdot\frac13+1\cdot\frac13+1\cdot\frac13 = \frac23.
+\end{align*}
+
+(b) By Bayes' rule and total probability:
+\begin{align*}
+P(C_3\mid D_2) &= \frac{P(D_2\mid C_3)P(C_3)}{P(D_2\mid C_1)P(C_1)+P(D_2\mid C_2)P(C_2)+P(D_2\mid C_3)P(C_3)} \\
+&= \frac{1\cdot\tfrac13}{p\cdot\tfrac13+0\cdot\tfrac13+1\cdot\tfrac13} \\
+&= \frac{1}{1+p}.
+\end{align*}
+
+(c) By symmetry (swap $p \to 1-p$):
+\begin{align*}
+P(C_2\mid D_3) &= \frac{1}{1+(1-p)} = \frac{1}{2-p}.
+\end{align*}
+
+\subsection*{Q28 --- SP 3 \S1 \textperiodcentered\ Problem 2}
+\begin{qbox}
+For each statement below, either show that it is true or give a counterexample. Throughout, $X, Y, Z$ are discrete random variables.
+
+(a) If $X$ and $Y$ are independent and $Y$ and $Z$ are independent, then $X$ and $Z$ are independent.
+
+(b) If $X$ and $Y$ are independent, then they are conditionally independent given $Z$.
+
+(c) If $X$ and $Y$ are conditionally independent given $Z$, then they are independent.
+
+(d) If $X$ and $Y$ have the same distribution given $Z$, i.e., for all $a$ and $z$, we have $P(X = a|Z = z) = P(Y = a|Z = z)$, then $X$ and $Y$ have the same distribution.
+\end{qbox}
+\textbf{Solution.}
+
+(a) \textbf{False}. Simple counterexample: take $X=Z$ (and let $Y$ be independent of $X$). Then $X,Y$ independent and $Y,Z=X$ independent, but $X,Z$ are trivially \emph{not} independent (they're equal) unless degenerate.
+
+(b) \textbf{False}. This is illustrated by the fire/popcorn (or similarly, chess-opponent) type example discussed in the text: two events can be marginally independent yet dependent once we condition on a third variable that correlates with both.
+
+(c) \textbf{False}. Discussed via the chess-opponent-of-unknown-strength example: game outcomes are conditionally independent given the (fixed) skill level, but marginally dependent, since observing one outcome updates our belief about skill level, which affects the other outcome. A coin with a random, unknown bias gives another simple example: the tosses are conditionally independent given the bias but not marginally independent.
+
+(d) \textbf{True}. By the law of total probability, conditioning on $Z$:
+\begin{align*}
+P(X=a) &= \sum_z P(X=a\mid Z=z)P(Z=z).
+\end{align*}
+Since $X$ and $Y$ have the same conditional distribution given $Z$, i.e. $P(X=a\mid Z=z)=P(Y=a\mid Z=z)$ for all $z$, this becomes
+\begin{align*}
+P(X=a) &= \sum_z P(Y=a\mid Z=z)P(Z=z) = P(Y=a).
+\end{align*}
+Since this holds for all $a$, $X$ and $Y$ have the same (marginal) distribution.
+
+\subsection{SP 3 \S2: Simpson's Paradox}
+
+\subsection*{Q29 --- SP 3 \S2 \textperiodcentered\ Problem 1}
+\begin{qbox}
+(a) Is it possible to have events $A, B, E$ such that $P(A|E) < P(B|E)$ and $P(A|E^c) < P(B|E^c)$, yet $P(A) > P(B)$? That is, $A$ is less likely under $B$ given that $E$ is true, and also given that $E$ is false, yet $A$ is more likely than $B$ if given no information about $E$. Show this is impossible (with a short proof) or find a counterexample (with a ``story'' interpreting $A, B, E$).
+
+(b) Is it possible to have events $A, B, E$ such that $P(A|B,E) < P(A|B^c, E)$ and $P(A|B,E^c) < P(A|B^c, E^c)$, yet $P(A|B) > P(A|B^c)$? That is, given that $E$ is true, learning $B$ is evidence against $A$, and similarly given that $E$ is false; but given no information about $E$, learning that $B$ is true is evidence in favor of $A$. Show this is impossible (with a short proof) or find a counterexample (with a ``story'' interpreting $A, B, E$).
+\end{qbox}
+\textbf{Solution.}
+
+(a) It is \emph{not} possible, by the law of total probability:
+\begin{align*}
+P(A) &= P(A\mid E)P(E)+P(A\mid E^c)P(E^c) \\
+&< P(B\mid E)P(E)+P(B\mid E^c)P(E^c) \\
+&= P(B),
+\end{align*}
+contradicting $P(A)>P(B)$.
+
+(b) Yes, this is possible: this is precisely the structure of Simpson's paradox. Consider the two-doctors example: Dr.\ Hibbert and Dr.\ Nick each perform two types of surgery, heart transplants and bandaid removals. Let $A$ be the event a surgery is successful, $B$ the event Dr.\ Nick performs the surgery ($B^c$: Dr.\ Hibbert performs it), $E$ heart surgery, $E^c$ bandaid removal.
+
+Suppose Dr.\ Hibbert performs 90 heart transplants (70 successful) and 10 bandaid removals (10 successful); Dr.\ Nick performs 10 heart transplants (2 successful) and 90 bandaid removals (81 successful). Then within each surgery type:
+\begin{align*}
+P(A\mid B,E) &= \frac{2}{10}=0.2, & P(A\mid B^c,E) &= \frac{70}{90}\approx 0.778,\\
+P(A\mid B,E^c) &= \frac{81}{90} = 0.9, & P(A\mid B^c,E^c) &= \frac{10}{10}=1.
+\end{align*}
+So $P(A\mid B,E) < P(A\mid B^c,E)$ and $P(A\mid B,E^c) < P(A\mid B^c,E^c)$ — Dr.\ Hibbert is better at \emph{both} surgery types. But overall:
+\begin{align*}
+P(A\mid B) &= \frac{2+81}{100} = \frac{83}{100} = 0.83, \\
+P(A\mid B^c) &= \frac{70+10}{100} = \frac{80}{100} = 0.80,
+\end{align*}
+so $P(A\mid B) > P(A\mid B^c)$ — Dr.\ Nick has the higher \emph{overall} success rate, since he performs mostly the easier bandaid removals while Dr.\ Hibbert performs mostly the harder heart transplants.
+
+\subsection*{Q30 --- SP 3 \S2 \textperiodcentered\ Problem 2}
+\begin{qbox}
+Consider the following conversation from an episode of \textit{The Simpsons}:
+
+Lisa: \textit{Dad, I think he's an ivory dealer! His boots are ivory, his hat is ivory, and I'm pretty sure that check is ivory.}
+
+Homer: \textit{Lisa, a guy who's got lots of ivory is less likely to hurt Stampy than a guy whose ivory supplies are low.}
+
+Here Homer and Lisa are debating the question of whether or not the man (named Blackheart) is likely to hurt Stampy the Elephant if they sell Stampy to him. They clearly disagree about how to use their observations about Blackheart to learn about the probability (conditional on the evidence) that Blackheart will hurt Stampy.
+
+(a) Define clear notation for the various events of interest here.
+
+(b) Express Lisa's and Homer's arguments (Lisa's is partly implicit) as conditional probability statements in terms of your notation from (a).
+
+(c) Assume it is true that someone who has a lot of a commodity will have less desire to acquire more of the commodity. Explain what is wrong with Homer's reasoning that the evidence about Blackheart makes it less likely that he will harm Stampy.
+\end{qbox}
+\textbf{Solution.}
+
+(a) Let $H$ be the event the man will hurt Stampy, $L$ the event the man has lots of ivory, $D$ the event the man is an ivory dealer.
+
+(b) Lisa: $P(D\mid L) > P(D)$, and implicitly $P(H\mid L) > P(H\mid L^c)$. Homer: $P(H\mid L) < P(H\mid L^c)$.
+
+(c) Homer does not realize that observing that Blackheart has so much ivory makes it much more likely Blackheart is an ivory dealer, which in turn makes it more likely he will hurt Stampy. This is an instance of Simpson's paradox. It may be true, controlling for whether Blackheart is a dealer, that
+\[
+P(H\mid L,D) < P(H\mid L^c,D) \quad\text{and}\quad P(H\mid L,D^c) < P(H\mid L^c,D^c),
+\]
+but this does not imply the unconditional statement $P(H\mid L) < P(H\mid L^c)$, because $L$ is also strong evidence for $D$, and $D$ is strongly associated with higher $H$.
+
+\subsection{SP 3 \S3: Gambler's Ruin}
+
+\subsection*{Q31 --- SP 3 \S3 \textperiodcentered\ Problem 1}
+\begin{qbox}
+A gambler repeatedly plays a game where in each round, he wins a dollar with probability $1/3$ and loses a dollar with probability $2/3$. His strategy is ``quit when he is ahead by \$2,'' though some suspect he is a gambling addict anyway. Suppose that he starts with a million dollars. Show that the probability that he'll ever be ahead by \$2 is less than $1/4$.
+\end{qbox}
+\textbf{Solution.} This is a special case of gambler's ruin. Let $a_i$ be the probability the gambler achieves a profit of \$2 before being ruined (going broke), starting from a fortune of \$$i$. Let $A_1$ be the event he wins the first play. By the law of total probability,
+\begin{align*}
+a_i &= P(W\mid A_1)P(A_1) + P(W\mid A_1^c)P(A_1^c) \\
+&= a_{i+1}\cdot\frac13 + a_{i-1}\cdot\frac23,
+\end{align*}
+with boundary conditions $a_0 = 0$ (he's ruined at fortune 0 — well below his target so we treat the relevant local boundary; more precisely here, treat him as ``ruined'' relative to the \$2 target if he ever drops \$2 below the start) and, setting the starting fortune as $i=0$ relative to target, boundary $a_{-2}=0$, $a_{2}=1$. Re-centering with $i$ measured relative to start (start at $i=0$, ruin at $i=-2$, i.e. shift to nonnegative index by adding 2): let $a_0=0$ at the ruin boundary and $a_{i+2}=1$ at the target boundary. Solving this difference equation for a fair-ish random walk with $p=1/3, q=2/3$ (using the standard gambler's ruin solution with $r=q/p=2$):
+\begin{align*}
+a_i &= \frac{1-r^{i}}{1-r^{i+2}} = \frac{2^i-1}{2^{2+i}-1},
+\end{align*}
+(using the ruin-probability formula shifted so the two boundaries are $0$ and $i+2$). We must show $a_i < 1/4$ for all $i \ge 0$ (in particular for the gambler's actual very large starting fortune):
+\begin{align*}
+\frac{2^i - 1}{2^{2+i}-1} &< \frac14 \\
+\iff 4(2^i-1) &< 2^{2+i}-1 \\
+\iff 4\cdot 2^i - 4 &< 4\cdot 2^i - 1 \\
+\iff -4 &< -1,
+\end{align*}
+which is true. Hence $a_i < 1/4$ for all $i$, so with a million dollars (a very large $i$), the probability he is ever ahead by \$2 is (strictly) less than $1/4$.
+
+\section{Homework}
+
+\subsection*{Q32 --- HW 2 \textperiodcentered\ Problem 3}
+\begin{qbox}
+A family has 3 children, creatively named $A, B$, and $C$.
+
+(a) Discuss intuitively (but clearly) whether the event ``$A$ is older than $B$'' is independent of the event ``$A$ is older than $C$.''
+
+(b) Find the probability that $A$ is older than $B$, given that $A$ is older than $C$.
+\end{qbox}
+\textbf{Solution.}
+
+(a) They are \emph{not} independent: knowing $A$ is older than $B$ makes it more likely $A$ is older than $C$ as well, since the only birth order compatible with $A>B$ but $A<C$ is $CAB$, while both $ABC$ and $ACB$ are compatible with $A>B$ and also have $A>C$. As an extreme illustration, with 100 children $A_1,\dots,A_{100}$: given $A_1$ is older than $A_2,\dots,A_{99}$, $A_1$ is clearly very old, so it's very likely $A_1$ is also older than $A_{100}$.
+
+(b) Writing $x>y$ for ``$x$ older than $y$'':
+\begin{align*}
+P(A>B\mid A>C) &= \frac{P(A>B,A>C)}{P(A>C)} \\
+&= \frac{1/3}{1/2} \\
+&= \frac{2}{3},
+\end{align*}
+since $P(A>B,A>C) = P(A \text{ is eldest}) = 1/3$ and $P(A>C)=1/2$.
+
+\subsection*{Q33 --- HW 2 \textperiodcentered\ Problem 4}
+\begin{qbox}
+Two coins are in a hat. The coins look alike, but one coin is fair (with probability $1/2$ of Heads), while the other coin is biased, with probability $1/4$ of Heads. One of the coins is randomly pulled from the hat, without knowing which of the two it is. Call the chosen coin ``Coin C''.
+
+(a) Coin C is tossed twice, showing Heads both times. Given this information, what is the probability that Coin C is the fair coin?
+
+(b) Are the events ``first toss of Coin C is Heads'' and ``second toss of Coin C is Heads'' independent? Explain.
+
+(c) Find the probability that in 10 flips of Coin C, there will be exactly 3 Heads. (The coin is equally likely to be either of the 2 coins; do not assume it already landed Heads twice as in (a).)
+\end{qbox}
+\textbf{Solution.}
+
+(a) By Bayes' rule,
+\begin{align*}
+P(\text{fair}\mid HH) &= \frac{P(HH\mid\text{fair})P(\text{fair})}{P(HH\mid\text{fair})P(\text{fair}) + P(HH\mid\text{biased})P(\text{biased})} \\
+&= \frac{\left(\tfrac12\right)^2\cdot\tfrac12}{\left(\tfrac12\right)^2\cdot\tfrac12 + \left(\tfrac14\right)^2\cdot\tfrac12} \\
+&= \frac{\tfrac14\cdot\tfrac12}{\tfrac14\cdot\tfrac12+\tfrac{1}{16}\cdot\tfrac12} \\
+&= \frac{1/8}{1/8+1/32} \\
+&= \frac{4/32}{4/32+1/32} \\
+&= \frac{4}{5}.
+\end{align*}
+
+(b) They are \emph{not} independent: the first toss being Heads is evidence in favor of the coin being the fair coin (updates our belief about which coin it is), which changes the probability of Heads on the second toss.
+
+(c) Let $X$ be the number of Heads in 10 tosses. By the law of total probability, conditioning on which coin C is:
+\begin{align*}
+P(X=3) &= P(X=3\mid\text{fair})P(\text{fair}) + P(X=3\mid\text{biased})P(\text{biased}) \\
+&= \binom{10}{3}\left(\frac12\right)^{10}\cdot\frac12 + \binom{10}{3}\left(\frac14\right)^3\left(\frac34\right)^7\cdot\frac12.
+\end{align*}
+Now $\binom{10}{3} = \dfrac{10!}{3!\,7!} = \dfrac{10\cdot9\cdot8}{6} = 120$. So
+\begin{align*}
+P(X=3) &= \frac12\binom{10}{3}\left(\frac{1}{2^{10}} + \frac{3^7}{4^{10}}\right) \\
+&= \frac12 \cdot 120 \cdot \left(\frac{1}{1024} + \frac{2187}{1048576}\right) \\
+&= 60\left(\frac{1}{1024}+\frac{2187}{1048576}\right) \\
+&= 60\left(\frac{1024}{1048576}+\frac{2187}{1048576}\right) \\
+&= 60\cdot\frac{3211}{1048576} \\
+&= \frac{192660}{1048576} \\
+&\approx 0.1837.
+\end{align*}
+
+\subsection*{Q34 --- HW 2 \textperiodcentered\ Problem 5}
+\begin{qbox}
+A woman has been murdered, and her husband is accused of having committed the murder. It is known that the man abused his wife repeatedly in the past, and the prosecution argues that this is important evidence pointing towards the man's guilt. The defense attorney says that the history of abuse is irrelevant, as only 1 in 1000 men who beat their wives end up murdering them.
+
+Assume that the defense attorney's 1 in 1000 figure is correct, and that half of men who murder their wives previously abused them. Also assume that 20\% of murdered women were killed by their husbands, and that if a woman is murdered and the husband is not guilty, then there is only a 10\% chance that the husband abused her. What is the probability that the man is guilty? Is the prosecution right that the abuse is important evidence in favor of guilt?
+\end{qbox}
+\textbf{Solution.} The defense attorney's ``1 in 1000'' figure is $P(\text{murder}\mid\text{abuse})$ unconditional on the murder actually having occurred — this is \emph{not} the relevant probability. We must condition on \emph{all} the evidence, i.e., on both the abuse \emph{and} the fact that the murder occurred.
+
+Let $G$ = the man is guilty of murdering his wife, $M$ = the wife was murdered, $A$ = the man abused his wife. We are given:
+\begin{align*}
+P(A\mid G,M) &= 0.5, & P(G\mid M) &= 0.2, & P(A\mid G^c,M) &= 0.1.
+\end{align*}
+We want $P(G\mid A,M)$. By Bayes' rule (conditioning throughout on $M$):
+\begin{align*}
+P(G\mid A,M) &= \frac{P(A\mid G,M)P(G\mid M)}{P(A\mid G,M)P(G\mid M) + P(A\mid G^c,M)P(G^c\mid M)} \\
+&= \frac{0.5\cdot 0.2}{0.5\cdot 0.2 + 0.1\cdot 0.8} \\
+&= \frac{0.1}{0.1+0.08} \\
+&= \frac{0.1}{0.18} \\
+&= \frac{10}{18} \\
+&= \frac{5}{9} \\
+&\approx 0.556.
+\end{align*}
+This means the evidence of abuse raised the probability of guilt from the prior $P(G\mid M)=20\%$ (0.2) to the posterior $P(G\mid A,M) = 5/9 \approx 55.6\%$ — a substantial increase. So the prosecution is correct: since the woman was indeed murdered, conditioning on that fact is crucial, and given that fact, the history of abuse is important evidence in favor of guilt.
+
+\subsection*{Q35 --- HW 2 \textperiodcentered\ Problem 6}
+\begin{qbox}
+A family has two children. Assume that birth month is independent of gender, with boys and girls equally likely and all months equally likely, and assume that the elder child's characteristics are independent of the younger child's characteristics.
+
+(a) Find the probability that both are girls, given that the elder child is a girl who was born in March.
+
+(b) Find the probability that both are girls, given that at least one is a girl who was born in March.
+\end{qbox}
+\textbf{Solution.}
+
+(a) Let $G_j$ be the event the $j$th-born child is a girl, and $M_j$ the event the $j$th-born child was born in March, $j\in\{1,2\}$. Then
+\begin{align*}
+P(G_1\cap G_2 \mid G_1 \cap M_1) &= P(G_2 \mid G_1\cap M_1)
+\end{align*}
+since, given $G_1$ occurs, $G_1\cap G_2$ occurring is the same as $G_2$ occurring. By independence of the two children's characteristics,
+\begin{align*}
+P(G_2 \mid G_1\cap M_1) &= P(G_2) = \frac12.
+\end{align*}
+
+(b) We compute
+\begin{align*}
+P(\text{both girls}\mid \text{at least one March-born girl}) &= \frac{P(\text{both girls, at least one born in March})}{P(\text{at least one March-born girl})}.
+\end{align*}
+Each child independently is a March-born girl with probability $\tfrac12\cdot\tfrac1{12} = \tfrac{1}{24}$, and not a March-born girl with probability $\tfrac{23}{24}$.
+
+Numerator: both are girls (probability $1/4$), and at least one of the two (given both are girls) is born in March. Given both are girls, "at least one born in March" has probability $1-(11/12)^2$ (complement of neither born in March, each independently not-March with prob $11/12$). So
+\begin{align*}
+P(\text{both girls, at least one March}) &= \frac14\left(1-\left(\frac{11}{12}\right)^2\right).
+\end{align*}
+Compute $\left(\tfrac{11}{12}\right)^2 = \tfrac{121}{144}$, so $1-\tfrac{121}{144} = \tfrac{23}{144}$. Thus
+\begin{align*}
+P(\text{both girls, at least one March}) &= \frac14\cdot\frac{23}{144} = \frac{23}{576}.
+\end{align*}
+
+Denominator: $P(\text{at least one March-born girl}) = 1-\left(\tfrac{23}{24}\right)^2$ (complement of neither child being a March-born girl). Compute $\left(\tfrac{23}{24}\right)^2 = \tfrac{529}{576}$, so
+\begin{align*}
+P(\text{at least one March-born girl}) &= 1-\frac{529}{576} = \frac{47}{576}.
+\end{align*}
+
+Therefore,
+\begin{align*}
+P(\text{both girls}\mid\text{at least one March-born girl}) &= \frac{23/576}{47/576} \\
+&= \frac{23}{47} \\
+&\approx 0.489.
+\end{align*}
+
+For contrast, note $P(\text{both girls}\mid\text{at least one girl}) = 1/3$ — so the seemingly irrelevant ``born in March'' detail actually matters, pushing the answer closer to $1/2$: the more specific the identifying information, the closer ``at least one'' becomes to specifying a particular child.
+
+\subsection*{Q36 --- HW 3 \textperiodcentered\ Problem 1}
+\begin{qbox}
+(a) Consider the following 7-door version of the Monty Hall problem. There are 7 doors, behind one of which there is a car (which you want), and behind the rest of which there are goats (which you don't want). Initially, all possibilities are equally likely for where the car is. You choose a door. Monty Hall then opens 3 goat doors, and offers you the option of switching to any of the remaining 3 doors.
+
+Assume that Monty Hall knows which door has the car, will always open 3 goat doors and offer the option of switching, and that Monty chooses with equal probabilities from all his choices of which goat doors to open. Should you switch? What is your probability of success if you switch to one of the remaining 3 doors?
+
+(b) Generalize the above to a Monty Hall problem where there are $n \geq 3$ doors, of which Monty opens $m$ goat doors, with $1 \leq m \leq n-2$.
+\end{qbox}
+\textbf{Solution.}
+
+(a) Assume you choose Door 1. Let $S$ be the event of success under ``stick,'' and $C_j$ the event the car is behind door $j$. By total probability,
+\begin{align*}
+P(S) &= P(S\mid C_1)P(C_1)+\cdots+P(S\mid C_7)P(C_7) = P(C_1) = \frac17.
+\end{align*}
+Let $M_{ijk}$ be the event Monty opens doors $i,j,k$ (for $2\le i<j<k\le 7$). Then
+\begin{align*}
+P(S) &= \sum_{i,j,k} P(S\mid M_{ijk})P(M_{ijk}),
+\end{align*}
+and by symmetry $P(S\mid M_{ijk}) = P(S) = 1/7$ for every such triple. So the conditional probability the car is behind one of the 3 remaining unopened doors is
+\begin{align*}
+1-\frac17 = \frac67,
+\end{align*}
+split equally among 3 doors: $\dfrac{6/7}{3} = \dfrac27$ each. So you should switch, raising your probability of success from $1/7$ to $2/7$.
+
+(b) By the same argument, ``stick'' succeeds with probability $\dfrac1n$ unconditionally and conditionally. Each of the $n-m-1$ unopened, non-chosen doors then has conditional probability
+\begin{align*}
+\frac{1-\tfrac1n}{n-m-1} &= \frac{n-1}{(n-m-1)n}
+\end{align*}
+of having the car — greater than $1/n$ — so you should switch, obtaining success probability $\dfrac{n-1}{(n-m-1)n}$.
+
+\subsection*{Q37 --- HW 3 \textperiodcentered\ Problem 2}
+\begin{qbox}
+The \textit{odds} of an event with probability $p$ are defined to be $\frac{p}{1-p}$, e.g., an event with probability $3/4$ is said to have odds of 3 to 1 in favor (or 1 to 3 against). We are interested in a hypothesis $H$ (which we think of as a event), and we gather new data as evidence (expressed as an event $D$) to study the hypothesis. The \textit{prior} probability of $H$ is our probability for $H$ being true before we gather the new data; the \textit{posterior} probability of $H$ is our probability for it after we gather the new data. The \textit{likelihood ratio} is defined as $\frac{P(D|H)}{P(D|H^c)}$.
+
+(a) Show that Bayes' rule can be expressed in terms of odds as follows: \textit{the posterior odds of a hypothesis $H$ are the prior odds of $H$ times the likelihood ratio.}
+
+(b) As in the example from class, suppose that a patient tests positive for a disease afflicting 1\% of the population. For a patient who has the disease, there is a 95\% chance of testing positive (in medical statistics, this is called the \textit{sensitivity} of the test); for a patient who doesn't have the disease, there is a 95\% chance of testing negative test (in medical statistics, this is called the \textit{specificity} of the test).
+
+The patient gets a second, independent test done (with the same sensitivity and specificity), and again tests positive. Use the odds form of Bayes' rule to find the probability that the patient has the disease, given the evidence, in two ways: in one step, conditioning on both test results simultaneously, and in two steps, first updating the probabilities based on the first test result, and then updating again based on the second test result.
+\end{qbox}
+\textbf{Solution.}
+
+(a) We want to show
+\begin{align*}
+\frac{P(H\mid D)}{P(H^c\mid D)} &= \frac{P(H)}{P(H^c)}\cdot\frac{P(D\mid H)}{P(D\mid H^c)}.
+\end{align*}
+By Bayes' rule,
+\begin{align*}
+P(H\mid D) &= \frac{P(D\mid H)P(H)}{P(D)}, & P(H^c\mid D) &= \frac{P(D\mid H^c)P(H^c)}{P(D)}.
+\end{align*}
+Dividing the first by the second (the $P(D)$'s cancel):
+\begin{align*}
+\frac{P(H\mid D)}{P(H^c\mid D)} &= \frac{P(D\mid H)P(H)}{P(D\mid H^c)P(H^c)} \\
+&= \frac{P(H)}{P(H^c)}\cdot\frac{P(D\mid H)}{P(D\mid H^c)},
+\end{align*}
+as desired.
+
+(b) Let $H$ be the event of having the disease. Prior probability $P(H)=0.01$, so prior odds are
+\begin{align*}
+\frac{P(H)}{P(H^c)} &= \frac{0.01}{0.99} = \frac{1}{99} \quad (\text{i.e., 1 to 99 against}).
+\end{align*}
+The likelihood ratio for one positive test result is
+\begin{align*}
+\frac{P(D\mid H)}{P(D\mid H^c)} &= \frac{0.95}{0.05} = 19.
+\end{align*}
+
+\textit{Two-update method.} After the first positive test, posterior odds are
+\begin{align*}
+\frac{1}{99}\cdot\frac{0.95}{0.05} &= \frac{1}{99}\cdot 19 = \frac{19}{99} \approx 0.1919,
+\end{align*}
+corresponding to probability
+\begin{align*}
+\frac{19/99}{1+19/99} &= \frac{19}{99+19} = \frac{19}{118} \approx 0.1610.
+\end{align*}
+These become the new prior odds for the second update. After the second positive test (same likelihood ratio $19$):
+\begin{align*}
+\frac{19}{99}\cdot 19 &= \frac{361}{99}.
+\end{align*}
+
+\textit{One-update method.} Since the two tests are independent given disease status, the combined likelihood ratio is
+\begin{align*}
+\left(\frac{0.95}{0.05}\right)^2 &= 19^2 = 361,
+\end{align*}
+so the posterior odds after both tests are
+\begin{align*}
+\frac{1}{99}\cdot 361 &= \frac{361}{99},
+\end{align*}
+matching the two-update method exactly (as required by coherence of Bayes' rule).
+
+Converting to probability:
+\begin{align*}
+P(H\mid \text{both positive}) &= \frac{361/99}{1+361/99} \\
+&= \frac{361}{99+361} \\
+&= \frac{361}{460} \\
+&\approx 0.7848.
+\end{align*}
+So after two independent positive tests, the probability of having the disease rises to about 78.5\% (compared to about 16.1\% after just one positive test).
+
+\subsection*{Q38 --- HW 3 \textperiodcentered\ Problem 3}
+\begin{qbox}
+Is it possible to have events $A_1, A_2, B, C$ with $P(A_1|B) > P(A_1|C)$ and $P(A_2|B) > P(A_2|C)$, yet $P(A_1 \cup A_2|B) < P(A_1 \cup A_2|C)$? If so, find an example (with a ``story'' interpreting the events, as well as giving specific numbers); otherwise, show that it is impossible for this phenomenon to happen.
+\end{qbox}
+\textbf{Solution.} Yes, this is possible. Note that
+\begin{align*}
+P(A_1\cup A_2\mid B) &= P(A_1\mid B)+P(A_2\mid B)-P(A_1\cap A_2\mid B),
+\end{align*}
+so it is \emph{not} possible if $A_1,A_2$ are disjoint (since then the intersection terms vanish and the union inequality would follow directly). We need $P(A_1\cap A_2\mid B)$ to be much larger than $P(A_1\cap A_2\mid C)$, to outweigh the other inequalities.
+
+\textit{Story}: Consider two basketball players, one of whom is randomly chosen to shoot two free throws. The first player is very streaky and always either makes both or misses both free throws, with probability 0.8 of making both. The second player's free throws go in with probability 0.7, independently of each other. Let $A_j$ be the event the $j$th free throw goes in ($j=1,2$); $B$ = the shooter is the first (streaky) player; $C=B^c$ = the shooter is the second player.
+
+Then:
+\begin{align*}
+P(A_1\mid B) &= P(A_2\mid B) = P(A_1\cap A_2\mid B) = P(A_1\cup A_2\mid B) = 0.8,
+\end{align*}
+since the streaky player either makes both (probability 0.8) or misses both.
+
+For the second player (independent shots):
+\begin{align*}
+P(A_1\mid C) &= P(A_2\mid C) = 0.7,\\
+P(A_1\cap A_2\mid C) &= 0.7\times 0.7 = 0.49,\\
+P(A_1\cup A_2\mid C) &= 0.7+0.7-0.49 = 1.4-0.49 = 0.91.
+\end{align*}
+
+So $P(A_1\mid B)=0.8 > 0.7=P(A_1\mid C)$ and $P(A_2\mid B)=0.8>0.7=P(A_2\mid C)$, yet
+\begin{align*}
+P(A_1\cup A_2 \mid B) &= 0.8 < 0.91 = P(A_1\cup A_2\mid C).
+\end{align*}
+This confirms the phenomenon is possible.
+
+\subsection*{Q39 --- HW 3 \textperiodcentered\ Problem 4}
+\begin{qbox}
+Calvin and Hobbes play a match consisting of a series of games, where Calvin has probability $p$ of winning each game (independently). They play with a ``win by two'' rule: the first player to win two games more than his opponent wins the match. Find the probability that Calvin wins the match (in terms of $p$), in two different ways:
+
+(a) by conditioning, using the law of total probability.
+
+(b) by interpreting the problem as a gambler's ruin problem.
+\end{qbox}
+\textbf{Solution.}
+
+(a) Let $C$ be the event Calvin wins the match, $X\sim\text{Bin}(2,p)$ the number of the first 2 games he wins, $q=1-p$. Since $X=0$ means Hobbes is already up 2 (Calvin loses, $P(C\mid X=0)=0$), $X=2$ means Calvin is up 2 (Calvin wins, $P(C\mid X=2)=1$), and $X=1$ means the match resets to even ($P(C\mid X=1)=P(C)$ by memorylessness):
+\begin{align*}
+P(C) &= 0\cdot q^2 + P(C)\cdot 2pq + 1\cdot p^2 \\
+&= 2pq\,P(C)+p^2.
+\end{align*}
+Solving:
+\begin{align*}
+P(C)(1-2pq) &= p^2 \\
+P(C) &= \frac{p^2}{1-2pq} = \frac{p^2}{p^2+q^2}
+\end{align*}
+(using $1-2pq = (p+q)^2-2pq = p^2+q^2$).
+
+(b) This is a gambler's ruin with each player starting at \$2 from the boundaries $0$ and $4$ (equivalently, starting at 0 relative to a target of $+2$ and ruin at $-2$). Using the standard formula with ratio $r=q/p$:
+\begin{align*}
+P(C) &= \frac{1-(q/p)^2}{1-(q/p)^4} \\
+&= \frac{(p^2-q^2)/p^2}{(p^4-q^4)/p^4} \\
+&= \frac{(p^2-q^2)/p^2}{(p^2-q^2)(p^2+q^2)/p^4} \\
+&= \frac{p^4}{p^2(p^2+q^2)} \\
+&= \frac{p^2}{p^2+q^2},
+\end{align*}
+which agrees with part (a).
+
+\subsection*{Q40 --- HW 3 \textperiodcentered\ Problem 5}
+\begin{qbox}
+A fair die is rolled repeatedly, and a running total is kept (which is, at each time, the total of all the rolls up until that time). Let $p_n$ be the probability that the running total is ever \textit{exactly} $n$ (assume the die will always be rolled enough times so that the running total will eventually exceed $n$, but it may or may not ever equal $n$).
+
+(a) Write down a recursive equation for $p_n$ (relating $p_n$ to earlier terms $p_k$ in a simple way). Your equation should be true for all positive integers $n$, so give a definition of $p_0$ and $p_k$ for $k < 0$ so that the recursive equation is true for small values of $n$.
+
+(b) Find $p_7$.
+
+(c) Give an intuitive explanation for the fact that $p_n \to 1/3.5=2/7$ as $n \to \infty$.
+\end{qbox}
+\textbf{Solution.}
+
+(a) By first-step analysis (conditioning on the first roll $k\in\{1,\dots,6\}$):
+\begin{align*}
+p_n &= \frac16\left(p_{n-1}+p_{n-2}+p_{n-3}+p_{n-4}+p_{n-5}+p_{n-6}\right),
+\end{align*}
+with $p_0=1$ and $p_k=0$ for $k<0$.
+
+(b) As computed previously,
+\begin{align*}
+p_1 &= \frac16, \quad p_2=\frac16\left(1+\frac16\right), \quad p_3=\frac16\left(1+\frac16\right)^2,\\
+p_4 &= \frac16\left(1+\frac16\right)^3, \quad p_5=\frac16\left(1+\frac16\right)^4, \quad p_6=\frac16\left(1+\frac16\right)^5.
+\end{align*}
+So
+\begin{align*}
+p_7 &= \frac16(p_1+p_2+p_3+p_4+p_5+p_6) \\
+&= \frac16\left[\left(1+\frac16\right)^6-1\right] \\
+&= \frac16\left[\left(\frac76\right)^6-1\right] \\
+&= \frac16\left[\frac{117649}{46656}-1\right] \\
+&= \frac16\cdot\frac{70993}{46656} \\
+&= \frac{70993}{279936} \\
+&\approx 0.2536.
+\end{align*}
+
+(c) The average value of a die roll is $\dfrac{1+2+3+4+5+6}{6}=\dfrac{21}{6}=\dfrac{7}{2}=3.5$. So on average each roll advances the running total by $3.5$, meaning about $2$ out of every $7$ consecutive integers get landed on exactly (since gaps of size $k$ are skipped, but on average $2/7$ of all integers are hit). Hence $p_n \to \dfrac{1}{3.5} = \dfrac{2}{7}$ as $n\to\infty$. (This can be proven rigorously using the identity $p_{n+1}+2p_{n+2}+\cdots+6p_{n+6}=6$ for all $n\ge -5$, which telescopes down to $p_{-5}+2p_{-4}+\cdots+6p_0=6$; taking $n\to\infty$ gives $(1+2+\cdots+6)\lim_{n\to\infty}p_n=6$, i.e., $21\lim_{n\to\infty}p_n=6$, so $\lim_{n\to\infty}p_n = 6/21=2/7$.)
+
+\end{document}
