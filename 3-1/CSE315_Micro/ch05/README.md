@@ -56,8 +56,6 @@ Think of this like the "carry" you do in elementary school addition — when a c
 
 This flag matters for **unsigned** number arithmetic — it tells you if the "true" answer didn't fit in the register.
 
-[MustSee](b.md)
-
 **Parity Flag (PF)**
 
 This just counts bits. Look at the **low byte** of the result. Count how many bits are `1`.
