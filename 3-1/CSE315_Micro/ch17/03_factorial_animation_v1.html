@@ -1,0 +1,914 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>FACTORIAL — Recursive Stack Animation</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Consolas', 'Courier New', monospace;
+    background: radial-gradient(ellipse at top, #0f1729 0%, #05070d 100%);
+    color: #e6edf3;
+    min-height: 100vh;
+    padding: 20px;
+  }
+  h1 {
+    text-align: center;
+    font-size: 28px;
+    letter-spacing: 4px;
+    margin-bottom: 20px;
+    color: #7dd3fc;
+    text-shadow: 0 0 20px rgba(125,211,252,0.5);
+  }
+  .container {
+    display: grid;
+    grid-template-columns: 1fr 1fr 280px;
+    gap: 20px;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+  .panel {
+    background: rgba(15, 23, 42, 0.7);
+    border: 1px solid #1e293b;
+    border-radius: 10px;
+    padding: 16px;
+    backdrop-filter: blur(10px);
+  }
+  .panel h2 {
+    font-size: 13px;
+    letter-spacing: 2px;
+    color: #94a3b8;
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #1e293b;
+  }
+
+  /* Code panel */
+  .code {
+    font-size: 12.5px;
+    line-height: 1.65;
+    white-space: pre;
+    overflow-x: auto;
+    max-height: 620px;
+    overflow-y: auto;
+  }
+  .code .line {
+    padding: 2px 8px;
+    border-radius: 4px;
+    transition: background 0.3s;
+  }
+  .code .line.active {
+    background: rgba(250, 204, 21, 0.15);
+    border-left: 3px solid #facc15;
+    padding-left: 5px;
+  }
+  .kw  { color: #f472b6; }
+  .reg { color: #7dd3fc; }
+  .num { color: #fbbf24; }
+  .lbl { color: #a78bfa; }
+  .cmt { color: #64748b; font-style: italic; }
+  .str { color: #86efac; }
+
+  /* Stack panel */
+  .stack-wrap {
+    position: relative;
+    height: 600px;
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    padding-bottom: 10px;
+  }
+  .stack {
+    position: relative;
+    width: 240px;
+    height: 100%;
+    border-left: 2px solid #334155;
+    border-right: 2px solid #334155;
+    border-bottom: 2px solid #334155;
+    border-radius: 0 0 6px 6px;
+    background: linear-gradient(to top, rgba(30,41,59,0.3), transparent);
+  }
+  .stack-item {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 200px;
+    height: 42px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 12px;
+    font-weight: bold;
+    font-size: 13px;
+    transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+    opacity: 0;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+    border: 1px solid rgba(255,255,255,0.1);
+  }
+  .stack-item.visible { opacity: 1; }
+  .stack-item .val { font-family: monospace; }
+  .stack-item .tag { font-size: 10px; opacity: 0.9; letter-spacing: 1px; }
+
+  /* Frame colors */
+  .c-f1  { background: linear-gradient(135deg, #0891b2, #0e7490); color: #fff; }
+  .c-f2  { background: linear-gradient(135deg, #9333ea, #7e22ce); color: #fff; }
+  .c-f3  { background: linear-gradient(135deg, #059669, #047857); color: #fff; }
+  .c-ret { background: linear-gradient(135deg, #ea580c, #c2410c); color: #fff; }
+
+  /* Pointers */
+  .pointer {
+    position: absolute;
+    right: -70px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 12px;
+    font-weight: bold;
+    transition: bottom 0.5s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.3s;
+    opacity: 0;
+  }
+  .pointer.visible { opacity: 1; }
+  .pointer::before {
+    content: '';
+    width: 0; height: 0;
+    border-top: 6px solid transparent;
+    border-bottom: 6px solid transparent;
+    border-right: 10px solid currentColor;
+  }
+  .sp-ptr { color: #22c55e; }
+  .bp-ptr { color: #facc15; }
+
+  /* Offset labels */
+  .offset-label {
+    position: absolute;
+    left: -75px;
+    font-size: 11px;
+    color: #cbd5e1;
+    transition: bottom 0.5s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.3s;
+    opacity: 0;
+    font-family: monospace;
+    background: rgba(15,23,42,0.8);
+    padding: 2px 6px;
+    border-radius: 3px;
+    border: 1px solid #334155;
+  }
+  .offset-label.visible { opacity: 1; }
+  .offset-label.hl {
+    color: #fbbf24;
+    border-color: #fbbf24;
+    box-shadow: 0 0 8px rgba(251,191,36,0.4);
+  }
+
+  /* Frame badge */
+  .frame-badge {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: bold;
+    letter-spacing: 1px;
+    transition: all 0.3s;
+    opacity: 0;
+  }
+  .frame-badge.visible { opacity: 1; }
+  .fb-f1 { background: #0891b2; color: #fff; }
+  .fb-f2 { background: #9333ea; color: #fff; }
+  .fb-f3 { background: #059669; color: #fff; }
+  .fb-main { background: #64748b; color: #fff; }
+
+  /* Registers panel */
+  .regs { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .reg-box {
+    background: #0f172a;
+    border: 1px solid #1e293b;
+    border-radius: 6px;
+    padding: 8px 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .reg-box .rn { color: #7dd3fc; font-size: 12px; font-weight: bold; }
+  .reg-box .rv { color: #fbbf24; font-size: 13px; font-family: monospace; }
+
+  .desc {
+    margin-top: 14px;
+    padding: 12px;
+    background: rgba(125, 211, 252, 0.08);
+    border-left: 3px solid #7dd3fc;
+    border-radius: 4px;
+    font-size: 12px;
+    line-height: 1.6;
+    color: #cbd5e1;
+    min-height: 100px;
+  }
+  .desc strong { color: #7dd3fc; }
+  .desc .res { color: #fbbf24; font-weight: bold; }
+
+  /* Controls */
+  .controls {
+    grid-column: 1 / -1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    padding: 14px;
+  }
+  .btn {
+    background: linear-gradient(135deg, #1e293b, #0f172a);
+    color: #e6edf3;
+    border: 1px solid #334155;
+    padding: 10px 20px;
+    border-radius: 6px;
+    font-family: inherit;
+    font-size: 13px;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: all 0.2s;
+    min-width: 90px;
+  }
+  .btn:hover:not(:disabled) {
+    background: linear-gradient(135deg, #334155, #1e293b);
+    border-color: #7dd3fc;
+    transform: translateY(-1px);
+  }
+  .btn:disabled { opacity: 0.3; cursor: not-allowed; }
+  .btn.play { background: linear-gradient(135deg, #059669, #047857); border-color: #10b981; }
+  .btn.play:hover:not(:disabled) { background: linear-gradient(135deg, #10b981, #059669); }
+  .step-info {
+    color: #94a3b8;
+    font-size: 13px;
+    min-width: 140px;
+    text-align: center;
+  }
+  .progress {
+    flex: 1;
+    max-width: 300px;
+    height: 4px;
+    background: #1e293b;
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, #7dd3fc, #a78bfa);
+    transition: width 0.4s;
+  }
+</style>
+</head>
+<body>
+
+<h1>⟦ FACTORIAL ⟧ — RECURSIVE STACK ANIMATION</h1>
+
+<div class="container">
+
+  <!-- CODE PANEL -->
+  <div class="panel">
+    <h2>▸ SOURCE CODE</h2>
+    <div class="code" id="code"></div>
+  </div>
+
+  <!-- STACK PANEL -->
+  <div class="panel">
+    <h2>▸ STACK (grows UPWARD ↑)</h2>
+    <div class="stack-wrap">
+      <div class="stack" id="stack">
+        <div class="frame-badge" id="frameBadge">MAIN</div>
+        <div class="pointer sp-ptr" id="spPtr">SP</div>
+        <div class="pointer bp-ptr" id="bpPtr">BP</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- REGISTERS + INFO -->
+  <div class="panel">
+    <h2>▸ REGISTERS</h2>
+    <div class="regs">
+      <div class="reg-box"><span class="rn">AX</span><span class="rv" id="rAX">????</span></div>
+      <div class="reg-box"><span class="rn">CX</span><span class="rv" id="rCX">????</span></div>
+      <div class="reg-box"><span class="rn">BP</span><span class="rv" id="rBP">????</span></div>
+      <div class="reg-box"><span class="rn">SP</span><span class="rv" id="rSP">FFFE</span></div>
+    </div>
+    <div class="desc" id="desc">Press <strong>NEXT</strong> or <strong>PLAY</strong> to begin computing 3!.</div>
+  </div>
+
+  <!-- CONTROLS -->
+  <div class="panel controls">
+    <button class="btn" id="prevBtn">◀ PREV</button>
+    <button class="btn play" id="playBtn">▶ PLAY</button>
+    <button class="btn" id="nextBtn">NEXT ▶</button>
+    <div class="progress"><div class="progress-bar" id="progBar"></div></div>
+    <div class="step-info" id="stepInfo">Step 0 / 0</div>
+  </div>
+
+</div>
+
+<script>
+/* ============================================================
+   SOURCE CODE
+   ============================================================ */
+const srcLines = [
+  ['<span class="kw">.MODEL</span> SMALL'],
+  ['<span class="kw">.STACK</span> 100H'],
+  ['<span class="kw">.CODE</span>'],
+  ['<span class="lbl">MAIN</span> <span class="kw">PROC</span>'],
+  ['    <span class="kw">MOV</span> <span class="reg">AX</span>, <span class="num">3</span>          <span class="cmt">; want 3!</span>'],
+  ['    <span class="kw">PUSH</span> <span class="reg">AX</span>             <span class="cmt">; N=3 as param</span>'],
+  ['    <span class="kw">CALL</span> <span class="lbl">FACTORIAL</span>       <span class="cmt">; AX = answer</span>'],
+  ['    <span class="kw">MOV</span> <span class="reg">AH</span>, <span class="num">4CH</span>'],
+  ['    <span class="kw">INT</span> <span class="num">21H</span>'],
+  ['<span class="lbl">MAIN</span> <span class="kw">ENDP</span>'],
+  [''],
+  ['<span class="lbl">FACTORIAL</span> <span class="kw">PROC</span> <span class="kw">NEAR</span>'],
+  ['    <span class="kw">PUSH</span> <span class="reg">BP</span>'],
+  ['    <span class="kw">MOV</span>  <span class="reg">BP</span>, <span class="reg">SP</span>          <span class="cmt">; [BP+4] = N</span>'],
+  ['    <span class="kw">CMP</span>  <span class="kw">WORD PTR</span> [<span class="reg">BP</span>+<span class="num">4</span>], <span class="num">1</span>  <span class="cmt">; N == 1?</span>'],
+  ['    <span class="kw">JG</span>   <span class="lbl">ELSE_</span>             <span class="cmt">; N>1 -> recurse</span>'],
+  ['    <span class="cmt">; ESCAPE CASE (N=1)</span>'],
+  ['    <span class="kw">MOV</span>  <span class="reg">AX</span>, <span class="num">1</span>'],
+  ['    <span class="kw">JMP</span>  <span class="lbl">RETURN</span>'],
+  [''],
+  ['<span class="lbl">ELSE_</span>:'],
+  ['    <span class="kw">MOV</span>  <span class="reg">CX</span>, [<span class="reg">BP</span>+<span class="num">4</span>]     <span class="cmt">; CX = N</span>'],
+  ['    <span class="kw">DEC</span>  <span class="reg">CX</span>              <span class="cmt">; CX = N-1</span>'],
+  ['    <span class="kw">PUSH</span> <span class="reg">CX</span>              <span class="cmt">; push N-1</span>'],
+  ['    <span class="kw">CALL</span> <span class="lbl">FACTORIAL</span>        <span class="cmt">; recurse!</span>'],
+  ['    <span class="kw">MUL</span>  <span class="kw">WORD PTR</span> [<span class="reg">BP</span>+<span class="num">4</span>] <span class="cmt">; AX = AX * N</span>'],
+  [''],
+  ['<span class="lbl">RETURN</span>:'],
+  ['    <span class="kw">POP</span>  <span class="reg">BP</span>'],
+  ['    <span class="kw">RET</span> <span class="num">2</span>                <span class="cmt">; discard 1 param</span>'],
+  ['<span class="lbl">FACTORIAL</span> <span class="kw">ENDP</span>'],
+  ['<span class="kw">END</span> <span class="lbl">MAIN</span>'],
+];
+
+/* ============================================================
+   STEPS
+   Each stack item: {id, value, tag, cls, offset, hl}
+   Stack array is BOTTOM -> TOP (index 0 = deepest)
+   ============================================================ */
+const STEPS = [
+  // 0 — initial
+  {
+    activeLine: 4, frame: 'MAIN',
+    stack: [], sp: null, bp: null,
+    regs: { AX:'????', CX:'????', BP:'????', SP:'FFFE' },
+    desc: 'Initial state. About to compute <strong>3! = 6</strong> via recursion.'
+  },
+  // 1 — MOV AX, 3
+  {
+    activeLine: 4, frame: 'MAIN',
+    stack: [], sp: null, bp: null,
+    regs: { AX:'0003', CX:'????', BP:'????', SP:'FFFE' },
+    desc: '<strong>MOV AX, 3</strong> — our input N=3 is now in AX.'
+  },
+  // 2 — PUSH AX
+  {
+    activeLine: 5, frame: 'MAIN',
+    stack: [ {id:'p1', value:'0003', tag:'N=3 (param)', cls:'c-f1', offset:null} ],
+    sp: 0, bp: null,
+    regs: { AX:'0003', CX:'????', BP:'????', SP:'FFFC' },
+    desc: '<strong>PUSH AX</strong> — N=3 is the parameter for FACTORIAL. Stack grows upward.'
+  },
+  // 3 — CALL FACTORIAL (frame 1)
+  {
+    activeLine: 6, frame: 'F1',
+    stack: [
+      {id:'p1', value:'0003', tag:'N=3', cls:'c-f1', offset:null},
+      {id:'r1', value:'RET1', tag:'return addr', cls:'c-f1', offset:null}
+    ],
+    sp: 1, bp: null,
+    regs: { AX:'0003', CX:'????', BP:'????', SP:'FFFA' },
+    desc: '<strong>CALL FACTORIAL</strong> — CPU pushes return address, jumps into procedure. <em>Frame 1 begins.</em>'
+  },
+  // 4 — PUSH BP (frame 1)
+  {
+    activeLine: 12, frame: 'F1',
+    stack: [
+      {id:'p1', value:'0003', tag:'N=3', cls:'c-f1', offset:null},
+      {id:'r1', value:'RET1', tag:'return addr', cls:'c-f1', offset:null},
+      {id:'b1', value:'oldBP', tag:'saved BP', cls:'c-f1', offset:null}
+    ],
+    sp: 2, bp: null,
+    regs: { AX:'0003', CX:'????', BP:'????', SP:'FFF8' },
+    desc: '<strong>PUSH BP</strong> — save caller\'s BP (defensive prologue).'
+  },
+  // 5 — MOV BP, SP (frame 1 anchored)
+  {
+    activeLine: 13, frame: 'F1',
+    stack: [
+      {id:'p1', value:'0003', tag:'N=3', cls:'c-f1', offset:'[BP+4]'},
+      {id:'r1', value:'RET1', tag:'return addr', cls:'c-f1', offset:'[BP+2]'},
+      {id:'b1', value:'oldBP', tag:'saved BP', cls:'c-f1', offset:'[BP+0]'}
+    ],
+    sp: 2, bp: 2,
+    regs: { AX:'0003', CX:'????', BP:'FFF8', SP:'FFF8' },
+    desc: '<strong>MOV BP, SP</strong> — BP anchored. <strong>[BP+4] = N = 3</strong>. This is our frame 1.'
+  },
+  // 6 — CMP [BP+4], 1
+  {
+    activeLine: 14, frame: 'F1',
+    stack: [
+      {id:'p1', value:'0003', tag:'N=3', cls:'c-f1', offset:'[BP+4]', hl:true},
+      {id:'r1', value:'RET1', tag:'return addr', cls:'c-f1', offset:'[BP+2]'},
+      {id:'b1', value:'oldBP', tag:'saved BP', cls:'c-f1', offset:'[BP+0]'}
+    ],
+    sp: 2, bp: 2,
+    regs: { AX:'0003', CX:'????', BP:'FFF8', SP:'FFF8' },
+    desc: '<strong>CMP [BP+4], 1</strong> — compare N=3 against 1. Is N == 1? No, 3 &gt; 1.'
+  },
+  // 7 — JG ELSE_ taken
+  {
+    activeLine: 15, frame: 'F1',
+    stack: [
+      {id:'p1', value:'0003', tag:'N=3', cls:'c-f1', offset:'[BP+4]'},
+      {id:'r1', value:'RET1', tag:'return addr', cls:'c-f1', offset:'[BP+2]'},
+      {id:'b1', value:'oldBP', tag:'saved BP', cls:'c-f1', offset:'[BP+0]'}
+    ],
+    sp: 2, bp: 2,
+    regs: { AX:'0003', CX:'????', BP:'FFF8', SP:'FFF8' },
+    desc: '<strong>JG ELSE_</strong> — N=3 &gt; 1, so we <em>jump</em> to the recursive case.'
+  },
+  // 8 — MOV CX, [BP+4]
+  {
+    activeLine: 21, frame: 'F1',
+    stack: [
+      {id:'p1', value:'0003', tag:'N=3', cls:'c-f1', offset:'[BP+4]', hl:true},
+      {id:'r1', value:'RET1', tag:'return addr', cls:'c-f1', offset:'[BP+2]'},
+      {id:'b1', value:'oldBP', tag:'saved BP', cls:'c-f1', offset:'[BP+0]'}
+    ],
+    sp: 2, bp: 2,
+    regs: { AX:'0003', CX:'0003', BP:'FFF8', SP:'FFF8' },
+    desc: '<strong>MOV CX, [BP+4]</strong> — CX = N = 3. We\'ll compute N-1 next.'
+  },
+  // 9 — DEC CX
+  {
+    activeLine: 22, frame: 'F1',
+    stack: [
+      {id:'p1', value:'0003', tag:'N=3', cls:'c-f1', offset:'[BP+4]'},
+      {id:'r1', value:'RET1', tag:'return addr', cls:'c-f1', offset:'[BP+2]'},
+      {id:'b1', value:'oldBP', tag:'saved BP', cls:'c-f1', offset:'[BP+0]'}
+    ],
+    sp: 2, bp: 2,
+    regs: { AX:'0003', CX:'0002', BP:'FFF8', SP:'FFF8' },
+    desc: '<strong>DEC CX</strong> — CX = N-1 = 2. This is the argument for the recursive call.'
+  },
+  // 10 — PUSH CX
+  {
+    activeLine: 23, frame: 'F1',
+    stack: [
+      {id:'p1', value:'0003', tag:'N=3', cls:'c-f1', offset:'[BP+4]'},
+      {id:'r1', value:'RET1', tag:'return addr', cls:'c-f1', offset:'[BP+2]'},
+      {id:'b1', value:'oldBP', tag:'saved BP', cls:'c-f1', offset:'[BP+0]'},
+      {id:'p2', value:'0002', tag:'N=2 (param)', cls:'c-f2', offset:null}
+    ],
+    sp: 3, bp: 2,
+    regs: { AX:'0003', CX:'0002', BP:'FFF8', SP:'FFF6' },
+    desc: '<strong>PUSH CX</strong> — push N-1=2 as the parameter for the <em>inner</em> call. <em>Frame 2\'s parameter appears.</em>'
+  },
+  // 11 — CALL FACTORIAL (frame 2)
+  {
+    activeLine: 24, frame: 'F2',
+    stack: [
+      {id:'p1', value:'0003', tag:'N=3', cls:'c-f1', offset:null},
+      {id:'r1', value:'RET1', tag:'return addr', cls:'c-f1', offset:null},
+      {id:'b1', value:'oldBP', tag:'saved BP', cls:'c-f1', offset:null},
+      {id:'p2', value:'0002', tag:'N=2', cls:'c-f2', offset:null},
+      {id:'r2', value:'RET2', tag:'return addr', cls:'c-f2', offset:null}
+    ],
+    sp: 4, bp: 2,
+    regs: { AX:'0003', CX:'0002', BP:'FFF8', SP:'FFF4' },
+    desc: '<strong>CALL FACTORIAL</strong> — recurse! Push return addr, jump back to top of procedure. <em>Frame 2 begins.</em>'
+  },
+  // 12 — PUSH BP (frame 2)
+  {
+    activeLine: 12, frame: 'F2',
+    stack: [
+      {id:'p1', value:'0003', tag:'N=3', cls:'c-f1', offset:null},
+      {id:'r1', value:'RET1', tag:'return addr', cls:'c-f1', offset:null},
+      {id:'b1', value:'oldBP', tag:'saved BP', cls:'c-f1', offset:null},
+      {id:'p2', value:'0002', tag:'N=2', cls:'c-f2', offset:null},
+      {id:'r2', value:'RET2', tag:'return addr', cls:'c-f2', offset:null},
+      {id:'b2', value:'FFF8', tag:'saved BP', cls:'c-f2', offset:null}
+    ],
+    sp: 5, bp: 2,
+    regs: { AX:'0003', CX:'0002', BP:'FFF8', SP:'FFF2' },
+    desc: '<strong>PUSH BP</strong> — save frame 1\'s BP (which is FFF8). Each frame saves its own caller\'s BP.'
+  },
+  // 13 — MOV BP, SP (frame 2 anchored)
+  {
+    activeLine: 13, frame: 'F2',
+    stack: [
+      {id:'p1', value:'0003', tag:'N=3', cls:'c-f1', offset:null},
+      {id:'r1', value:'RET1', tag:'return addr', cls:'c-f1', offset:null},
+      {id:'b1', value:'oldBP', tag:'saved BP', cls:'c-f1', offset:null},
+      {id:'p2', value:'0002', tag:'N=2', cls:'c-f2', offset:'[BP+4]'},
+      {id:'r2', value:'RET2', tag:'return addr', cls:'c-f2', offset:'[BP+2]'},
+      {id:'b2', value:'FFF8', tag:'saved BP', cls:'c-f2', offset:'[BP+0]'}
+    ],
+    sp: 5, bp: 5,
+    regs: { AX:'0003', CX:'0002', BP:'FFF2', SP:'FFF2' },
+    desc: '<strong>MOV BP, SP</strong> — BP now points to frame 2\'s saved BP. <strong>[BP+4] = N = 2</strong> for this frame.'
+  },
+  // 14 — CMP [BP+4], 1
+  {
+    activeLine: 14, frame: 'F2',
+    stack: [
+      {id:'p1', value:'0003', tag:'N=3', cls:'c-f1', offset:null},
+      {id:'r1', value:'RET1', tag:'return addr', cls:'c-f1', offset:null},
+      {id:'b1', value:'oldBP', tag:'saved BP', cls:'c-f1', offset:null},
+      {id:'p2', value:'0002', tag:'N=2', cls:'c-f2', offset:'[BP+4]', hl:true},
+      {id:'r2', value:'RET2', tag:'return addr', cls:'c-f2', offset:'[BP+2]'},
+      {id:'b2', value:'FFF8', tag:'saved BP', cls:'c-f2', offset:'[BP+0]'}
+    ],
+    sp: 5, bp: 5,
+    regs: { AX:'0003', CX:'0002', BP:'FFF2', SP:'FFF2' },
+    desc: '<strong>CMP [BP+4], 1</strong> — compare N=2 against 1. 2 &gt; 1, so recurse again.'
+  },
+  // 15 — JG ELSE_
+  {
+    activeLine: 15, frame: 'F2',
+    stack: [
+      {id:'p1', value:'0003', tag:'N=3', cls:'c-f1', offset:null},
+      {id:'r1', value:'RET1', tag:'return addr', cls:'c-f1', offset:null},
+      {id:'b1', value:'oldBP', tag:'saved BP', cls:'c-f1', offset:null},
+      {id:'p2', value:'0002', tag:'N=2', cls:'c-f2', offset:'[BP+4]'},
+      {id:'r2', value:'RET2', tag:'return addr', cls:'c-f2', offset:'[BP+2]'},
+      {id:'b2', value:'FFF8', tag:'saved BP', cls:'c-f2', offset:'[BP+0]'}
+    ],
+    sp: 5, bp: 5,
+    regs: { AX:'0003', CX:'0002', BP:'FFF2', SP:'FFF2' },
+    desc: '<strong>JG ELSE_</strong> — N=2 &gt; 1, jump to recursive case.'
+  },
+  // 16 — MOV CX, [BP+4]
+  {
+    activeLine: 21, frame: 'F2',
+    stack: [
+      {id:'p1', value:'0003', tag:'N=3', cls:'c-f1', offset:null},
+      {id:'r1', value:'RET1', tag:'return addr', cls:'c-f1', offset:null},
+      {id:'b1', value:'oldBP', tag:'saved BP', cls:'c-f1', offset:null},
+      {id:'p2', value:'0002', tag:'N=2', cls:'c-f2', offset:'[BP+4]', hl:true},
+      {id:'r2', value:'RET2', tag:'return addr', cls:'c-f2', offset:'[BP+2]'},
+      {id:'b2', value:'FFF8', tag:'saved BP', cls:'c-f2', offset:'[BP+0]'}
+    ],
+    sp: 5, bp: 5,
+    regs: { AX:'0003', CX:'0002', BP:'FFF2', SP:'FFF2' },
+    desc: '<strong>MOV CX, [BP+4]</strong> — CX = N = 2 (frame 2\'s own N).'
+  },
+  // 17 — DEC CX
+  {
+    activeLine: 22, frame: 'F2',
+    stack: [
+      {id:'p1', value:'0003', tag:'N=3', cls:'c-f1', offset:null},
+      {id:'r1', value:'RET1', tag:'return addr', cls:'c-f1', offset:null},
+      {id:'b1', value:'oldBP', tag:'saved BP', cls:'c-f1', offset:null},
+      {id:'p2', value:'0002', tag:'N=2', cls:'c-f2', offset:'[BP+4]'},
+      {id:'r2', value:'RET2', tag:'return addr', cls:'c-f2', offset:'[BP+2]'},
+      {id:'b2', value:'FFF8', tag:'saved BP', cls:'c-f2', offset:'[BP+0]'}
+    ],
+    sp: 5, bp: 5,
+    regs: { AX:'0003', CX:'0001', BP:'FFF2', SP:'FFF2' },
+    desc: '<strong>DEC CX</strong> — CX = N-1 = 1.'
+  },
+  // 18 — PUSH CX
+  {
+    activeLine: 23, frame: 'F2',
+    stack: [
+      {id:'p1', value:'0003', tag:'N=3', cls:'c-f1', offset:null},
+      {id:'r1', value:'RET1', tag:'return addr', cls:'c-f1', offset:null},
+      {id:'b1', value:'oldBP', tag:'saved BP', cls:'c-f1', offset:null},
+      {id:'p2', value:'0002', tag:'N=2', cls:'c-f2', offset:'[BP+4]'},
+      {id:'r2', value:'RET2', tag:'return addr', cls:'c-f2', offset:'[BP+2]'},
+      {id:'b2', value:'FFF8', tag:'saved BP', cls:'c-f2', offset:'[BP+0]'},
+      {id:'p3', value:'0001', tag:'N=1 (param)', cls:'c-f3', offset:null}
+    ],
+    sp: 6, bp: 5,
+    regs: { AX:'0003', CX:'0001', BP:'FFF2', SP:'FFF0' },
+    desc: '<strong>PUSH CX</strong> — push N-1=1. <em>Frame 3\'s parameter appears.</em>'
+  },
+  // 19 — CALL FACTORIAL (frame 3)
+  {
+    activeLine: 24, frame: 'F3',
+    stack: [
+      {id:'p1', value:'0003', tag:'N=3', cls:'c-f1', offset:null},
+      {id:'r1', value:'RET1', tag:'return addr', cls:'c-f1', offset:null},
+      {id:'b1', value:'oldBP', tag:'saved BP', cls:'c-f1', offset:null},
+      {id:'p2', value:'0002', tag:'N=2', cls:'c-f2', offset:null},
+      {id:'r2', value:'RET2', tag:'return addr', cls:'c-f2', offset:null},
+      {id:'b2', value:'FFF8', tag:'saved BP', cls:'c-f2', offset:null},
+      {id:'p3', value:'0001', tag:'N=1', cls:'c-f3', offset:null},
+      {id:'r3', value:'RET3', tag:'return addr', cls:'c-f3', offset:null}
+    ],
+    sp: 7, bp: 5,
+    regs: { AX:'0003', CX:'0001', BP:'FFF2', SP:'FFEE' },
+    desc: '<strong>CALL FACTORIAL</strong> — recurse again! <em>Frame 3 begins.</em>'
+  },
+  // 20 — PUSH BP (frame 3)
+  {
+    activeLine: 12, frame: 'F3',
+    stack: [
+      {id:'p1', value:'0003', tag:'N=3', cls:'c-f1', offset:null},
+      {id:'r1', value:'RET1', tag:'return addr', cls:'c-f1', offset:null},
+      {id:'b1', value:'oldBP', tag:'saved BP', cls:'c-f1', offset:null},
+      {id:'p2', value:'0002', tag:'N=2', cls:'c-f2', offset:null},
+      {id:'r2', value:'RET2', tag:'return addr', cls:'c-f2', offset:null},
+      {id:'b2', value:'FFF8', tag:'saved BP', cls:'c-f2', offset:null},
+      {id:'p3', value:'0001', tag:'N=1', cls:'c-f3', offset:null},
+      {id:'r3', value:'RET3', tag:'return addr', cls:'c-f3', offset:null},
+      {id:'b3', value:'FFF2', tag:'saved BP', cls:'c-f3', offset:null}
+    ],
+    sp: 8, bp: 5,
+    regs: { AX:'0003', CX:'0001', BP:'FFF2', SP:'FFEC' },
+    desc: '<strong>PUSH BP</strong> — save frame 2\'s BP (=FFF2).'
+  },
+  // 21 — MOV BP, SP (frame 3 anchored)
+  {
+    activeLine: 13, frame: 'F3',
+    stack: [
+      {id:'p1', value:'0003', tag:'N=3', cls:'c-f1', offset:null},
+      {id:'r1', value:'RET1', tag:'return addr', cls:'c-f1', offset:null},
+      {id:'b1', value:'oldBP', tag:'saved BP', cls:'c-f1', offset:null},
+      {id:'p2', value:'0002', tag:'N=2', cls:'c-f2', offset:null},
+      {id:'r2', value:'RET2', tag:'return addr', cls:'c-f2', offset:null},
+      {id:'b2', value:'FFF8', tag:'saved BP', cls:'c-f2', offset:null},
+      {id:'p3', value:'0001', tag:'N=1', cls:'c-f3', offset:'[BP+4]'},
+      {id:'r3', value:'RET3', tag:'return addr', cls:'c-f3', offset:'[BP+2]'},
+      {id:'b3', value:'FFF2', tag:'saved BP', cls:'c-f3', offset:'[BP+0]'}
+    ],
+    sp: 8, bp: 8,
+    regs: { AX:'0003', CX:'0001', BP:'FFEC', SP:'FFEC' },
+    desc: '<strong>MOV BP, SP</strong> — BP anchored to frame 3. <strong>[BP+4] = N = 1</strong>.'
+  },
+  // 22 — CMP [BP+4], 1
+  {
+    activeLine: 14, frame: 'F3',
+    stack: [
+      {id:'p1', value:'0003', tag:'N=3', cls:'c-f1', offset:null},
+      {id:'r1', value:'RET1', tag:'return addr', cls:'c-f1', offset:null},
+      {id:'b1', value:'oldBP', tag:'saved BP', cls:'c-f1', offset:null},
+      {id:'p2', value:'0002', tag:'N=2', cls:'c-f2', offset:null},
+      {id:'r2', value:'RET2', tag:'return addr', cls:'c-f2', offset:null},
+      {id:'b2', value:'FFF8', tag:'saved BP', cls:'c-f2', offset:null},
+      {id:'p3', value:'0001', tag:'N=1', cls:'c-f3', offset:'[BP+4]', hl:true},
+      {id:'r3', value:'RET3', tag:'return addr', cls:'c-f3', offset:'[BP+2]'},
+      {id:'b3', value:'FFF2', tag:'saved BP', cls:'c-f3', offset:'[BP+0]'}
+    ],
+    sp: 8, bp: 8,
+    regs: { AX:'0003', CX:'0001', BP:'FFEC', SP:'FFEC' },
+    desc: '<strong>CMP [BP+4], 1</strong> — N=1 == 1. The <em>base case</em>! JG will NOT be taken.'
+  },
+  // 23 — fall through (JG not taken)
+  {
+    activeLine: 15, frame: 'F3',
+    stack: [
+      {id:'p1', value:'0003', tag:'N=3', cls:'c-f1', offset:null},
+      {id:'r1', value:'RET1', tag:'return addr', cls:'c-f1', offset:null},
+      {id:'b1', value:'oldBP', tag:'saved BP', cls:'c-f1', offset:null},
+      {id:'p2', value:'0002', tag:'N=2', cls:'c-f2', offset:null},
+      {id:'r2', value:'RET2', tag:'return addr', cls:'c-f2', offset:null},
+      {id:'b2', value:'FFF8', tag:'saved BP', cls:'c-f2', offset:null},
+      {id:'p3', value:'0001', tag:'N=1', cls:'c-f3', offset:'[BP+4]'},
+      {id:'r3', value:'RET3', tag:'return addr', cls:'c-f3', offset:'[BP+2]'},
+      {id:'b3', value:'FFF2', tag:'saved BP', cls:'c-f3', offset:'[BP+0]'}
+    ],
+    sp: 8, bp: 8,
+    regs: { AX:'0003', CX:'0001', BP:'FFEC', SP:'FFEC' },
+    desc: '<strong>JG ELSE_</strong> — N=1 is NOT &gt; 1, so the jump is <em>not taken</em>. We fall through to the escape case.'
+  },
+  // 24 — MOV AX, 1
+  {
+    activeLine: 17, frame: 'F3',
+    stack: [
+      {id:'p1', value:'0003', tag:'N=3', cls:'c-f1', offset:null},
+      {id:'r1', value:'RET1', tag:'return addr', cls:'c-f1', offset:null},
+      {id:'b1', value:'oldBP', tag:'saved BP', cls:'c-f1', offset:null},
+      {id:'p2', value:'0002', tag:'N=2', cls:'c-f2', offset:null},
+      {id:'r2', value:'RET2', tag:'return addr', cls:'c-f2', offset:null},
+      {id:'b2', value:'FFF8', tag:'saved BP', cls:'c-f2', offset:null},
+      {id:'p3', value:'0001', tag:'N=1', cls:'c-f3', offset:'[BP+4]'},
+      {id:'r3', value:'RET3', tag:'return addr', cls:'c-f3', offset:'[BP+2]'},
+      {id:'b3', value:'FFF2', tag:'saved BP', cls:'c-f3', offset:'[BP+0]'}
+    ],
+    sp: 8, bp: 8,
+    regs: { AX:'0001', CX:'0001', BP:'FFEC', SP:'FFEC' },
+    desc: '<strong>MOV AX, 1</strong> — base case: 1! = <span class="res">1</span>. Result in AX.'
+  },
+  // 25 — JMP RETURN + POP BP (frame 3 epilogue)
+  {
+    activeLine: 29, frame: 'F3',
+    stack: [
+      {id:'p1', value:'0003', tag:'N=3', cls:'c-f1', offset:null},
+      {id:'r1', value:'RET1', tag:'return addr', cls:'c-f1', offset:null},
+      {id:'b1', value:'oldBP', tag:'saved BP', cls:'c-f1', offset:null},
+      {id:'p2', value:'0002', tag:'N=2', cls:'c-f2', offset:null},
+      {id:'r2', value:'RET2', tag:'return addr', cls:'c-f2', offset:null},
+      {id:'b2', value:'FFF8', tag:'saved BP', cls:'c-f2', offset:null},
+      {id:'p3', value:'0001', tag:'N=1', cls:'c-f3', offset:null},
+      {id:'r3', value:'RET3', tag:'return addr', cls:'c-f3', offset:null}
+    ],
+    sp: 7, bp: 5,
+    regs: { AX:'0001', CX:'0001', BP:'FFF2', SP:'FFEE' },
+    desc: '<strong>POP BP</strong> — frame 3 restores frame 2\'s BP (=FFF2). Frame 3 is done.'
+  },
+  // 26 — RET 2 (frame 3 returns)
+  {
+    activeLine: 30, frame: 'F2',
+    stack: [
+      {id:'p1', value:'0003', tag:'N=3', cls:'c-f1', offset:null},
+      {id:'r1', value:'RET1', tag:'return addr', cls:'c-f1', offset:null},
+      {id:'b1', value:'oldBP', tag:'saved BP', cls:'c-f1', offset:null},
+      {id:'p2', value:'0002', tag:'N=2', cls:'c-f2', offset:'[BP+4]'},
+      {id:'r2', value:'RET2', tag:'return addr', cls:'c-f2', offset:'[BP+2]'},
+      {id:'b2', value:'FFF8', tag:'saved BP', cls:'c-f2', offset:'[BP+0]'}
+    ],
+    sp: 5, bp: 5,
+    regs: { AX:'0001', CX:'0001', BP:'FFF2', SP:'FFF2' },
+    desc: '<strong>RET 2</strong> — frame 3 returns to frame 2 (at the MUL instruction), and discards the N=1 parameter. <em>Back in frame 2.</em>'
+  },
+  // 27 — MUL [BP+4] in frame 2
+  {
+    activeLine: 25, frame: 'F2',
+    stack: [
+      {id:'p1', value:'0003', tag:'N=3', cls:'c-f1', offset:null},
+      {id:'r1', value:'RET1', tag:'return addr', cls:'c-f1', offset:null},
+      {id:'b1', value:'oldBP', tag:'saved BP', cls:'c-f1', offset:null},
+      {id:'p2', value:'0002', tag:'N=2', cls:'c-f2', offset:'[BP+4]', hl:true},
+      {id:'r2', value:'RET2', tag:'return addr', cls:'c-f2', offset:'[BP+2]'},
+      {id:'b2', value:'FFF8', tag:'saved BP', cls:'c-f2', offset:'[BP+0]'}
+    ],
+    sp: 5, bp: 5,
+    regs: { AX:'0002', CX:'0001', BP:'FFF2', SP:'FFF2' },
+    desc: '<strong>MUL [BP+4]</strong> — AX = AX × N = 1 × 2 = <span class="res">2</span>. That\'s 2! = 2. Notice BP still points to frame 2 — the inner call preserved it!'
+  },
+  // 28 — POP BP + RET 2 (frame 2 returns)
+  {
+    activeLine: 30, frame: 'F1',
+    stack: [
+      {id:'p1', value:'0003', tag:'N=3', cls:'c-f1', offset:'[BP+4]'},
+      {id:'r1', value:'RET1', tag:'return addr', cls:'c-f1', offset:'[BP+2]'},
+      {id:'b1', value:'oldBP', tag:'saved BP', cls:'c-f1', offset:'[BP+0]'}
+    ],
+    sp: 2, bp: 2,
+    regs: { AX:'0002', CX:'0001', BP:'FFF8', SP:'FFF8' },
+    desc: '<strong>POP BP + RET 2</strong> — frame 2 returns to frame 1, discards N=2. <em>Back in frame 1.</em>'
+  },
+  // 29 — MUL [BP+4] in frame 1
+  {
+    activeLine: 25, frame: 'F1',
+    stack: [
+      {id:'p1', value:'0003', tag:'N=3', cls:'c-f1', offset:'[BP+4]', hl:true},
+      {id:'r1', value:'RET1', tag:'return addr', cls:'c-f1', offset:'[BP+2]'},
+      {id:'b1', value:'oldBP', tag:'saved BP', cls:'c-f1', offset:'[BP+0]'}
+    ],
+    sp: 2, bp: 2,
+    regs: { AX:'0006', CX:'0001', BP:'FFF8', SP:'FFF8' },
+    desc: '<strong>MUL [BP+4]</strong> — AX = AX × N = 2 × 3 = <span class="res">6</span>. That\'s 3! = 6. ✓'
+  },
+  // 30 — POP BP + RET 2 (frame 1 returns)
+  {
+    activeLine: 30, frame: 'MAIN',
+    stack: [],
+    sp: null, bp: null,
+    regs: { AX:'0006', CX:'0001', BP:'????', SP:'FFFA' },
+    desc: '<strong>POP BP + RET 2</strong> — frame 1 returns to MAIN, discards N=3. Stack is empty again.'
+  },
+  // 31 — MOV AH, 4CH
+  {
+    activeLine: 7, frame: 'MAIN',
+    stack: [],
+    sp: null, bp: null,
+    regs: { AX:'4C06', CX:'0001', BP:'????', SP:'FFFA' },
+    desc: '<strong>MOV AH, 4CH</strong> — DOS exit function. AH=4C, AL=06 (our result).'
+  },
+  // 32 — INT 21H
+  {
+    activeLine: 8, frame: 'MAIN',
+    stack: [],
+    sp: null, bp: null,
+    regs: { AX:'4C06', CX:'0001', BP:'????', SP:'FFFA' },
+    desc: '<strong>INT 21H</strong> — program exits. Final result: <span class="res">3! = 6</span>. Done! ✓'
+  },
+];
+
+/* ============================================================
+   RENDERING
+   ============================================================ */
+const codeEl   = document.getElementById('code');
+const stackEl  = document.getElementById('stack');
+const spPtr    = document.getElementById('spPtr');
+const bpPtr    = document.getElementById('bpPtr');
+const frameBadge = document.getElementById('frameBadge');
+const descEl   = document.getElementById('desc');
+const stepInfo = document.getElementById('stepInfo');
+const progBar  = document.getElementById('progBar');
+
+codeEl.innerHTML = srcLines.map((l,i) => `<div class="line" data-i="${i}">${l[0]||'&nbsp;'}</div>`).join('');
+
+const ITEM_H = 48;
+const BASE_PAD = 10;
+
+function render(idx) {
+  const s = STEPS[idx];
+
+  document.querySelectorAll('.code .line').forEach(el => {
+    el.classList.toggle('active', +el.dataset.i === s.activeLine);
+  });
+
+  stackEl.querySelectorAll('.stack-item, .offset-label').forEach(e => e.remove());
+
+  s.stack.forEach((item, i) => {
+    const el = document.createElement('div');
+    el.className = `stack-item ${item.cls}`;
+    el.innerHTML = `<span class="tag">${item.tag}</span><span class="val">${item.value}</span>`;
+    if (item.hl) {
+      el.style.boxShadow = '0 0 0 2px #fbbf24, 0 4px 12px rgba(251,191,36,0.4)';
+    }
+    el.style.bottom = (BASE_PAD + i * ITEM_H) + 'px';
+    stackEl.appendChild(el);
+    requestAnimationFrame(() => el.classList.add('visible'));
+
+    if (item.offset && s.bp !== null) {
+      const ol = document.createElement('div');
+      ol.className = 'offset-label' + (item.hl ? ' hl' : '');
+      ol.textContent = item.offset;
+      ol.style.bottom = (BASE_PAD + i * ITEM_H + 13) + 'px';
+      stackEl.appendChild(ol);
+      requestAnimationFrame(() => ol.classList.add('visible'));
+    }
+  });
+
+  if (s.sp !== null && s.stack.length > 0) {
+    spPtr.style.bottom = (BASE_PAD + s.sp * ITEM_H + 14) + 'px';
+    spPtr.classList.add('visible');
+  } else {
+    spPtr.classList.remove('visible');
+  }
+
+  if (s.bp !== null && s.stack.length > 0) {
+    bpPtr.style.bottom = (BASE_PAD + s.bp * ITEM_H + 14) + 'px';
+    bpPtr.classList.add('visible');
+  } else {
+    bpPtr.classList.remove('visible');
+  }
+
+  // Frame badge
+  frameBadge.classList.remove('visible', 'fb-f1', 'fb-f2', 'fb-f3', 'fb-main');
+  if (s.frame === 'F1') { frameBadge.textContent = 'FRAME 1 (N=3)'; frameBadge.classList.add('visible','fb-f1'); }
+  else if (s.frame === 'F2') { frameBadge.textContent = 'FRAME 2 (N=2)'; frameBadge.classList.add('visible','fb-f2'); }
+  else if (s.frame === 'F3') { frameBadge.textContent = 'FRAME 3 (N=1)'; frameBadge.classList.add('visible','fb-f3'); }
+  else { frameBadge.textContent = 'MAIN'; frameBadge.classList.add('visible','fb-main'); }
+
+  document.getElementById('rAX').textContent = s.regs.AX;
+  document.getElementById('rCX').textContent = s.regs.CX;
+  document.getElementById('rBP').textContent = s.regs.BP;
+  document.getElementById('rSP').textContent = s.regs.SP;
+
+  descEl.innerHTML = s.desc;
+
+  stepInfo.textContent = `Step ${idx} / ${STEPS.length - 1}`;
+  progBar.style.width = (idx / (STEPS.length - 1) * 100) + '%';
+
+  document.getElementById('prevBtn').disabled = idx === 0;
+  document.getElementById('nextBtn').disabled = idx === STEPS.length - 1;
+}
+
+/* ============================================================
+   CONTROLS
+   ============================================================ */
+let current = 0;
+let playTimer = null;
+
+function go(i) {
+  current = Math.max(0, Math.min(STEPS.length - 1, i));
+  render(current);
+}
+
+document.getElementById('prevBtn').onclick = () => { stopPlay(); go(current - 1); };
+document.getElementById('nextBtn').onclick = () => { stopPlay(); go(current + 1); };
+document.getElementById('playBtn').onclick = () => {
+  if (playTimer) { stopPlay(); return; }
+  document.getElementById('playBtn').textContent = '⏸ PAUSE';
+  if (current === STEPS.length - 1) go(0);
+  playTimer = setInterval(() => {
+    if (current >= STEPS.length - 1) { stopPlay(); return; }
+    go(current + 1);
+  }, 1500);
+};
+function stopPlay() {
+  clearInterval(playTimer);
+  playTimer = null;
+  document.getElementById('playBtn').textContent = '▶ PLAY';
+}
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight') { stopPlay(); go(current + 1); }
+  if (e.key === 'ArrowLeft')  { stopPlay(); go(current - 1); }
+  if (e.key === ' ') { e.preventDefault(); document.getElementById('playBtn').click(); }
+});
+
+go(0);
+</script>
+</body>
+</html>

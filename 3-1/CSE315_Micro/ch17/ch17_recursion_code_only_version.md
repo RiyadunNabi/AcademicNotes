@@ -2,9 +2,12 @@
 
 Builds directly on Ch8 (stack, CALL/RET). Same rule: every file is standalone, teaching lives in the comments.
 
+[See BP first](BP.md)
 ---
 
 ## 1. Passing parameters ON THE STACK (not registers) — the prerequisite skill
+
+[See Animation](./01_parameter_stacking.html)
 
 ```asm
 TITLE ADD_WORDS
@@ -80,6 +83,7 @@ END MAIN
 
 ## 3. FACTORIAL — one recursive call, fully commented
 
+[See animation](./03_factorial_animation_v1.html)
 ```asm
 TITLE FACTORIAL
 .MODEL SMALL
@@ -127,6 +131,52 @@ RETURN:
 FACTORIAL ENDP
 END MAIN
 ```
+or, 
+[See animation](./03_factorial_animation_v2.html)
+```asm
+TITLE FACTORIAL
+.MODEL SMALL
+.STACK 100H
+
+.CODE
+
+MAIN PROC
+    MOV AX, 3
+    PUSH AX
+    CALL FACTORIAL
+
+    MOV AH, 4CH
+    INT 21H
+MAIN ENDP
+
+FACTORIAL PROC NEAR
+    PUSH BP
+    MOV BP, SP
+
+    CMP WORD PTR [BP+4], 1
+    JLE BASE
+
+    MOV CX, [BP+4]
+    DEC CX
+    PUSH CX
+    CALL FACTORIAL
+
+    MUL WORD PTR [BP+4]
+    JMP DONE
+
+BASE:
+    MOV AX, 1
+
+DONE:
+    POP BP
+    RET 2
+FACTORIAL ENDP
+
+END MAIN
+```
+
+
+
 
 ### The exact stack picture while tracing FACTORIAL(3) — as comments
 
@@ -157,6 +207,7 @@ END MAIN
 
 ## 4. FIND_MAX — same recursion pattern, applied to an array
 
+[See animation](./04_find_max_in_array_v1.html)
 ```asm
 TITLE FIND_MAX
 .MODEL SMALL
@@ -212,10 +263,70 @@ END MAIN
 ```
 Trace it exactly like FACTORIAL — 4 nested calls stack up, escape fires at N=1 (AX=A[1]=10), then unwinding compares A[2]=50 (new max), A[3]=20 (no change), A[4]=4 (no change) → final AX=50.
 
+
+or,
+[See animation](./04_find_max_in_array_v2.html)
+```asm
+TITLE FIND_MAX
+.MODEL SMALL
+.STACK 100H
+
+.DATA
+A DW 10, 50, 20, 4
+
+.CODE
+
+MAIN PROC
+    MOV AX, @DATA
+    MOV DS, AX
+
+    MOV AX, 4
+    PUSH AX
+    CALL FIND_MAX
+
+    MOV AH, 4CH
+    INT 21H
+MAIN ENDP
+
+FIND_MAX PROC NEAR
+    PUSH BP
+    MOV BP, SP
+
+    CMP WORD PTR [BP+4], 1
+    JLE BASE
+
+    MOV CX, [BP+4]
+    DEC CX
+    PUSH CX
+    CALL FIND_MAX
+
+    MOV BX, [BP+4]
+    SHL BX, 1
+    SUB BX, 2
+
+    CMP A[BX], AX
+    JLE DONE
+
+    MOV AX, A[BX]
+    JMP DONE
+
+BASE:
+    MOV AX, A
+
+DONE:
+    POP BP
+    RET 2
+FIND_MAX ENDP
+
+END MAIN
+```
+
+
 ---
 
 ## 5. BINOMIAL — the twist: TWO recursive calls in one invocation
 
+[See animation](05_binomial_coefficients_v1.html)
 ```asm
 TITLE BINOMIAL_COEFFICIENTS
 .MODEL SMALL
@@ -279,6 +390,72 @@ RETURN:
 BINOMIAL ENDP
 END MAIN
 ```
+or, 
+[See animation](05_binomial_coefficients_v2.html)
+```asm
+TITLE BINOMIAL_COEFFICIENTS
+.MODEL SMALL
+.STACK 100H
+
+.CODE
+
+MAIN PROC
+    MOV AX, 2
+    PUSH AX
+
+    MOV AX, 3
+    PUSH AX
+
+    CALL BINOMIAL
+
+    MOV AH, 4CH
+    INT 21H
+MAIN ENDP
+
+BINOMIAL PROC NEAR
+    PUSH BP
+    MOV BP, SP
+
+    MOV AX, [BP+6]
+    CMP AX, [BP+4]
+    JE BASE
+
+    CMP AX, 0
+    JE BASE
+
+    PUSH [BP+6]
+
+    MOV CX, [BP+4]
+    DEC CX
+    PUSH CX
+    CALL BINOMIAL
+
+    PUSH AX
+
+    MOV CX, [BP+6]
+    DEC CX
+    PUSH CX
+
+    MOV CX, [BP+4]
+    DEC CX
+    PUSH CX
+    CALL BINOMIAL
+
+    POP BX
+    ADD AX, BX
+    JMP DONE
+
+BASE:
+    MOV AX, 1
+
+DONE:
+    POP BP
+    RET 4
+BINOMIAL ENDP
+
+END MAIN
+```
+
 
 ### Hand-trace C(3,2) as comments
 

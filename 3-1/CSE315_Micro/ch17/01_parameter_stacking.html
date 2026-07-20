@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>ADD_WORDS — Stack Animation</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Consolas', 'Courier New', monospace;
+    background: radial-gradient(ellipse at top, #0f1729 0%, #05070d 100%);
+    color: #e6edf3;
+    min-height: 100vh;
+    padding: 20px;
+  }
+  h1 {
+    text-align: center;
+    font-size: 28px;
+    letter-spacing: 4px;
+    margin-bottom: 20px;
+    color: #7dd3fc;
+    text-shadow: 0 0 20px rgba(125,211,252,0.5);
+  }
+  .container {
+    display: grid;
+    grid-template-columns: 1fr 1fr 280px;
+    gap: 20px;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+  .panel {
+    background: rgba(15, 23, 42, 0.7);
+    border: 1px solid #1e293b;
+    border-radius: 10px;
+    padding: 16px;
+    backdrop-filter: blur(10px);
+  }
+  .panel h2 {
+    font-size: 13px;
+    letter-spacing: 2px;
+    color: #94a3b8;
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #1e293b;
+  }
+
+  /* Code panel */
+  .code {
+    font-size: 13px;
+    line-height: 1.7;
+    white-space: pre;
+    overflow-x: auto;
+  }
+  .code .line {
+    padding: 2px 8px;
+    border-radius: 4px;
+    transition: background 0.3s;
+  }
+  .code .line.active {
+    background: rgba(250, 204, 21, 0.15);
+    border-left: 3px solid #facc15;
+    padding-left: 5px;
+  }
+  .kw  { color: #f472b6; }
+  .reg { color: #7dd3fc; }
+  .num { color: #fbbf24; }
+  .lbl { color: #a78bfa; }
+  .cmt { color: #64748b; font-style: italic; }
+  .str { color: #86efac; }
+
+  /* Stack panel */
+  .stack-wrap {
+    position: relative;
+    height: 520px;
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    padding-bottom: 10px;
+  }
+  .stack {
+    position: relative;
+    width: 220px;
+    height: 100%;
+    border-left: 2px solid #334155;
+    border-right: 2px solid #334155;
+    border-bottom: 2px solid #334155;
+    border-radius: 0 0 6px 6px;
+    background: linear-gradient(to top, rgba(30,41,59,0.3), transparent);
+  }
+  .stack-item {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 180px;
+    height: 44px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 12px;
+    font-weight: bold;
+    font-size: 14px;
+    transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+    opacity: 0;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+    border: 1px solid rgba(255,255,255,0.1);
+  }
+  .stack-item.visible { opacity: 1; }
+  .stack-item .val { font-family: monospace; }
+  .stack-item .tag { font-size: 10px; opacity: 0.85; letter-spacing: 1px; }
+
+  /* Color classes */
+  .c-param  { background: linear-gradient(135deg, #0891b2, #0e7490); color: #fff; }
+  .c-ret    { background: linear-gradient(135deg, #ea580c, #c2410c); color: #fff; }
+  .c-bp     { background: linear-gradient(135deg, #9333ea, #7e22ce); color: #fff; }
+  .c-local  { background: linear-gradient(135deg, #059669, #047857); color: #fff; }
+
+  /* Pointers */
+  .pointer {
+    position: absolute;
+    right: -70px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 12px;
+    font-weight: bold;
+    transition: bottom 0.5s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.3s;
+    opacity: 0;
+  }
+  .pointer.visible { opacity: 1; }
+  .pointer::before {
+    content: '';
+    width: 0; height: 0;
+    border-top: 6px solid transparent;
+    border-bottom: 6px solid transparent;
+    border-right: 10px solid currentColor;
+  }
+  .sp-ptr { color: #22c55e; }
+  .bp-ptr { color: #facc15; }
+
+  /* Offset labels on left */
+  .offset-label {
+    position: absolute;
+    left: -70px;
+    font-size: 11px;
+    color: #94a3b8;
+    transition: bottom 0.5s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.3s;
+    opacity: 0;
+    font-family: monospace;
+  }
+  .offset-label.visible { opacity: 1; }
+
+  /* Registers panel */
+  .regs { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .reg-box {
+    background: #0f172a;
+    border: 1px solid #1e293b;
+    border-radius: 6px;
+    padding: 8px 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .reg-box .rn { color: #7dd3fc; font-size: 12px; font-weight: bold; }
+  .reg-box .rv { color: #fbbf24; font-size: 13px; font-family: monospace; }
+
+  .desc {
+    margin-top: 14px;
+    padding: 12px;
+    background: rgba(125, 211, 252, 0.08);
+    border-left: 3px solid #7dd3fc;
+    border-radius: 4px;
+    font-size: 12px;
+    line-height: 1.6;
+    color: #cbd5e1;
+    min-height: 80px;
+  }
+  .desc strong { color: #7dd3fc; }
+
+  /* Controls */
+  .controls {
+    grid-column: 1 / -1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    padding: 14px;
+  }
+  .btn {
+    background: linear-gradient(135deg, #1e293b, #0f172a);
+    color: #e6edf3;
+    border: 1px solid #334155;
+    padding: 10px 20px;
+    border-radius: 6px;
+    font-family: inherit;
+    font-size: 13px;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: all 0.2s;
+    min-width: 90px;
+  }
+  .btn:hover:not(:disabled) {
+    background: linear-gradient(135deg, #334155, #1e293b);
+    border-color: #7dd3fc;
+    transform: translateY(-1px);
+  }
+  .btn:disabled { opacity: 0.3; cursor: not-allowed; }
+  .btn.play { background: linear-gradient(135deg, #059669, #047857); border-color: #10b981; }
+  .btn.play:hover:not(:disabled) { background: linear-gradient(135deg, #10b981, #059669); }
+  .step-info {
+    color: #94a3b8;
+    font-size: 13px;
+    min-width: 140px;
+    text-align: center;
+  }
+  .progress {
+    flex: 1;
+    max-width: 300px;
+    height: 4px;
+    background: #1e293b;
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, #7dd3fc, #a78bfa);
+    transition: width 0.4s;
+  }
+</style>
+</head>
+<body>
+
+<h1>⟦ ADD_WORDS ⟧ — STACK FRAME ANIMATION</h1>
+
+<div class="container">
+
+  <!-- CODE PANEL -->
+  <div class="panel">
+    <h2>▸ SOURCE CODE</h2>
+    <div class="code" id="code"></div>
+  </div>
+
+  <!-- STACK PANEL -->
+  <div class="panel">
+    <h2>▸ STACK (grows UPWARD ↑)</h2>
+    <div class="stack-wrap">
+      <div class="stack" id="stack">
+        <!-- Stack items injected here -->
+        <div class="pointer sp-ptr" id="spPtr">SP</div>
+        <div class="pointer bp-ptr" id="bpPtr">BP</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- REGISTERS + INFO -->
+  <div class="panel">
+    <h2>▸ REGISTERS</h2>
+    <div class="regs">
+      <div class="reg-box"><span class="rn">AX</span><span class="rv" id="rAX">????</span></div>
+      <div class="reg-box"><span class="rn">BP</span><span class="rv" id="rBP">????</span></div>
+      <div class="reg-box"><span class="rn">SP</span><span class="rv" id="rSP">FFFE</span></div>
+      <div class="reg-box"><span class="rn">DS</span><span class="rv" id="rDS">????</span></div>
+    </div>
+    <div class="desc" id="desc">Press <strong>NEXT</strong> or <strong>PLAY</strong> to begin.</div>
+  </div>
+
+  <!-- CONTROLS -->
+  <div class="panel controls">
+    <button class="btn" id="prevBtn">◀ PREV</button>
+    <button class="btn play" id="playBtn">▶ PLAY</button>
+    <button class="btn" id="nextBtn">NEXT ▶</button>
+    <div class="progress"><div class="progress-bar" id="progBar"></div></div>
+    <div class="step-info" id="stepInfo">Step 0 / 0</div>
+  </div>
+
+</div>
+
+<script>
+/* ============================================================
+   SOURCE CODE (with syntax tokens)
+   ============================================================ */
+const srcLines = [
+  ['<span class="kw">.MODEL</span> SMALL'],
+  ['<span class="kw">.STACK</span> 100H'],
+  ['<span class="kw">.DATA</span>'],
+  ['<span class="lbl">WORD1</span>   <span class="kw">DW</span>   <span class="num">2</span>'],
+  ['<span class="lbl">WORD2</span>   <span class="kw">DW</span>   <span class="num">5</span>'],
+  ['<span class="kw">.CODE</span>'],
+  ['<span class="lbl">MAIN</span> <span class="kw">PROC</span>'],
+  ['    <span class="kw">MOV</span> <span class="reg">AX</span>, <span class="str">@DATA</span>'],
+  ['    <span class="kw">MOV</span> <span class="reg">DS</span>, <span class="reg">AX</span>'],
+  ['    <span class="kw">PUSH</span> <span class="lbl">WORD1</span>          <span class="cmt">; push 2</span>'],
+  ['    <span class="kw">PUSH</span> <span class="lbl">WORD2</span>          <span class="cmt">; push 5</span>'],
+  ['    <span class="kw">CALL</span> <span class="lbl">ADD_WORDS</span>'],
+  ['    <span class="kw">MOV</span> <span class="reg">AH</span>, <span class="num">4CH</span>'],
+  ['    <span class="kw">INT</span> <span class="num">21H</span>'],
+  ['<span class="lbl">MAIN</span> <span class="kw">ENDP</span>'],
+  [''],
+  ['<span class="lbl">ADD_WORDS</span> <span class="kw">PROC</span> <span class="kw">NEAR</span>'],
+  ['    <span class="kw">PUSH</span> <span class="reg">BP</span>'],
+  ['    <span class="kw">MOV</span>  <span class="reg">BP</span>, <span class="reg">SP</span>'],
+  ['    <span class="kw">MOV</span> <span class="reg">AX</span>, [<span class="reg">BP</span>+<span class="num">6</span>]    <span class="cmt">; AX = WORD1 = 2</span>'],
+  ['    <span class="kw">ADD</span> <span class="reg">AX</span>, [<span class="reg">BP</span>+<span class="num">4</span>]    <span class="cmt">; AX = 2+5 = 7</span>'],
+  ['    <span class="kw">POP</span> <span class="reg">BP</span>'],
+  ['    <span class="kw">RET</span> <span class="num">4</span>              <span class="cmt">; return + clean 4 bytes</span>'],
+  ['<span class="lbl">ADD_WORDS</span> <span class="kw">ENDP</span>'],
+  ['<span class="kw">END</span> <span class="lbl">MAIN</span>'],
+];
+
+/* ============================================================
+   STEPS — each step defines:
+     - activeLine: highlighted code line index
+     - stack: array of {id, value, tag, cls, offset}
+     - sp/bp: pointer positions (index into stack, or null)
+     - regs: register values
+     - desc: explanation
+   Stack items are listed BOTTOM->TOP (index 0 = deepest)
+   ============================================================ */
+const STEPS = [
+  {
+    activeLine: 7,
+    stack: [],
+    sp: null, bp: null,
+    regs: { AX:'????', BP:'????', SP:'FFFE', DS:'????' },
+    desc: 'Initial state. Stack is empty. About to set up the data segment.'
+  },
+  {
+    activeLine: 7,
+    stack: [],
+    sp: null, bp: null,
+    regs: { AX:'DATA', BP:'????', SP:'FFFE', DS:'????' },
+    desc: '<strong>MOV AX, @DATA</strong> — AX now holds the segment address of our data.'
+  },
+  {
+    activeLine: 8,
+    stack: [],
+    sp: null, bp: null,
+    regs: { AX:'DATA', BP:'????', SP:'FFFE', DS:'DATA' },
+    desc: '<strong>MOV DS, AX</strong> — DS now points to our data segment. We can access WORD1/WORD2.'
+  },
+  {
+    activeLine: 9,
+    stack: [ {id:'w1', value:'0002', tag:'WORD1', cls:'c-param', offset:null} ],
+    sp: 0, bp: null,
+    regs: { AX:'DATA', BP:'????', SP:'FFFC', DS:'DATA' },
+    desc: '<strong>PUSH WORD1</strong> — SP decrements by 2, value 2 is written at new top. Stack grows <em>upward</em>.'
+  },
+  {
+    activeLine: 10,
+    stack: [
+      {id:'w1', value:'0002', tag:'WORD1', cls:'c-param', offset:null},
+      {id:'w2', value:'0005', tag:'WORD2', cls:'c-param', offset:null}
+    ],
+    sp: 1, bp: null,
+    regs: { AX:'DATA', BP:'????', SP:'FFFA', DS:'DATA' },
+    desc: '<strong>PUSH WORD2</strong> — 5 is now on TOP. Pushed LAST, so it sits closer to SP.'
+  },
+  {
+    activeLine: 11,
+    stack: [
+      {id:'w1', value:'0002', tag:'WORD1', cls:'c-param', offset:null},
+      {id:'w2', value:'0005', tag:'WORD2', cls:'c-param', offset:null},
+      {id:'ret', value:'RET', tag:'return addr', cls:'c-ret', offset:null}
+    ],
+    sp: 2, bp: null,
+    regs: { AX:'DATA', BP:'????', SP:'FFF8', DS:'DATA' },
+    desc: '<strong>CALL ADD_WORDS</strong> — CPU pushes the return address, then jumps into the procedure. Stack top→bottom: [RET, 5, 2].'
+  },
+  {
+    activeLine: 17,
+    stack: [
+      {id:'w1', value:'0002', tag:'WORD1', cls:'c-param', offset:null},
+      {id:'w2', value:'0005', tag:'WORD2', cls:'c-param', offset:null},
+      {id:'ret', value:'RET', tag:'return addr', cls:'c-ret', offset:null},
+      {id:'sbp', value:'oldBP', tag:'saved BP', cls:'c-bp', offset:null}
+    ],
+    sp: 3, bp: null,
+    regs: { AX:'DATA', BP:'????', SP:'FFF6', DS:'DATA' },
+    desc: '<strong>PUSH BP</strong> — save caller\'s BP (defensive prologue). We\'ll anchor BP to SP next.'
+  },
+  {
+    activeLine: 18,
+    stack: [
+      {id:'w1', value:'0002', tag:'WORD1', cls:'c-param', offset:'[BP+6]'},
+      {id:'w2', value:'0005', tag:'WORD2', cls:'c-param', offset:'[BP+4]'},
+      {id:'ret', value:'RET', tag:'return addr', cls:'c-ret', offset:'[BP+2]'},
+      {id:'sbp', value:'oldBP', tag:'saved BP', cls:'c-bp', offset:'[BP+0]'}
+    ],
+    sp: 3, bp: 3,
+    regs: { AX:'DATA', BP:'FFF6', SP:'FFF6', DS:'DATA' },
+    desc: '<strong>MOV BP, SP</strong> — BP is now anchored. Why? 8086 forbids [SP+n] addressing, but allows [BP+n] and auto-assumes SS segment. Free bonus!'
+  },
+  {
+    activeLine: 19,
+    stack: [
+      {id:'w1', value:'0002', tag:'WORD1', cls:'c-param', offset:'[BP+6]', hl:true},
+      {id:'w2', value:'0005', tag:'WORD2', cls:'c-param', offset:'[BP+4]'},
+      {id:'ret', value:'RET', tag:'return addr', cls:'c-ret', offset:'[BP+2]'},
+      {id:'sbp', value:'oldBP', tag:'saved BP', cls:'c-bp', offset:'[BP+0]'}
+    ],
+    sp: 3, bp: 3,
+    regs: { AX:'0002', BP:'FFF6', SP:'FFF6', DS:'DATA' },
+    desc: '<strong>MOV AX, [BP+6]</strong> — fetch WORD1 (=2) from 3 words above BP. AX = 2.'
+  },
+  {
+    activeLine: 20,
+    stack: [
+      {id:'w1', value:'0002', tag:'WORD1', cls:'c-param', offset:'[BP+6]'},
+      {id:'w2', value:'0005', tag:'WORD2', cls:'c-param', offset:'[BP+4]', hl:true},
+      {id:'ret', value:'RET', tag:'return addr', cls:'c-ret', offset:'[BP+2]'},
+      {id:'sbp', value:'oldBP', tag:'saved BP', cls:'c-bp', offset:'[BP+0]'}
+    ],
+    sp: 3, bp: 3,
+    regs: { AX:'0007', BP:'FFF6', SP:'FFF6', DS:'DATA' },
+    desc: '<strong>ADD AX, [BP+4]</strong> — add WORD2 (=5). AX = 2 + 5 = <strong style="color:#fbbf24">7</strong>. Result in AX.'
+  },
+  {
+    activeLine: 21,
+    stack: [
+      {id:'w1', value:'0002', tag:'WORD1', cls:'c-param', offset:'[BP+6]'},
+      {id:'w2', value:'0005', tag:'WORD2', cls:'c-param', offset:'[BP+4]'},
+      {id:'ret', value:'RET', tag:'return addr', cls:'c-ret', offset:'[BP+2]'},
+    ],
+    sp: 2, bp: null,
+    regs: { AX:'0007', BP:'oldBP', SP:'FFF8', DS:'DATA' },
+    desc: '<strong>POP BP</strong> — restore caller\'s BP. Stack top is back at the return address.'
+  },
+  {
+    activeLine: 22,
+    stack: [],
+    sp: null, bp: null,
+    regs: { AX:'0007', BP:'oldBP', SP:'FFFA', DS:'DATA' },
+    desc: '<strong>RET 4</strong> — pop return address into IP, then add 4 to SP. The two parameter words are discarded in one instruction — caller doesn\'t clean up!'
+  },
+  {
+    activeLine: 12,
+    stack: [],
+    sp: null, bp: null,
+    regs: { AX:'4C07', BP:'oldBP', SP:'FFFA', DS:'DATA' },
+    desc: 'Back in MAIN. <strong>MOV AH, 4CH</strong> — DOS exit function. AH=4C, AL still holds 07 (the sum).'
+  },
+  {
+    activeLine: 13,
+    stack: [],
+    sp: null, bp: null,
+    regs: { AX:'4C07', BP:'oldBP', SP:'FFFA', DS:'DATA' },
+    desc: '<strong>INT 21H</strong> — program exits. AX=7 was our result. Done! ✓'
+  },
+];
+
+/* ============================================================
+   RENDERING
+   ============================================================ */
+const codeEl   = document.getElementById('code');
+const stackEl  = document.getElementById('stack');
+const spPtr    = document.getElementById('spPtr');
+const bpPtr    = document.getElementById('bpPtr');
+const descEl   = document.getElementById('desc');
+const stepInfo = document.getElementById('stepInfo');
+const progBar  = document.getElementById('progBar');
+
+// Build code lines
+codeEl.innerHTML = srcLines.map((l,i) => `<div class="line" data-i="${i}">${l[0]||'&nbsp;'}</div>`).join('');
+
+const ITEM_H = 50;   // height + gap
+const BASE_PAD = 10; // bottom padding inside stack
+
+function render(idx) {
+  const s = STEPS[idx];
+
+  // Code highlight
+  document.querySelectorAll('.code .line').forEach(el => {
+    el.classList.toggle('active', +el.dataset.i === s.activeLine);
+  });
+
+  // Clear existing stack items (but keep pointers)
+  stackEl.querySelectorAll('.stack-item, .offset-label').forEach(e => e.remove());
+
+  // Render stack items
+  s.stack.forEach((item, i) => {
+    const el = document.createElement('div');
+    el.className = `stack-item ${item.cls}`;
+    el.innerHTML = `<span class="tag">${item.tag}</span><span class="val">${item.value}</span>`;
+    if (item.hl) {
+      el.style.boxShadow = '0 0 0 2px #fbbf24, 0 4px 12px rgba(251,191,36,0.4)';
+    }
+    el.style.bottom = (BASE_PAD + i * ITEM_H) + 'px';
+    stackEl.appendChild(el);
+    // trigger transition
+    requestAnimationFrame(() => el.classList.add('visible'));
+
+    // Offset label (only shown when BP is anchored)
+    if (item.offset && s.bp !== null) {
+      const ol = document.createElement('div');
+      ol.className = 'offset-label';
+      ol.textContent = item.offset;
+      ol.style.bottom = (BASE_PAD + i * ITEM_H + 15) + 'px';
+      stackEl.appendChild(ol);
+      requestAnimationFrame(() => ol.classList.add('visible'));
+    }
+  });
+
+  // SP pointer
+  if (s.sp !== null && s.stack.length > 0) {
+    spPtr.style.bottom = (BASE_PAD + s.sp * ITEM_H + 15) + 'px';
+    spPtr.classList.add('visible');
+  } else {
+    spPtr.classList.remove('visible');
+  }
+
+  // BP pointer
+  if (s.bp !== null && s.stack.length > 0) {
+    bpPtr.style.bottom = (BASE_PAD + s.bp * ITEM_H + 15) + 'px';
+    bpPtr.classList.add('visible');
+  } else {
+    bpPtr.classList.remove('visible');
+  }
+
+  // Registers
+  document.getElementById('rAX').textContent = s.regs.AX;
+  document.getElementById('rBP').textContent = s.regs.BP;
+  document.getElementById('rSP').textContent = s.regs.SP;
+  document.getElementById('rDS').textContent = s.regs.DS;
+
+  // Description
+  descEl.innerHTML = s.desc;
+
+  // Step info
+  stepInfo.textContent = `Step ${idx} / ${STEPS.length - 1}`;
+  progBar.style.width = (idx / (STEPS.length - 1) * 100) + '%';
+
+  // Button states
+  document.getElementById('prevBtn').disabled = idx === 0;
+  document.getElementById('nextBtn').disabled = idx === STEPS.length - 1;
+}
+
+/* ============================================================
+   CONTROLS
+   ============================================================ */
+let current = 0;
+let playTimer = null;
+
+function go(i) {
+  current = Math.max(0, Math.min(STEPS.length - 1, i));
+  render(current);
+}
+
+document.getElementById('prevBtn').onclick = () => { stopPlay(); go(current - 1); };
+document.getElementById('nextBtn').onclick = () => { stopPlay(); go(current + 1); };
+document.getElementById('playBtn').onclick = () => {
+  if (playTimer) { stopPlay(); return; }
+  document.getElementById('playBtn').textContent = '⏸ PAUSE';
+  if (current === STEPS.length - 1) go(0);
+  playTimer = setInterval(() => {
+    if (current >= STEPS.length - 1) { stopPlay(); return; }
+    go(current + 1);
+  }, 1600);
+};
+function stopPlay() {
+  clearInterval(playTimer);
+  playTimer = null;
+  document.getElementById('playBtn').textContent = '▶ PLAY';
+}
+
+// Keyboard
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight') { stopPlay(); go(current + 1); }
+  if (e.key === 'ArrowLeft')  { stopPlay(); go(current - 1); }
+  if (e.key === ' ') { e.preventDefault(); document.getElementById('playBtn').click(); }
+});
+
+// Initial render
+go(0);
+</script>
+</body>
+</html>

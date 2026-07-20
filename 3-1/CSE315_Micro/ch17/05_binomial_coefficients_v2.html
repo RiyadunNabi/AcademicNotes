@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>BINOMIAL_COEFFICIENTS — Recursive Animation</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Consolas', 'Courier New', monospace;
+    background: radial-gradient(ellipse at top, #0f1729 0%, #05070d 100%);
+    color: #e6edf3;
+    min-height: 100vh;
+    padding: 20px;
+  }
+  h1 {
+    text-align: center;
+    font-size: 26px;
+    letter-spacing: 4px;
+    margin-bottom: 20px;
+    color: #7dd3fc;
+    text-shadow: 0 0 20px rgba(125,211,252,0.5);
+  }
+  .container {
+    display: grid;
+    grid-template-columns: 1fr 1fr 280px;
+    gap: 20px;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+  .panel {
+    background: rgba(15, 23, 42, 0.7);
+    border: 1px solid #1e293b;
+    border-radius: 10px;
+    padding: 16px;
+    backdrop-filter: blur(10px);
+  }
+  .panel h2 {
+    font-size: 13px;
+    letter-spacing: 2px;
+    color: #94a3b8;
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #1e293b;
+  }
+
+  .code {
+    font-size: 11.5px;
+    line-height: 1.55;
+    white-space: pre;
+    overflow-x: auto;
+    max-height: 620px;
+    overflow-y: auto;
+  }
+  .code .line {
+    padding: 2px 8px;
+    border-radius: 4px;
+    transition: background 0.3s;
+  }
+  .code .line.active {
+    background: rgba(250, 204, 21, 0.15);
+    border-left: 3px solid #facc15;
+    padding-left: 5px;
+  }
+  .kw  { color: #f472b6; }
+  .reg { color: #7dd3fc; }
+  .num { color: #fbbf24; }
+  .lbl { color: #a78bfa; }
+  .cmt { color: #64748b; font-style: italic; }
+  .str { color: #86efac; }
+
+  .stack-wrap {
+    position: relative;
+    height: 620px;
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    padding-bottom: 10px;
+  }
+  .stack {
+    position: relative;
+    width: 240px;
+    height: 100%;
+    border-left: 2px solid #334155;
+    border-right: 2px solid #334155;
+    border-bottom: 2px solid #334155;
+    border-radius: 0 0 6px 6px;
+    background: linear-gradient(to top, rgba(30,41,59,0.3), transparent);
+  }
+  .stack-item {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 200px;
+    height: 38px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 10px;
+    font-weight: bold;
+    font-size: 11px;
+    transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+    opacity: 0;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+    border: 1px solid rgba(255,255,255,0.1);
+  }
+  .stack-item.visible { opacity: 1; }
+  .stack-item .val { font-family: monospace; }
+  .stack-item .tag { font-size: 9px; opacity: 0.9; letter-spacing: 1px; }
+
+  .c-f1  { background: linear-gradient(135deg, #0891b2, #0e7490); color: #fff; }
+  .c-f2  { background: linear-gradient(135deg, #9333ea, #7e22ce); color: #fff; }
+  .c-f3  { background: linear-gradient(135deg, #059669, #047857); color: #fff; }
+  .c-f4  { background: linear-gradient(135deg, #dc2626, #b91c1c); color: #fff; }
+  .c-f5  { background: linear-gradient(135deg, #ea580c, #c2410c); color: #fff; }
+
+  .pointer {
+    position: absolute;
+    right: -70px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 12px;
+    font-weight: bold;
+    transition: bottom 0.5s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.3s;
+    opacity: 0;
+  }
+  .pointer.visible { opacity: 1; }
+  .pointer::before {
+    content: '';
+    width: 0; height: 0;
+    border-top: 6px solid transparent;
+    border-bottom: 6px solid transparent;
+    border-right: 10px solid currentColor;
+  }
+  .sp-ptr { color: #22c55e; }
+  .bp-ptr { color: #facc15; }
+
+  .offset-label {
+    position: absolute;
+    left: -75px;
+    font-size: 10px;
+    color: #cbd5e1;
+    transition: bottom 0.5s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.3s;
+    opacity: 0;
+    font-family: monospace;
+    background: rgba(15,23,42,0.8);
+    padding: 2px 5px;
+    border-radius: 3px;
+    border: 1px solid #334155;
+  }
+  .offset-label.visible { opacity: 1; }
+  .offset-label.hl {
+    color: #fbbf24;
+    border-color: #fbbf24;
+    box-shadow: 0 0 8px rgba(251,191,36,0.4);
+  }
+
+  .frame-badge {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-size: 10px;
+    font-weight: bold;
+    letter-spacing: 1px;
+    transition: all 0.3s;
+    opacity: 0;
+  }
+  .frame-badge.visible { opacity: 1; }
+  .fb-f1 { background: #0891b2; color: #fff; }
+  .fb-f2 { background: #9333ea; color: #fff; }
+  .fb-f3 { background: #059669; color: #fff; }
+  .fb-f4 { background: #dc2626; color: #fff; }
+  .fb-f5 { background: #ea580c; color: #fff; }
+  .fb-main { background: #64748b; color: #fff; }
+
+  .regs { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; margin-bottom: 12px; }
+  .reg-box {
+    background: #0f172a;
+    border: 1px solid #1e293b;
+    border-radius: 6px;
+    padding: 5px 7px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .reg-box .rn { color: #7dd3fc; font-size: 10px; font-weight: bold; }
+  .reg-box .rv { color: #fbbf24; font-size: 11px; font-family: monospace; }
+
+  .desc {
+    padding: 10px;
+    background: rgba(125, 211, 252, 0.08);
+    border-left: 3px solid #7dd3fc;
+    border-radius: 4px;
+    font-size: 10.5px;
+    line-height: 1.5;
+    color: #cbd5e1;
+    min-height: 100px;
+  }
+  .desc strong { color: #7dd3fc; }
+  .desc .res { color: #fbbf24; font-weight: bold; }
+
+  .controls {
+    grid-column: 1 / -1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    padding: 14px;
+  }
+  .btn {
+    background: linear-gradient(135deg, #1e293b, #0f172a);
+    color: #e6edf3;
+    border: 1px solid #334155;
+    padding: 10px 20px;
+    border-radius: 6px;
+    font-family: inherit;
+    font-size: 13px;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: all 0.2s;
+    min-width: 90px;
+  }
+  .btn:hover:not(:disabled) {
+    background: linear-gradient(135deg, #334155, #1e293b);
+    border-color: #7dd3fc;
+    transform: translateY(-1px);
+  }
+  .btn:disabled { opacity: 0.3; cursor: not-allowed; }
+  .btn.play { background: linear-gradient(135deg, #059669, #047857); border-color: #10b981; }
+  .btn.play:hover:not(:disabled) { background: linear-gradient(135deg, #10b981, #059669); }
+  .step-info {
+    color: #94a3b8;
+    font-size: 13px;
+    min-width: 140px;
+    text-align: center;
+  }
+  .progress {
+    flex: 1;
+    max-width: 300px;
+    height: 4px;
+    background: #1e293b;
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, #7dd3fc, #a78bfa);
+    transition: width 0.4s;
+  }
+</style>
+</head>
+<body>
+
+<h1>⟦ BINOMIAL_COEFFICIENTS ⟧ — RECURSIVE ANIMATION</h1>
+
+<div class="container">
+
+  <div class="panel">
+    <h2>▸ SOURCE CODE</h2>
+    <div class="code" id="code"></div>
+  </div>
+
+  <div class="panel">
+    <h2>▸ STACK (grows UPWARD ↑)</h2>
+    <div class="stack-wrap">
+      <div class="stack" id="stack">
+        <div class="frame-badge" id="frameBadge">MAIN</div>
+        <div class="pointer sp-ptr" id="spPtr">SP</div>
+        <div class="pointer bp-ptr" id="bpPtr">BP</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h2>▸ REGISTERS</h2>
+    <div class="regs">
+      <div class="reg-box"><span class="rn">AX</span><span class="rv" id="rAX">????</span></div>
+      <div class="reg-box"><span class="rn">BX</span><span class="rv" id="rBX">????</span></div>
+      <div class="reg-box"><span class="rn">CX</span><span class="rv" id="rCX">????</span></div>
+      <div class="reg-box"><span class="rn">BP</span><span class="rv" id="rBP">????</span></div>
+      <div class="reg-box"><span class="rn">SP</span><span class="rv" id="rSP">FFFE</span></div>
+    </div>
+
+    <div class="desc" id="desc">Press <strong>NEXT</strong> or <strong>PLAY</strong> to compute C(3,2).</div>
+  </div>
+
+  <div class="panel controls">
+    <button class="btn" id="prevBtn">◀ PREV</button>
+    <button class="btn play" id="playBtn">▶ PLAY</button>
+    <button class="btn" id="nextBtn">NEXT ▶</button>
+    <div class="progress"><div class="progress-bar" id="progBar"></div></div>
+    <div class="step-info" id="stepInfo">Step 0 / 0</div>
+  </div>
+
+</div>
+
+<script>
+const srcLines = [
+  ['<span class="kw">TITLE</span> BINOMIAL_COEFFICIENTS'],
+  ['<span class="kw">.MODEL</span> SMALL'],
+  ['<span class="kw">.STACK</span> 100H'],
+  [''],
+  ['<span class="kw">.CODE</span>'],
+  [''],
+  ['<span class="lbl">MAIN</span> <span class="kw">PROC</span>'],
+  ['    <span class="kw">MOV</span> <span class="reg">AX</span>, <span class="num">2</span>'],
+  ['    <span class="kw">PUSH</span> <span class="reg">AX</span>'],
+  [''],
+  ['    <span class="kw">MOV</span> <span class="reg">AX</span>, <span class="num">3</span>'],
+  ['    <span class="kw">PUSH</span> <span class="reg">AX</span>'],
+  [''],
+  ['    <span class="kw">CALL</span> <span class="lbl">BINOMIAL</span>'],
+  [''],
+  ['    <span class="kw">MOV</span> <span class="reg">AH</span>, <span class="num">4CH</span>'],
+  ['    <span class="kw">INT</span> <span class="num">21H</span>'],
+  ['<span class="lbl">MAIN</span> <span class="kw">ENDP</span>'],
+  [''],
+  ['<span class="lbl">BINOMIAL</span> <span class="kw">PROC</span> <span class="kw">NEAR</span>'],
+  ['    <span class="kw">PUSH</span> <span class="reg">BP</span>'],
+  ['    <span class="kw">MOV</span> <span class="reg">BP</span>, <span class="reg">SP</span>'],
+  [''],
+  ['    <span class="kw">MOV</span> <span class="reg">AX</span>, [<span class="reg">BP</span>+<span class="num">6</span>]'],
+  ['    <span class="kw">CMP</span> <span class="reg">AX</span>, [<span class="reg">BP</span>+<span class="num">4</span>]'],
+  ['    <span class="kw">JE</span> <span class="lbl">BASE</span>'],
+  [''],
+  ['    <span class="kw">CMP</span> <span class="reg">AX</span>, <span class="num">0</span>'],
+  ['    <span class="kw">JE</span> <span class="lbl">BASE</span>'],
+  [''],
+  ['    <span class="kw">PUSH</span> [<span class="reg">BP</span>+<span class="num">6</span>]'],
+  [''],
+  ['    <span class="kw">MOV</span> <span class="reg">CX</span>, [<span class="reg">BP</span>+<span class="num">4</span>]'],
+  ['    <span class="kw">DEC</span> <span class="reg">CX</span>'],
+  ['    <span class="kw">PUSH</span> <span class="reg">CX</span>'],
+  ['    <span class="kw">CALL</span> <span class="lbl">BINOMIAL</span>'],
+  [''],
+  ['    <span class="kw">PUSH</span> <span class="reg">AX</span>'],
+  [''],
+  ['    <span class="kw">MOV</span> <span class="reg">CX</span>, [<span class="reg">BP</span>+<span class="num">6</span>]'],
+  ['    <span class="kw">DEC</span> <span class="reg">CX</span>'],
+  ['    <span class="kw">PUSH</span> <span class="reg">CX</span>'],
+  [''],
+  ['    <span class="kw">MOV</span> <span class="reg">CX</span>, [<span class="reg">BP</span>+<span class="num">4</span>]'],
+  ['    <span class="kw">DEC</span> <span class="reg">CX</span>'],
+  ['    <span class="kw">PUSH</span> <span class="reg">CX</span>'],
+  ['    <span class="kw">CALL</span> <span class="lbl">BINOMIAL</span>'],
+  [''],
+  ['    <span class="kw">POP</span> <span class="reg">BX</span>'],
+  ['    <span class="kw">ADD</span> <span class="reg">AX</span>, <span class="reg">BX</span>'],
+  ['    <span class="kw">JMP</span> <span class="lbl">DONE</span>'],
+  [''],
+  ['<span class="lbl">BASE</span>:'],
+  ['    <span class="kw">MOV</span> <span class="reg">AX</span>, <span class="num">1</span>'],
+  [''],
+  ['<span class="lbl">DONE</span>:'],
+  ['    <span class="kw">POP</span> <span class="reg">BP</span>'],
+  ['    <span class="kw">RET</span> <span class="num">4</span>'],
+  ['<span class="lbl">BINOMIAL</span> <span class="kw">ENDP</span>'],
+  [''],
+  ['<span class="kw">END</span> <span class="lbl">MAIN</span>'],
+];
+
+const STEPS = [
+  { activeLine: 7, frame: 'MAIN', stack: [], sp: null, bp: null, regs: { AX:'????', BX:'????', CX:'????', BP:'????', SP:'FFFE' }, desc: 'Initial state. About to compute C(3,2) = 3.' },
+  { activeLine: 7, frame: 'MAIN', stack: [], sp: null, bp: null, regs: { AX:'0002', BX:'????', CX:'????', BP:'????', SP:'FFFE' }, desc: '<strong>MOV AX, 2</strong> — first parameter.' },
+  { activeLine: 8, frame: 'MAIN', stack: [{id:'p1', value:'0002', tag:'param1', cls:'c-f1', offset:null}], sp: 0, bp: null, regs: { AX:'0002', BX:'????', CX:'????', BP:'????', SP:'FFFC' }, desc: '<strong>PUSH AX</strong> — push 2.' },
+  { activeLine: 10, frame: 'MAIN', stack: [{id:'p1', value:'0002', tag:'param1', cls:'c-f1', offset:null}], sp: 0, bp: null, regs: { AX:'0003', BX:'????', CX:'????', BP:'????', SP:'FFFC' }, desc: '<strong>MOV AX, 3</strong> — second parameter.' },
+  { activeLine: 11, frame: 'MAIN', stack: [{id:'p1', value:'0002', tag:'param1', cls:'c-f1', offset:null}, {id:'p2', value:'0003', tag:'param2', cls:'c-f1', offset:null}], sp: 1, bp: null, regs: { AX:'0003', BX:'????', CX:'????', BP:'????', SP:'FFFA' }, desc: '<strong>PUSH AX</strong> — push 3. Stack: [3, 2].' },
+  { activeLine: 13, frame: 'F1', stack: [{id:'p1', value:'0002', tag:'k=2', cls:'c-f1', offset:null}, {id:'p2', value:'0003', tag:'n=3', cls:'c-f1', offset:null}, {id:'r1', value:'RET1', tag:'return', cls:'c-f1', offset:null}], sp: 2, bp: null, regs: { AX:'0003', BX:'????', CX:'????', BP:'????', SP:'FFF8' }, desc: '<strong>CALL BINOMIAL</strong> — push return addr. <em>Frame 1 begins.</em>' },
+  { activeLine: 20, frame: 'F1', stack: [{id:'p1', value:'0002', tag:'k=2', cls:'c-f1', offset:null}, {id:'p2', value:'0003', tag:'n=3', cls:'c-f1', offset:null}, {id:'r1', value:'RET1', tag:'return', cls:'c-f1', offset:null}, {id:'b1', value:'oldBP', tag:'saved BP', cls:'c-f1', offset:null}], sp: 3, bp: null, regs: { AX:'0003', BX:'????', CX:'????', BP:'????', SP:'FFF6' }, desc: '<strong>PUSH BP</strong> — save caller\'s BP.' },
+  { activeLine: 21, frame: 'F1', stack: [{id:'p1', value:'0002', tag:'k=2', cls:'c-f1', offset:'[BP+6]'}, {id:'p2', value:'0003', tag:'n=3', cls:'c-f1', offset:'[BP+4]'}, {id:'r1', value:'RET1', tag:'return', cls:'c-f1', offset:'[BP+2]'}, {id:'b1', value:'oldBP', tag:'saved BP', cls:'c-f1', offset:'[BP+0]'}], sp: 3, bp: 3, regs: { AX:'0003', BX:'????', CX:'????', BP:'FFF6', SP:'FFF6' }, desc: '<strong>MOV BP, SP</strong> — BP anchored. [BP+4]=3 (n), [BP+6]=2 (k).' },
+  { activeLine: 23, frame: 'F1', stack: [{id:'p1', value:'0002', tag:'k=2', cls:'c-f1', offset:'[BP+6]', hl:true}, {id:'p2', value:'0003', tag:'n=3', cls:'c-f1', offset:'[BP+4]'}, {id:'r1', value:'RET1', tag:'return', cls:'c-f1', offset:'[BP+2]'}, {id:'b1', value:'oldBP', tag:'saved BP', cls:'c-f1', offset:'[BP+0]'}], sp: 3, bp: 3, regs: { AX:'0002', BX:'????', CX:'????', BP:'FFF6', SP:'FFF6' }, desc: '<strong>MOV AX, [BP+6]</strong> — AX = k = 2.' },
+  { activeLine: 24, frame: 'F1', stack: [{id:'p1', value:'0002', tag:'k=2', cls:'c-f1', offset:'[BP+6]', hl:true}, {id:'p2', value:'0003', tag:'n=3', cls:'c-f1', offset:'[BP+4]', hl:true}, {id:'r1', value:'RET1', tag:'return', cls:'c-f1', offset:'[BP+2]'}, {id:'b1', value:'oldBP', tag:'saved BP', cls:'c-f1', offset:'[BP+0]'}], sp: 3, bp: 3, regs: { AX:'0002', BX:'????', CX:'????', BP:'FFF6', SP:'FFF6' }, desc: '<strong>CMP AX, [BP+4]</strong> — compare k=2 with n=3. Not equal.' },
+  { activeLine: 25, frame: 'F1', stack: [{id:'p1', value:'0002', tag:'k=2', cls:'c-f1', offset:'[BP+6]'}, {id:'p2', value:'0003', tag:'n=3', cls:'c-f1', offset:'[BP+4]'}, {id:'r1', value:'RET1', tag:'return', cls:'c-f1', offset:'[BP+2]'}, {id:'b1', value:'oldBP', tag:'saved BP', cls:'c-f1', offset:'[BP+0]'}], sp: 3, bp: 3, regs: { AX:'0002', BX:'????', CX:'????', BP:'FFF6', SP:'FFF6' }, desc: '<strong>JE BASE</strong> — not taken (2 != 3).' },
+  { activeLine: 27, frame: 'F1', stack: [{id:'p1', value:'0002', tag:'k=2', cls:'c-f1', offset:'[BP+6]'}, {id:'p2', value:'0003', tag:'n=3', cls:'c-f1', offset:'[BP+4]'}, {id:'r1', value:'RET1', tag:'return', cls:'c-f1', offset:'[BP+2]'}, {id:'b1', value:'oldBP', tag:'saved BP', cls:'c-f1', offset:'[BP+0]'}], sp: 3, bp: 3, regs: { AX:'0002', BX:'????', CX:'????', BP:'FFF6', SP:'FFF6' }, desc: '<strong>CMP AX, 0</strong> — compare k=2 with 0. Not equal.' },
+  { activeLine: 28, frame: 'F1', stack: [{id:'p1', value:'0002', tag:'k=2', cls:'c-f1', offset:'[BP+6]'}, {id:'p2', value:'0003', tag:'n=3', cls:'c-f1', offset:'[BP+4]'}, {id:'r1', value:'RET1', tag:'return', cls:'c-f1', offset:'[BP+2]'}, {id:'b1', value:'oldBP', tag:'saved BP', cls:'c-f1', offset:'[BP+0]'}], sp: 3, bp: 3, regs: { AX:'0002', BX:'????', CX:'????', BP:'FFF6', SP:'FFF6' }, desc: '<strong>JE BASE</strong> — not taken (2 != 0). Recursive case.' },
+  { activeLine: 30, frame: 'F1', stack: [{id:'p1', value:'0002', tag:'k=2', cls:'c-f1', offset:'[BP+6]'}, {id:'p2', value:'0003', tag:'n=3', cls:'c-f1', offset:'[BP+4]'}, {id:'r1', value:'RET1', tag:'return', cls:'c-f1', offset:'[BP+2]'}, {id:'b1', value:'oldBP', tag:'saved BP', cls:'c-f1', offset:'[BP+0]'}, {id:'p3', value:'0002', tag:'n=2', cls:'c-f2', offset:null}], sp: 4, bp: 3, regs: { AX:'0002', BX:'????', CX:'????', BP:'FFF6', SP:'FFF4' }, desc: '<strong>PUSH [BP+6]</strong> — push n=2 for first recursive call.' },
+  { activeLine: 32, frame: 'F1', stack: [{id:'p1', value:'0002', tag:'k=2', cls:'c-f1', offset:'[BP+6]'}, {id:'p2', value:'0003', tag:'n=3', cls:'c-f1', offset:'[BP+4]'}, {id:'r1', value:'RET1', tag:'return', cls:'c-f1', offset:'[BP+2]'}, {id:'b1', value:'oldBP', tag:'saved BP', cls:'c-f1', offset:'[BP+0]'}, {id:'p3', value:'0002', tag:'n=2', cls:'c-f2', offset:null}], sp: 4, bp: 3, regs: { AX:'0002', BX:'????', CX:'0003', BP:'FFF6', SP:'FFF4' }, desc: '<strong>MOV CX, [BP+4]</strong> — CX = n = 3.' },
+  { activeLine: 33, frame: 'F1', stack: [{id:'p1', value:'0002', tag:'k=2', cls:'c-f1', offset:'[BP+6]'}, {id:'p2', value:'0003', tag:'n=3', cls:'c-f1', offset:'[BP+4]'}, {id:'r1', value:'RET1', tag:'return', cls:'c-f1', offset:'[BP+2]'}, {id:'b1', value:'oldBP', tag:'saved BP', cls:'c-f1', offset:'[BP+0]'}, {id:'p3', value:'0002', tag:'n=2', cls:'c-f2', offset:null}], sp: 4, bp: 3, regs: { AX:'0002', BX:'????', CX:'0002', BP:'FFF6', SP:'FFF4' }, desc: '<strong>DEC CX</strong> — CX = 2.' },
+  { activeLine: 34, frame: 'F1', stack: [{id:'p1', value:'0002', tag:'k=2', cls:'c-f1', offset:'[BP+6]'}, {id:'p2', value:'0003', tag:'n=3', cls:'c-f1', offset:'[BP+4]'}, {id:'r1', value:'RET1', tag:'return', cls:'c-f1', offset:'[BP+2]'}, {id:'b1', value:'oldBP', tag:'saved BP', cls:'c-f1', offset:'[BP+0]'}, {id:'p3', value:'0002', tag:'n=2', cls:'c-f2', offset:null}, {id:'p4', value:'0002', tag:'k=2', cls:'c-f2', offset:null}], sp: 5, bp: 3, regs: { AX:'0002', BX:'????', CX:'0002', BP:'FFF6', SP:'FFF2' }, desc: '<strong>PUSH CX</strong> — push k=2.' },
+  { activeLine: 35, frame: 'F2', stack: [{id:'p1', value:'0002', tag:'k=2', cls:'c-f1', offset:null}, {id:'p2', value:'0003', tag:'n=3', cls:'c-f1', offset:null}, {id:'r1', value:'RET1', tag:'return', cls:'c-f1', offset:null}, {id:'b1', value:'oldBP', tag:'saved BP', cls:'c-f1', offset:null}, {id:'p3', value:'0002', tag:'n=2', cls:'c-f2', offset:null}, {id:'p4', value:'0002', tag:'k=2', cls:'c-f2', offset:null}, {id:'r2', value:'RET2', tag:'return', cls:'c-f2', offset:null}], sp: 6, bp: 3, regs: { AX:'0002', BX:'????', CX:'0002', BP:'FFF6', SP:'FFF0' }, desc: '<strong>CALL BINOMIAL</strong> — C(2,2). <em>Frame 2 begins.</em>' },
+  { activeLine: 20, frame: 'F2', stack: [{id:'p1', value:'0002', tag:'k=2', cls:'c-f1', offset:null}, {id:'p2', value:'0003', tag:'n=3', cls:'c-f1', offset:null}, {id:'r1', value:'RET1', tag:'return', cls:'c-f1', offset:null}, {id:'b1', value:'oldBP', tag:'saved BP', cls:'c-f1', offset:null}, {id:'p3', value:'0002', tag:'n=2', cls:'c-f2', offset:null}, {id:'p4', value:'0002', tag:'k=2', cls:'c-f2', offset:null}, {id:'r2', value:'RET2', tag:'return', cls:'c-f2', offset:null}, {id:'b2', value:'FFF6', tag:'saved BP', cls:'c-f2', offset:null}], sp: 7, bp: 3, regs: { AX:'0002', BX:'????', CX:'0002', BP:'FFF6', SP:'FFEE' }, desc: '<strong>PUSH BP</strong> — save frame 1\'s BP.' },
+  { activeLine: 21, frame: 'F2', stack: [{id:'p1', value:'0002', tag:'k=2', cls:'c-f1', offset:null}, {id:'p2', value:'0003', tag:'n=3', cls:'c-f1', offset:null}, {id:'r1', value:'RET1', tag:'return', cls:'c-f1', offset:null}, {id:'b1', value:'oldBP', tag:'saved BP', cls:'c-f1', offset:null}, {id:'p3', value:'0002', tag:'n=2', cls:'c-f2', offset:'[BP+6]'}, {id:'p4', value:'0002', tag:'k=2', cls:'c-f2', offset:'[BP+4]'}, {id:'r2', value:'RET2', tag:'return', cls:'c-f2', offset:'[BP+2]'}, {id:'b2', value:'FFF6', tag:'saved BP', cls:'c-f2', offset:'[BP+0]'}], sp: 7, bp: 7, regs: { AX:'0002', BX:'????', CX:'0002', BP:'FFEE', SP:'FFEE' }, desc: '<strong>MOV BP, SP</strong> — BP anchored. [BP+4]=2 (n), [BP+6]=2 (k).' },
+  { activeLine: 23, frame: 'F2', stack: [{id:'p1', value:'0002', tag:'k=2', cls:'c-f1', offset:null}, {id:'p2', value:'0003', tag:'n=3', cls:'c-f1', offset:null}, {id:'r1', value:'RET1', tag:'return', cls:'c-f1', offset:null}, {id:'b1', value:'oldBP', tag:'saved BP', cls:'c-f1', offset:null}, {id:'p3', value:'0002', tag:'n=2', cls:'c-f2', offset:'[BP+6]', hl:true}, {id:'p4', value:'0002', tag:'k=2', cls:'c-f2', offset:'[BP+4]'}, {id:'r2', value:'RET2', tag:'return', cls:'c-f2', offset:'[BP+2]'}, {id:'b2', value:'FFF6', tag:'saved BP', cls:'c-f2', offset:'[BP+0]'}], sp: 7, bp: 7, regs: { AX:'0002', BX:'????', CX:'0002', BP:'FFEE', SP:'FFEE' }, desc: '<strong>MOV AX, [BP+6]</strong> — AX = k = 2.' },
+  { activeLine: 24, frame: 'F2', stack: [{id:'p1', value:'0002', tag:'k=2', cls:'c-f1', offset:null}, {id:'p2', value:'0003', tag:'n=3', cls:'c-f1', offset:null}, {id:'r1', value:'RET1', tag:'return', cls:'c-f1', offset:null}, {id:'b1', value:'oldBP', tag:'saved BP', cls:'c-f1', offset:null}, {id:'p3', value:'0002', tag:'n=2', cls:'c-f2', offset:'[BP+6]', hl:true}, {id:'p4', value:'0002', tag:'k=2', cls:'c-f2', offset:'[BP+4]', hl:true}, {id:'r2', value:'RET2', tag:'return', cls:'c-f2', offset:'[BP+2]'}, {id:'b2', value:'FFF6', tag:'saved BP', cls:'c-f2', offset:'[BP+0]'}], sp: 7, bp: 7, regs: { AX:'0002', BX:'????', CX:'0002', BP:'FFEE', SP:'FFEE' }, desc: '<strong>CMP AX, [BP+4]</strong> — k=2 == n=2. <em>BASE CASE!</em>' },
+  { activeLine: 25, frame: 'F2', stack: [{id:'p1', value:'0002', tag:'k=2', cls:'c-f1', offset:null}, {id:'p2', value:'0003', tag:'n=3', cls:'c-f1', offset:null}, {id:'r1', value:'RET1', tag:'return', cls:'c-f1', offset:null}, {id:'b1', value:'oldBP', tag:'saved BP', cls:'c-f1', offset:null}, {id:'p3', value:'0002', tag:'n=2', cls:'c-f2', offset:'[BP+6]'}, {id:'p4', value:'0002', tag:'k=2', cls:'c-f2', offset:'[BP+4]'}, {id:'r2', value:'RET2', tag:'return', cls:'c-f2', offset:'[BP+2]'}, {id:'b2', value:'FFF6', tag:'saved BP', cls:'c-f2', offset:'[BP+0]'}], sp: 7, bp: 7, regs: { AX:'0002', BX:'????', CX:'0002', BP:'FFEE', SP:'FFEE' }, desc: '<strong>JE BASE</strong> — taken! Jump to base case.' },
+  { activeLine: 49, frame: 'F2', stack: [{id:'p1', value:'0002', tag:'k=2', cls:'c-f1', offset:null}, {id:'p2', value:'0003', tag:'n=3', cls:'c-f1', offset:null}, {id:'r1', value:'RET1', tag:'return', cls:'c-f1', offset:null}, {id:'b1', value:'oldBP', tag:'saved BP', cls:'c-f1', offset:null}, {id:'p3', value:'0002', tag:'n=2', cls:'c-f2', offset:'[BP+6]'}, {id:'p4', value:'0002', tag:'k=2', cls:'c-f2', offset:'[BP+4]'}, {id:'r2', value:'RET2', tag:'return', cls:'c-f2', offset:'[BP+2]'}, {id:'b2', value:'FFF6', tag:'saved BP', cls:'c-f2', offset:'[BP+0]'}], sp: 7, bp: 7, regs: { AX:'0001', BX:'????', CX:'0002', BP:'FFEE', SP:'FFEE' }, desc: '<strong>MOV AX, 1</strong> — C(2,2) = <span class="res">1</span>.' },
+  { activeLine: 52, frame: 'F2', stack: [{id:'p1', value:'0002', tag:'k=2', cls:'c-f1', offset:null}, {id:'p2', value:'0003', tag:'n=3', cls:'c-f1', offset:null}, {id:'r1', value:'RET1', tag:'return', cls:'c-f1', offset:null}, {id:'b1', value:'oldBP', tag:'saved BP', cls:'c-f1', offset:null}, {id:'p3', value:'0002', tag:'n=2', cls:'c-f2', offset:null}, {id:'p4', value:'0002', tag:'k=2', cls:'c-f2', offset:null}, {id:'r2', value:'RET2', tag:'return', cls:'c-f2', offset:null}], sp: 6, bp: 3, regs: { AX:'0001', BX:'????', CX:'0002', BP:'FFF6', SP:'FFF2' }, desc: '<strong>POP BP + RET 4</strong> — frame 2 returns to frame 1. C(2,2)=1 in AX.' },
+  { activeLine: 37, frame: 'F1', stack: [{id:'p1', value:'0002', tag:'k=2', cls:'c-f1', offset:'[BP+6]'}, {id:'p2', value:'0003', tag:'n=3', cls:'c-f1', offset:'[BP+4]'}, {id:'r1', value:'RET1', tag:'return', cls:'c-f1', offset:'[BP+2]'}, {id:'b1', value:'oldBP', tag:'saved BP', cls:'c-f1', offset:'[BP+0]'}, {id:'s1', value:'0001', tag:'saved AX', cls:'c-f1', offset:null}], sp: 4, bp: 3, regs: { AX:'0001', BX:'????', CX:'0002', BP:'FFF6', SP:'FFF4' }, desc: '<strong>PUSH AX</strong> — save C(2,2)=1 on stack.' },
+  { activeLine: 39, frame: 'F1', stack: [{id:'p1', value:'0002', tag:'k=2', cls:'c-f1', offset:'[BP+6]'}, {id:'p2', value:'0003', tag:'n=3', cls:'c-f1', offset:'[BP+4]'}, {id:'r1', value:'RET1', tag:'return', cls:'c-f1', offset:'[BP+2]'}, {id:'b1', value:'oldBP', tag:'saved BP', cls:'c-f1', offset:'[BP+0]'}, {id:'s1', value:'0001', tag:'saved AX', cls:'c-f1', offset:null}, {id:'p5', value:'0001', tag:'n=1', cls:'c-f3', offset:null}], sp: 5, bp: 3, regs: { AX:'0001', BX:'????', CX:'0001', BP:'FFF6', SP:'FFF2' }, desc: '<strong>MOV CX, [BP+6]; DEC CX; PUSH CX</strong> — push n-1=1.' },
+  { activeLine: 43, frame: 'F1', stack: [{id:'p1', value:'0002', tag:'k=2', cls:'c-f1', offset:'[BP+6]'}, {id:'p2', value:'0003', tag:'n=3', cls:'c-f1', offset:'[BP+4]'}, {id:'r1', value:'RET1', tag:'return', cls:'c-f1', offset:'[BP+2]'}, {id:'b1', value:'oldBP', tag:'saved BP', cls:'c-f1', offset:'[BP+0]'}, {id:'s1', value:'0001', tag:'saved AX', cls:'c-f1', offset:null}, {id:'p5', value:'0001', tag:'n=1', cls:'c-f3', offset:null}, {id:'p6', value:'0002', tag:'k=2', cls:'c-f3', offset:null}], sp: 6, bp: 3, regs: { AX:'0001', BX:'????', CX:'0002', BP:'FFF6', SP:'FFF0' }, desc: '<strong>MOV CX, [BP+4]; DEC CX; PUSH CX</strong> — push k-1=2.' },
+  { activeLine: 45, frame: 'F3', stack: [{id:'p1', value:'0002', tag:'k=2', cls:'c-f1', offset:null}, {id:'p2', value:'0003', tag:'n=3', cls:'c-f1', offset:null}, {id:'r1', value:'RET1', tag:'return', cls:'c-f1', offset:null}, {id:'b1', value:'oldBP', tag:'saved BP', cls:'c-f1', offset:null}, {id:'s1', value:'0001', tag:'saved AX', cls:'c-f1', offset:null}, {id:'p5', value:'0001', tag:'n=1', cls:'c-f3', offset:null}, {id:'p6', value:'0002', tag:'k=2', cls:'c-f3', offset:null}, {id:'r3', value:'RET3', tag:'return', cls:'c-f3', offset:null}], sp: 7, bp: 3, regs: { AX:'0001', BX:'????', CX:'0002', BP:'FFF6', SP:'FFEE' }, desc: '<strong>CALL BINOMIAL</strong> — C(1,2). <em>Frame 3 begins.</em>' },
+  { activeLine: 20, frame: 'F3', stack: [{id:'p1', value:'0002', tag:'k=2', cls:'c-f1', offset:null}, {id:'p2', value:'0003', tag:'n=3', cls:'c-f1', offset:null}, {id:'r1', value:'RET1', tag:'return', cls:'c-f1', offset:null}, {id:'b1', value:'oldBP', tag:'saved BP', cls:'c-f1', offset:null}, {id:'s1', value:'0001', tag:'saved AX', cls:'c-f1', offset:null}, {id:'p5', value:'0001', tag:'n=1', cls:'c-f3', offset:null}, {id:'p6', value:'0002', tag:'k=2', cls:'c-f3', offset:null}, {id:'r3', value:'RET3', tag:'return', cls:'c-f3', offset:null}, {id:'b3', value:'FFF6', tag:'saved BP', cls:'c-f3', offset:null}], sp: 8, bp: 3, regs: { AX:'0001', BX:'????', CX:'0002', BP:'FFF6', SP:'FFEC' }, desc: '<strong>PUSH BP</strong> — save frame 1\'s BP.' },
+  { activeLine: 21, frame: 'F3', stack: [{id:'p1', value:'0002', tag:'k=2', cls:'c-f1', offset:null}, {id:'p2', value:'0003', tag:'n=3', cls:'c-f1', offset:null}, {id:'r1', value:'RET1', tag:'return', cls:'c-f1', offset:null}, {id:'b1', value:'oldBP', tag:'saved BP', cls:'c-f1', offset:null}, {id:'s1', value:'0001', tag:'saved AX', cls:'c-f1', offset:null}, {id:'p5', value:'0001', tag:'n=1', cls:'c-f3', offset:'[BP+6]'}, {id:'p6', value:'0002', tag:'k=2', cls:'c-f3', offset:'[BP+4]'}, {id:'r3', value:'RET3', tag:'return', cls:'c-f3', offset:'[BP+2]'}, {id:'b3', value:'FFF6', tag:'saved BP', cls:'c-f3', offset:'[BP+0]'}], sp: 8, bp: 8, regs: { AX:'0001', BX:'????', CX:'0002', BP:'FFEC', SP:'FFEC' }, desc: '<strong>MOV BP, SP</strong> — BP anchored. [BP+4]=2 (n), [BP+6]=1 (k).' },
+  { activeLine: 23, frame: 'F3', stack: [{id:'p1', value:'0002', tag:'k=2', cls:'c-f1', offset:null}, {id:'p2', value:'0003', tag:'n=3', cls:'c-f1', offset:null}, {id:'r1', value:'RET1', tag:'return', cls:'c-f1', offset:null}, {id:'b1', value:'oldBP', tag:'saved BP', cls:'c-f1', offset:null}, {id:'s1', value:'0001', tag:'saved AX', cls:'c-f1', offset:null}, {id:'p5', value:'0001', tag:'n=1', cls:'c-f3', offset:'[BP+6]', hl:true}, {id:'p6', value:'0002', tag:'k=2', cls:'c-f3', offset:'[BP+4]'}, {id:'r3', value:'RET3', tag:'return', cls:'c-f3', offset:'[BP+2]'}, {id:'b3', value:'FFF6', tag:'saved BP', cls:'c-f3', offset:'[BP+0]'}], sp: 8, bp: 8, regs: { AX:'0001', BX:'????', CX:'0002', BP:'FFEC', SP:'FFEC' }, desc: '<strong>MOV AX, [BP+6]</strong> — AX = k = 1.' },
+  { activeLine: 24, frame: 'F3', stack: [{id:'p1', value:'0002', tag:'k=2', cls:'c-f1', offset:null}, {id:'p2', value:'0003', tag:'n=3', cls:'c-f1', offset:null}, {id:'r1', value:'RET1', tag:'return', cls:'c-f1', offset:null}, {id:'b1', value:'oldBP', tag:'saved BP', cls:'c-f1', offset:null}, {id:'s1', value:'0001', tag:'saved AX', cls:'c-f1', offset:null}, {id:'p5', value:'0001', tag:'n=1', cls:'c-f3', offset:'[BP+6]', hl:true}, {id:'p6', value:'0002', tag:'k=2', cls:'c-f3', offset:'[BP+4]', hl:true}, {id:'r3', value:'RET3', tag:'return', cls:'c-f3', offset:'[BP+2]'}, {id:'b3', value:'FFF6', tag:'saved BP', cls:'c-f3', offset:'[BP+0]'}], sp: 8, bp: 8, regs: { AX:'0001', BX:'????', CX:'0002', BP:'FFEC', SP:'FFEC' }, desc: '<strong>CMP AX, [BP+4]</strong> — k=1 vs n=2. Not equal.' },
+  { activeLine: 25, frame: 'F3', stack: [{id:'p1', value:'0002', tag:'k=2', cls:'c-f1', offset:null}, {id:'p2', value:'0003', tag:'n=3', cls:'c-f1', offset:null}, {id:'r1', value:'RET1', tag:'return', cls:'c-f1', offset:null}, {id:'b1', value:'oldBP', tag:'saved BP', cls:'c-f1', offset:null}, {id:'s1', value:'0001', tag:'saved AX', cls:'c-f1', offset:null}, {id:'p5', value:'0001', tag:'n=1', cls:'c-f3', offset:'[BP+6]'}, {id:'p6', value:'0002', tag:'k=2', cls:'c-f3', offset:'[BP+4]'}, {id:'r3', value:'RET3', tag:'return', cls:'c-f3', offset:'[BP+2]'}, {id:'b3', value:'FFF6', tag:'saved BP', cls:'c-f3', offset:'[BP+0]'}], sp: 8, bp: 8, regs: { AX:'0001', BX:'????', CX:'0002', BP:'FFEC', SP:'FFEC' }, desc: '<strong>JE BASE</strong> — not taken.' },
+  { activeLine: 27, frame: 'F3', stack: [{id:'p1', value:'0002', tag:'k=2', cls:'c-f1', offset:null}, {id:'p2', value:'0003', tag:'n=3', cls:'c-f1', offset:null}, {id:'r1', value:'RET1', tag:'return', cls:'c-f1', offset:null}, {id:'b1', value:'oldBP', tag:'saved BP', cls:'c-f1', offset:null}, {id:'s1', value:'0001', tag:'saved AX', cls:'c-f1', offset:null}, {id:'p5', value:'0001', tag:'n=1', cls:'c-f3', offset:'[BP+6]'}, {id:'p6', value:'0002', tag:'k=2', cls:'c-f3', offset:'[BP+4]'}, {id:'r3', value:'RET3', tag:'return', cls:'c-f3', offset:'[BP+2]'}, {id:'b3', value:'FFF6', tag:'saved BP', cls:'c-f3', offset:'[BP+0]'}], sp: 8, bp: 8, regs: { AX:'0001', BX:'????', CX:'0002', BP:'FFEC', SP:'FFEC' }, desc: '<strong>CMP AX, 0</strong> — k=1 vs 0. Not equal.' },
+  { activeLine: 28, frame: 'F3', stack: [{id:'p1', value:'0002', tag:'k=2', cls:'c-f1', offset:null}, {id:'p2', value:'0003', tag:'n=3', cls:'c-f1', offset:null}, {id:'r1', value:'RET1', tag:'return', cls:'c-f1', offset:null}, {id:'b1', value:'oldBP', tag:'saved BP', cls:'c-f1', offset:null}, {id:'s1', value:'0001', tag:'saved AX', cls:'c-f1', offset:null}, {id:'p5', value:'0001', tag:'n=1', cls:'c-f3', offset:'[BP+6]'}, {id:'p6', value:'0002', tag:'k=2', cls:'c-f3', offset:'[BP+4]'}, {id:'r3', value:'RET3', tag:'return', cls:'c-f3', offset:'[BP+2]'}, {id:'b3', value:'FFF6', tag:'saved BP', cls:'c-f3', offset:'[BP+0]'}], sp: 8, bp: 8, regs: { AX:'0001', BX:'????', CX:'0002', BP:'FFEC', SP:'FFEC' }, desc: '<strong>JE BASE</strong> — not taken. Recursive case (k &gt; n, will recurse further).' },
+  { activeLine: 30, frame: 'F3', stack: [{id:'p1', value:'0002', tag:'k=2', cls:'c-f1', offset:null}, {id:'p2', value:'0003', tag:'n=3', cls:'c-f1', offset:null}, {id:'r1', value:'RET1', tag:'return', cls:'c-f1', offset:null}, {id:'b1', value:'oldBP', tag:'saved BP', cls:'c-f1', offset:null}, {id:'s1', value:'0001', tag:'saved AX', cls:'c-f1', offset:null}, {id:'p5', value:'0001', tag:'n=1', cls:'c-f3', offset:'[BP+6]'}, {id:'p6', value:'0002', tag:'k=2', cls:'c-f3', offset:'[BP+4]'}, {id:'r3', value:'RET3', tag:'return', cls:'c-f3', offset:'[BP+2]'}, {id:'b3', value:'FFF6', tag:'saved BP', cls:'c-f3', offset:'[BP+0]'}, {id:'p7', value:'0001', tag:'n=1', cls:'c-f4', offset:null}], sp: 9, bp: 8, regs: { AX:'0001', BX:'????', CX:'0001', BP:'FFEC', SP:'FFEA' }, desc: '<strong>PUSH [BP+6]</strong> — push n=1.' },
+  { activeLine: 34, frame: 'F3', stack: [{id:'p1', value:'0002', tag:'k=2', cls:'c-f1', offset:null}, {id:'p2', value:'0003', tag:'n=3', cls:'c-f1', offset:null}, {id:'r1', value:'RET1', tag:'return', cls:'c-f1', offset:null}, {id:'b1', value:'oldBP', tag:'saved BP', cls:'c-f1', offset:null}, {id:'s1', value:'0001', tag:'saved AX', cls:'c-f1', offset:null}, {id:'p5', value:'0001', tag:'n=1', cls:'c-f3', offset:'[BP+6]'}, {id:'p6', value:'0002', tag:'k=2', cls:'c-f3', offset:'[BP+4]'}, {id:'r3', value:'RET3', tag:'return', cls:'c-f3', offset:'[BP+2]'}, {id:'b3', value:'FFF6', tag:'saved BP', cls:'c-f3', offset:'[BP+0]'}, {id:'p7', value:'0001', tag:'n=1', cls:'c-f4', offset:null}, {id:'p8', value:'0001', tag:'k=1', cls:'c-f4', offset:null}], sp: 10, bp: 8, regs: { AX:'0001', BX:'????', CX:'0001', BP:'FFEC', SP:'FFE8' }, desc: '<strong>MOV CX, [BP+4]; DEC CX; PUSH CX</strong> — push k-1=1.' },
+  { activeLine: 35, frame: 'F4', stack: [{id:'p1', value:'0002', tag:'k=2', cls:'c-f1', offset:null}, {id:'p2', value:'0003', tag:'n=3', cls:'c-f1', offset:null}, {id:'r1', value:'RET1', tag:'return', cls:'c-f1', offset:null}, {id:'b1', value:'oldBP', tag:'saved BP', cls:'c-f1', offset:null}, {id:'s1', value:'0001', tag:'saved AX', cls:'c-f1', offset:null}, {id:'p5', value:'0001', tag:'n=1', cls:'c-f3', offset:null}, {id:'p6', value:'0002', tag:'k=2', cls:'c-f3', offset:null}, {id:'r3', value:'RET3', tag:'return', cls:'c-f3', offset:null}, {id:'b3', value:'FFF6', tag:'saved BP', cls:'c-f3', offset:null}, {id:'p7', value:'0001', tag:'n=1', cls:'c-f4', offset:null}, {id:'p8', value:'0001', tag:'k=1', cls:'c-f4', offset:null}, {id:'r4', value:'RET4', tag:'return', cls:'c-f4', offset:null}], sp: 11, bp: 8, regs: { AX:'0001', BX:'????', CX:'0001', BP:'FFEC', SP:'FFE6' }, desc: '<strong>CALL BINOMIAL</strong> — C(1,1). <em>Frame 4 begins.</em>' },
+  { activeLine: 20, frame: 'F4', stack: [{id:'p1', value:'0002', tag:'k=2', cls:'c-f1', offset:null}, {id:'p2', value:'0003', tag:'n=3', cls:'c-f1', offset:null}, {id:'r1', value:'RET1', tag:'return', cls:'c-f1', offset:null}, {id:'b1', value:'oldBP', tag:'saved BP', cls:'c-f1', offset:null}, {id:'s1', value:'0001', tag:'saved AX', cls:'c-f1', offset:null}, {id:'p5', value:'0001', tag:'n=1', cls:'c-f3', offset:null}, {id:'p6', value:'0002', tag:'k=2', cls:'c-f3', offset:null}, {id:'r3', value:'RET3', tag:'return', cls:'c-f3', offset:null}, {id:'b3', value:'FFF6', tag:'saved BP', cls:'c-f3', offset:null}, {id:'p7', value:'0001', tag:'n=1', cls:'c-f4', offset:null}, {id:'p8', value:'0001', tag:'k=1', cls:'c-f4', offset:null}, {id:'r4', value:'RET4', tag:'return', cls:'c-f4', offset:null}, {id:'b4', value:'FFEC', tag:'saved BP', cls:'c-f4', offset:null}], sp: 12, bp: 8, regs: { AX:'0001', BX:'????', CX:'0001', BP:'FFEC', SP:'FFE4' }, desc: '<strong>PUSH BP</strong> — save frame 3\'s BP.' },
+  { activeLine: 21, frame: 'F4', stack: [{id:'p1', value:'0002', tag:'k=2', cls:'c-f1', offset:null}, {id:'p2', value:'0003', tag:'n=3', cls:'c-f1', offset:null}, {id:'r1', value:'RET1', tag:'return', cls:'c-f1', offset:null}, {id:'b1', value:'oldBP', tag:'saved BP', cls:'c-f1', offset:null}, {id:'s1', value:'0001', tag:'saved AX', cls:'c-f1', offset:null}, {id:'p5', value:'0001', tag:'n=1', cls:'c-f3', offset:null}, {id:'p6', value:'0002', tag:'k=2', cls:'c-f3', offset:null}, {id:'r3', value:'RET3', tag:'return', cls:'c-f3', offset:null}, {id:'b3', value:'FFF6', tag:'saved BP', cls:'c-f3', offset:null}, {id:'p7', value:'0001', tag:'n=1', cls:'c-f4', offset:'[BP+6]'}, {id:'p8', value:'0001', tag:'k=1', cls:'c-f4', offset:'[BP+4]'}, {id:'r4', value:'RET4', tag:'return', cls:'c-f4', offset:'[BP+2]'}, {id:'b4', value:'FFEC', tag:'saved BP', cls:'c-f4', offset:'[BP+0]'}], sp: 12, bp: 12, regs: { AX:'0001', BX:'????', CX:'0001', BP:'FFE4', SP:'FFE4' }, desc: '<strong>MOV BP, SP</strong> — BP anchored. [BP+4]=1 (n), [BP+6]=1 (k).' },
+  { activeLine: 23, frame: 'F4', stack: [{id:'p1', value:'0002', tag:'k=2', cls:'c-f1', offset:null}, {id:'p2', value:'0003', tag:'n=3', cls:'c-f1', offset:null}, {id:'r1', value:'RET1', tag:'return', cls:'c-f1', offset:null}, {id:'b1', value:'oldBP', tag:'saved BP', cls:'c-f1', offset:null}, {id:'s1', value:'0001', tag:'saved AX', cls:'c-f1', offset:null}, {id:'p5', value:'0001', tag:'n=1', cls:'c-f3', offset:null}, {id:'p6', value:'0002', tag:'k=2', cls:'c-f3', offset:null}, {id:'r3', value:'RET3', tag:'return', cls:'c-f3', offset:null}, {id:'b3', value:'FFF6', tag:'saved BP', cls:'c-f3', offset:null}, {id:'p7', value:'0001', tag:'n=1', cls:'c-f4', offset:'[BP+6]', hl:true}, {id:'p8', value:'0001', tag:'k=1', cls:'c-f4', offset:'[BP+4]'}, {id:'r4', value:'RET4', tag:'return', cls:'c-f4', offset:'[BP+2]'}, {id:'b4', value:'FFEC', tag:'saved BP', cls:'c-f4', offset:'[BP+0]'}], sp: 12, bp: 12, regs: { AX:'0001', BX:'????', CX:'0001', BP:'FFE4', SP:'FFE4' }, desc: '<strong>MOV AX, [BP+6]</strong> — AX = k = 1.' },
+  { activeLine: 24, frame: 'F4', stack: [{id:'p1', value:'0002', tag:'k=2', cls:'c-f1', offset:null}, {id:'p2', value:'0003', tag:'n=3', cls:'c-f1', offset:null}, {id:'r1', value:'RET1', tag:'return', cls:'c-f1', offset:null}, {id:'b1', value:'oldBP', tag:'saved BP', cls:'c-f1', offset:null}, {id:'s1', value:'0001', tag:'saved AX', cls:'c-f1', offset:null}, {id:'p5', value:'0001', tag:'n=1', cls:'c-f3', offset:null}, {id:'p6', value:'0002', tag:'k=2', cls:'c-f3', offset:null}, {id:'r3', value:'RET3', tag:'return', cls:'c-f3', offset:null}, {id:'b3', value:'FFF6', tag:'saved BP', cls:'c-f3', offset:null}, {id:'p7', value:'0001', tag:'n=1', cls:'c-f4', offset:'[BP+6]', hl:true}, {id:'p8', value:'0001', tag:'k=1', cls:'c-f4', offset:'[BP+4]', hl:true}, {id:'r4', value:'RET4', tag:'return', cls:'c-f4', offset:'[BP+2]'}, {id:'b4', value:'FFEC', tag:'saved BP', cls:'c-f4', offset:'[BP+0]'}], sp: 12, bp: 12, regs: { AX:'0001', BX:'????', CX:'0001', BP:'FFE4', SP:'FFE4' }, desc: '<strong>CMP AX, [BP+4]</strong> — k=1 == n=1. <em>BASE CASE!</em>' },
+  { activeLine: 25, frame: 'F4', stack: [{id:'p1', value:'0002', tag:'k=2', cls:'c-f1', offset:null}, {id:'p2', value:'0003', tag:'n=3', cls:'c-f1', offset:null}, {id:'r1', value:'RET1', tag:'return', cls:'c-f1', offset:null}, {id:'b1', value:'oldBP', tag:'saved BP', cls:'c-f1', offset:null}, {id:'s1', value:'0001', tag:'saved AX', cls:'c-f1', offset:null}, {id:'p5', value:'0001', tag:'n=1', cls:'c-f3', offset:null}, {id:'p6', value:'0002', tag:'k=2', cls:'c-f3', offset:null}, {id:'r3', value:'RET3', tag:'return', cls:'c-f3', offset:null}, {id:'b3', value:'FFF6', tag:'saved BP', cls:'c-f3', offset:null}, {id:'p7', value:'0001', tag:'n=1', cls:'c-f4', offset:'[BP+6]'}, {id:'p8', value:'0001', tag:'k=1', cls:'c-f4', offset:'[BP+4]'}, {id:'r4', value:'RET4', tag:'return', cls:'c-f4', offset:'[BP+2]'}, {id:'b4', value:'FFEC', tag:'saved BP', cls:'c-f4', offset:'[BP+0]'}], sp: 12, bp: 12, regs: { AX:'0001', BX:'????', CX:'0001', BP:'FFE4', SP:'FFE4' }, desc: '<strong>JE BASE</strong> — taken!' },
+  { activeLine: 49, frame: 'F4', stack: [{id:'p1', value:'0002', tag:'k=2', cls:'c-f1', offset:null}, {id:'p2', value:'0003', tag:'n=3', cls:'c-f1', offset:null}, {id:'r1', value:'RET1', tag:'return', cls:'c-f1', offset:null}, {id:'b1', value:'oldBP', tag:'saved BP', cls:'c-f1', offset:null}, {id:'s1', value:'0001', tag:'saved AX', cls:'c-f1', offset:null}, {id:'p5', value:'0001', tag:'n=1', cls:'c-f3', offset:null}, {id:'p6', value:'0002', tag:'k=2', cls:'c-f3', offset:null}, {id:'r3', value:'RET3', tag:'return', cls:'c-f3', offset:null}, {id:'b3', value:'FFF6', tag:'saved BP', cls:'c-f3', offset:null}, {id:'p7', value:'0001', tag:'n=1', cls:'c-f4', offset:'[BP+6]'}, {id:'p8', value:'0001', tag:'k=1', cls:'c-f4', offset:'[BP+4]'}, {id:'r4', value:'RET4', tag:'return', cls:'c-f4', offset:'[BP+2]'}, {id:'b4', value:'FFEC', tag:'saved BP', cls:'c-f4', offset:'[BP+0]'}], sp: 12, bp: 12, regs: { AX:'0001', BX:'????', CX:'0001', BP:'FFE4', SP:'FFE4' }, desc: '<strong>MOV AX, 1</strong> — C(1,1) = <span class="res">1</span>.' },
+  { activeLine: 52, frame: 'F3', stack: [{id:'p1', value:'0002', tag:'k=2', cls:'c-f1', offset:null}, {id:'p2', value:'0003', tag:'n=3', cls:'c-f1', offset:null}, {id:'r1', value:'RET1', tag:'return', cls:'c-f1', offset:null}, {id:'b1', value:'oldBP', tag:'saved BP', cls:'c-f1', offset:null}, {id:'s1', value:'0001', tag:'saved AX', cls:'c-f1', offset:null}, {id:'p5', value:'0001', tag:'n=1', cls:'c-f3', offset:'[BP+6]'}, {id:'p6', value:'0002', tag:'k=2', cls:'c-f3', offset:'[BP+4]'}, {id:'r3', value:'RET3', tag:'return', cls:'c-f3', offset:'[BP+2]'}, {id:'b3', value:'FFF6', tag:'saved BP', cls:'c-f3', offset:'[BP+0]'}], sp: 8, bp: 8, regs: { AX:'0001', BX:'????', CX:'0001', BP:'FFEC', SP:'FFEC' }, desc: '<strong>POP BP + RET 4</strong> — frame 4 returns. C(1,1)=1 in AX.' },
+  { activeLine: 47, frame: 'F3', stack: [{id:'p1', value:'0002', tag:'k=2', cls:'c-f1', offset:null}, {id:'p2', value:'0003', tag:'n=3', cls:'c-f1', offset:null}, {id:'r1', value:'RET1', tag:'return', cls:'c-f1', offset:null}, {id:'b1', value:'oldBP', tag:'saved BP', cls:'c-f1', offset:null}, {id:'s1', value:'0001', tag:'saved AX', cls:'c-f1', offset:null}, {id:'p5', value:'0001', tag:'n=1', cls:'c-f3', offset:'[BP+6]'}, {id:'p6', value:'0002', tag:'k=2', cls:'c-f3', offset:'[BP+4]'}, {id:'r3', value:'RET3', tag:'return', cls:'c-f3', offset:'[BP+2]'}, {id:'b3', value:'FFF6', tag:'saved BP', cls:'c-f3', offset:'[BP+0]'}, {id:'s2', value:'0001', tag:'saved AX', cls:'c-f3', offset:null}], sp: 9, bp: 8, regs: { AX:'0001', BX:'????', CX:'0001', BP:'FFEC', SP:'FFEA' }, desc: '<strong>POP BX</strong> — BX = C(1,1) = 1.' },
+  { activeLine: 48, frame: 'F3', stack: [{id:'p1', value:'0002', tag:'k=2', cls:'c-f1', offset:null}, {id:'p2', value:'0003', tag:'n=3', cls:'c-f1', offset:null}, {id:'r1', value:'RET1', tag:'return', cls:'c-f1', offset:null}, {id:'b1', value:'oldBP', tag:'saved BP', cls:'c-f1', offset:null}, {id:'s1', value:'0001', tag:'saved AX', cls:'c-f1', offset:null}, {id:'p5', value:'0001', tag:'n=1', cls:'c-f3', offset:'[BP+6]'}, {id:'p6', value:'0002', tag:'k=2', cls:'c-f3', offset:'[BP+4]'}, {id:'r3', value:'RET3', tag:'return', cls:'c-f3', offset:'[BP+2]'}, {id:'b3', value:'FFF6', tag:'saved BP', cls:'c-f3', offset:'[BP+0]'}], sp: 8, bp: 8, regs: { AX:'0002', BX:'0001', CX:'0001', BP:'FFEC', SP:'FFEC' }, desc: '<strong>ADD AX, BX</strong> — AX = 1 + 1 = 2. C(1,2) = 2 (incorrect, but that\'s what the code computes).' },
+  { activeLine: 49, frame: 'F3', stack: [{id:'p1', value:'0002', tag:'k=2', cls:'c-f1', offset:null}, {id:'p2', value:'0003', tag:'n=3', cls:'c-f1', offset:null}, {id:'r1', value:'RET1', tag:'return', cls:'c-f1', offset:null}, {id:'b1', value:'oldBP', tag:'saved BP', cls:'c-f1', offset:null}, {id:'s1', value:'0001', tag:'saved AX', cls:'c-f1', offset:null}, {id:'p5', value:'0001', tag:'n=1', cls:'c-f3', offset:null}, {id:'p6', value:'0002', tag:'k=2', cls:'c-f3', offset:null}, {id:'r3', value:'RET3', tag:'return', cls:'c-f3', offset:null}], sp: 7, bp: 3, regs: { AX:'0002', BX:'0001', CX:'0001', BP:'FFF6', SP:'FFF2' }, desc: '<strong>POP BP + RET 4</strong> — frame 3 returns. C(1,2)=2 in AX.' },
+  { activeLine: 47, frame: 'F1', stack: [{id:'p1', value:'0002', tag:'k=2', cls:'c-f1', offset:'[BP+6]'}, {id:'p2', value:'0003', tag:'n=3', cls:'c-f1', offset:'[BP+4]'}, {id:'r1', value:'RET1', tag:'return', cls:'c-f1', offset:'[BP+2]'}, {id:'b1', value:'oldBP', tag:'saved BP', cls:'c-f1', offset:'[BP+0]'}, {id:'s1', value:'0001', tag:'saved AX', cls:'c-f1', offset:null}], sp: 4, bp: 3, regs: { AX:'0002', BX:'0001', CX:'0001', BP:'FFF6', SP:'FFF4' }, desc: '<strong>POP BX</strong> — BX = C(2,2) = 1.' },
+  { activeLine: 48, frame: 'F1', stack: [{id:'p1', value:'0002', tag:'k=2', cls:'c-f1', offset:'[BP+6]'}, {id:'p2', value:'0003', tag:'n=3', cls:'c-f1', offset:'[BP+4]'}, {id:'r1', value:'RET1', tag:'return', cls:'c-f1', offset:'[BP+2]'}, {id:'b1', value:'oldBP', tag:'saved BP', cls:'c-f1', offset:'[BP+0]'}], sp: 3, bp: 3, regs: { AX:'0003', BX:'0001', CX:'0001', BP:'FFF6', SP:'FFF6' }, desc: '<strong>ADD AX, BX</strong> — AX = 2 + 1 = <span class="res">3</span>. C(3,2) = 3.' },
+  { activeLine: 49, frame: 'F1', stack: [{id:'p1', value:'0002', tag:'k=2', cls:'c-f1', offset:null}, {id:'p2', value:'0003', tag:'n=3', cls:'c-f1', offset:null}, {id:'r1', value:'RET1', tag:'return', cls:'c-f1', offset:null}], sp: 2, bp: null, regs: { AX:'0003', BX:'0001', CX:'0001', BP:'????', SP:'FFFA' }, desc: '<strong>POP BP + RET 4</strong> — frame 1 returns to MAIN. C(3,2)=3 in AX.' },
+  { activeLine: 15, frame: 'MAIN', stack: [], sp: null, bp: null, regs: { AX:'4C03', BX:'0001', CX:'0001', BP:'????', SP:'FFFC' }, desc: '<strong>MOV AH, 4CH; INT 21H</strong> — exit. Result: <span class="res">C(3,2) = 3</span>. ✓' },
+];
+
+const codeEl   = document.getElementById('code');
+const stackEl  = document.getElementById('stack');
+const spPtr    = document.getElementById('spPtr');
+const bpPtr    = document.getElementById('bpPtr');
+const frameBadge = document.getElementById('frameBadge');
+const descEl   = document.getElementById('desc');
+const stepInfo = document.getElementById('stepInfo');
+const progBar  = document.getElementById('progBar');
+
+codeEl.innerHTML = srcLines.map((l,i) => `<div class="line" data-i="${i}">${l[0]||'&nbsp;'}</div>`).join('');
+
+const ITEM_H = 44;
+const BASE_PAD = 10;
+
+function render(idx) {
+  const s = STEPS[idx];
+
+  document.querySelectorAll('.code .line').forEach(el => {
+    el.classList.toggle('active', +el.dataset.i === s.activeLine);
+  });
+
+  stackEl.querySelectorAll('.stack-item, .offset-label').forEach(e => e.remove());
+
+  s.stack.forEach((item, i) => {
+    const el = document.createElement('div');
+    el.className = `stack-item ${item.cls}`;
+    el.innerHTML = `<span class="tag">${item.tag}</span><span class="val">${item.value}</span>`;
+    if (item.hl) {
+      el.style.boxShadow = '0 0 0 2px #fbbf24, 0 4px 12px rgba(251,191,36,0.4)';
+    }
+    el.style.bottom = (BASE_PAD + i * ITEM_H) + 'px';
+    stackEl.appendChild(el);
+    requestAnimationFrame(() => el.classList.add('visible'));
+
+    if (item.offset && s.bp !== null) {
+      const ol = document.createElement('div');
+      ol.className = 'offset-label' + (item.hl ? ' hl' : '');
+      ol.textContent = item.offset;
+      ol.style.bottom = (BASE_PAD + i * ITEM_H + 11) + 'px';
+      stackEl.appendChild(ol);
+      requestAnimationFrame(() => ol.classList.add('visible'));
+    }
+  });
+
+  if (s.sp !== null && s.stack.length > 0) {
+    spPtr.style.bottom = (BASE_PAD + s.sp * ITEM_H + 12) + 'px';
+    spPtr.classList.add('visible');
+  } else {
+    spPtr.classList.remove('visible');
+  }
+
+  if (s.bp !== null && s.stack.length > 0) {
+    bpPtr.style.bottom = (BASE_PAD + s.bp * ITEM_H + 12) + 'px';
+    bpPtr.classList.add('visible');
+  } else {
+    bpPtr.classList.remove('visible');
+  }
+
+  frameBadge.classList.remove('visible', 'fb-f1', 'fb-f2', 'fb-f3', 'fb-f4', 'fb-f5', 'fb-main');
+  if (s.frame === 'F1') { frameBadge.textContent = 'FRAME 1 C(3,2)'; frameBadge.classList.add('visible','fb-f1'); }
+  else if (s.frame === 'F2') { frameBadge.textContent = 'FRAME 2 C(2,2)'; frameBadge.classList.add('visible','fb-f2'); }
+  else if (s.frame === 'F3') { frameBadge.textContent = 'FRAME 3 C(1,2)'; frameBadge.classList.add('visible','fb-f3'); }
+  else if (s.frame === 'F4') { frameBadge.textContent = 'FRAME 4 C(1,1)'; frameBadge.classList.add('visible','fb-f4'); }
+  else { frameBadge.textContent = 'MAIN'; frameBadge.classList.add('visible','fb-main'); }
+
+  document.getElementById('rAX').textContent = s.regs.AX;
+  document.getElementById('rBX').textContent = s.regs.BX;
+  document.getElementById('rCX').textContent = s.regs.CX;
+  document.getElementById('rBP').textContent = s.regs.BP;
+  document.getElementById('rSP').textContent = s.regs.SP;
+
+  descEl.innerHTML = s.desc;
+
+  stepInfo.textContent = `Step ${idx} / ${STEPS.length - 1}`;
+  progBar.style.width = (idx / (STEPS.length - 1) * 100) + '%';
+
+  document.getElementById('prevBtn').disabled = idx === 0;
+  document.getElementById('nextBtn').disabled = idx === STEPS.length - 1;
+}
+
+let current = 0;
+let playTimer = null;
+
+function go(i) {
+  current = Math.max(0, Math.min(STEPS.length - 1, i));
+  render(current);
+}
+
+document.getElementById('prevBtn').onclick = () => { stopPlay(); go(current - 1); };
+document.getElementById('nextBtn').onclick = () => { stopPlay(); go(current + 1); };
+document.getElementById('playBtn').onclick = () => {
+  if (playTimer) { stopPlay(); return; }
+  document.getElementById('playBtn').textContent = '⏸ PAUSE';
+  if (current === STEPS.length - 1) go(0);
+  playTimer = setInterval(() => {
+    if (current >= STEPS.length - 1) { stopPlay(); return; }
+    go(current + 1);
+  }, 1300);
+};
+function stopPlay() {
+  clearInterval(playTimer);
+  playTimer = null;
+  document.getElementById('playBtn').textContent = '▶ PLAY';
+}
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight') { stopPlay(); go(current + 1); }
+  if (e.key === 'ArrowLeft')  { stopPlay(); go(current - 1); }
+  if (e.key === ' ') { e.preventDefault(); document.getElementById('playBtn').click(); }
+});
+
+go(0);
+</script>
+</body>
+</html>
