@@ -1,0 +1,492 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{mathpazo}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,amsfonts,amsthm,mathtools}
+\usepackage[most]{tcolorbox}
+\usepackage{hyperref}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage{microtype}
+\usepackage{enumitem}
+
+\allowdisplaybreaks
+
+% tcolorbox setup for question statements
+\tcbset{
+  colback=blue!4!white,
+  colframe=blue!35!black,
+  arc=3pt,
+  boxrule=0.8pt,
+  left=12pt,
+  right=12pt,
+  top=10pt,
+  bottom=10pt,
+  fonttitle=\bfseries,
+  enhanced,
+  drop shadow=black!10!white
+}
+
+% Header and Footer setup
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small \textit{Chapter 6: Moments --- Worked Study Guide}}
+\fancyhead[R]{\small \textit{Reading-Only Practice}}
+\fancyfoot[C]{\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0pt}
+
+% Section styling
+\titleformat{\section}
+  {\normalfont\Large\bfseries\color{blue!40!black}}{\thesection}{1em}{}
+\titleformat{\subsection}
+  {\normalfont\large\bfseries\color{blue!30!black}}{\thesubsection}{1em}{}
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue!50!black,
+    urlcolor=blue!50!black,
+    pdftitle={Chapter 6: Moments - Worked Study Guide}
+}
+
+\begin{document}
+
+\begin{center}
+    {\LARGE \textbf{Chapter 6: Moments}}\\[8pt]
+    {\Large \textbf{Complete Step-by-Step Study Document}}\\[6pt]
+    {\small \textit{Reading-Only Practice $\cdot$ Unnumbered Alignments $\cdot$ Verbatim Question Boxes}}
+\end{center}
+
+\vspace{5pt}
+\hrule
+\vspace{10pt}
+
+\tableofcontents
+
+\vspace{15pt}
+\hrule
+\vspace{15pt}
+
+\section{Textbook Exercises}
+
+\subsection{Book Ch.6, Exercise 13}
+\begin{tcolorbox}[title={Book Ch.6, Exercise 13}]
+A fair die is rolled twice, with outcomes $X$ for the first roll and $Y$ for the second roll. Find the moment generating function $M_{X+Y}(t)$ of $X+Y$ (your answer should be a function of $t$ and can contain unsimplified finite sums).
+\end{tcolorbox}
+
+\noindent \textbf{Solution.} By independence of $X$ and $Y$, the moment generating function of their sum is the product of their individual moment generating functions:
+\begin{align*}
+M_{X+Y}(t) &= E\left( e^{t(X+Y)} \right) \\
+&= E\left( e^{tX} e^{tY} \right) \\
+&= E\left( e^{tX} \right) E\left( e^{tY} \right) \\
+&= M_X(t) M_Y(t).
+\end{align*}
+For a fair die, $X$ is uniformly distributed on the discrete set $\{1, 2, 3, 4, 5, 6\}$ with probability $P(X=k) = \frac{1}{6}$ for each $k \in \{1, 2, 3, 4, 5, 6\}$. Computing $M_X(t)$ explicitly:
+\begin{align*}
+M_X(t) &= E\left( e^{tX} \right) \\
+&= \sum_{k=1}^{6} P(X=k) e^{kt} \\
+&= \sum_{k=1}^{6} \frac{1}{6} e^{kt} \\
+&= \frac{1}{6} \left( e^{t} + e^{2t} + e^{3t} + e^{4t} + e^{5t} + e^{6t} \right) \\
+&= \frac{1}{6} \sum_{k=1}^{6} e^{kt}.
+\end{align*}
+Since $Y$ has the identical distribution, $M_Y(t) = M_X(t)$. Multiplying the two MGFs:
+\begin{align*}
+M_{X+Y}(t) &= M_X(t) M_Y(t) \\
+&= \left( \frac{1}{6} \sum_{k=1}^{6} e^{kt} \right) \left( \frac{1}{6} \sum_{k=1}^{6} e^{kt} \right) \\
+&= \left( \frac{1}{6} \sum_{k=1}^{6} e^{kt} \right)^2.
+\end{align*}
+
+\vspace{10pt}
+\subsection{Book Ch.6, Exercise 14}
+\begin{tcolorbox}[title={Book Ch.6, Exercise 14}]
+Let $U_1, U_2, \dots, U_{60}$ be i.i.d. $\text{Unif}(0, 1)$ and $X = U_1 + U_2 + \dots + U_{60}$. Find the MGF of $X$.
+\end{tcolorbox}
+
+\noindent \textbf{Solution.} First, computing the MGF of a single uniform random variable $U_1 \sim \text{Unif}(0,1)$ for $t \neq 0$:
+\begin{align*}
+M_{U_1}(t) &= E\left( e^{t U_1} \right) \\
+&= \int_{0}^{1} e^{tu} f_{U_1}(u) \, du \\
+&= \int_{0}^{1} e^{tu} (1) \, du \\
+&= \left[ \frac{e^{tu}}{t} \right]_{u=0}^{u=1} \\
+&= \frac{e^{t(1)}}{t} - \frac{e^{t(0)}}{t} \\
+&= \frac{e^t - 1}{t}.
+\end{align*}
+For $t = 0$:
+\begin{align*}
+M_{U_1}(0) &= E\left( e^{0 \cdot U_1} \right) \\
+&= E(1) \\
+&= 1.
+\end{align*}
+By independence of $U_1, U_2, \dots, U_{60}$, the MGF of the sum $X = U_1 + U_2 + \dots + U_{60}$ is the product of the individual MGFs:
+\begin{align*}
+M_X(t) &= E\left( e^{t(U_1 + U_2 + \dots + U_{60})} \right) \\
+&= \prod_{i=1}^{60} E\left( e^{t U_i} \right) \\
+&= \left( M_{U_1}(t) \right)^{60} \\
+&= \begin{cases}
+\left( \dfrac{e^t - 1}{t} \right)^{60} = \dfrac{(e^t - 1)^{60}}{t^{60}}, & t \neq 0, \\[10pt]
+1, & t = 0.
+\end{cases}
+\end{align*}
+
+\vspace{10pt}
+\subsection{Book Ch.6, Exercise 20}
+\begin{tcolorbox}[title={Book Ch.6, Exercise 20}]
+Let $X \sim \text{Pois}(\lambda)$, and let $M(t)$ be the MGF of $X$. The cumulant generating function is defined to be $g(t) = \log M(t)$. Expanding $g(t)$ as a Taylor series
+\[
+g(t) = \sum_{j=1}^{\infty} \frac{c_j}{j!} t^j
+\]
+(the sum starts at $j=1$ because $g(0) = 0$), the coefficient $c_j$ is called the $j$th cumulant of $X$. Find the $j$th cumulant of $X$, for all $j \ge 1$.
+\end{tcolorbox}
+
+\noindent \textbf{Solution.} For $X \sim \text{Pois}(\lambda)$, the MGF is $M(t) = e^{\lambda(e^t - 1)}$. Computing the cumulant generating function $g(t)$:
+\begin{align*}
+g(t) &= \log M(t) \\
+&= \log\left( e^{\lambda(e^t - 1)} \right) \\
+&= \lambda(e^t - 1).
+\end{align*}
+Expanding $e^t$ as a Taylor series around $t = 0$:
+\begin{align*}
+e^t &= \sum_{j=0}^{\infty} \frac{t^j}{j!} \\
+&= 1 + t + \frac{t^2}{2!} + \frac{t^3}{3!} + \dots \\
+e^t - 1 &= \sum_{j=1}^{\infty} \frac{t^j}{j!} \\
+&= t + \frac{t^2}{2!} + \frac{t^3}{3!} + \dots
+\end{align*}
+Substituting this series back into $g(t)$:
+\begin{align*}
+g(t) &= \lambda \sum_{j=1}^{\infty} \frac{t^j}{j!} \\
+&= \sum_{j=1}^{\infty} \frac{\lambda}{j!} t^j.
+\end{align*}
+Matching coefficients with the definition $g(t) = \sum_{j=1}^{\infty} \frac{c_j}{j!} t^j$ term by term:
+\begin{align*}
+\frac{c_j}{j!} t^j &= \frac{\lambda}{j!} t^j \\
+\frac{c_j}{j!} &= \frac{\lambda}{j!} \\
+c_j &= \lambda \quad \text{for all } j \ge 1.
+\end{align*}
+
+\vspace{10pt}
+\subsection{Book Ch.6, Exercise 21}
+\begin{tcolorbox}[title={Book Ch.6, Exercise 21}]
+Let $X_n \sim \text{Bin}(n, p_n)$ for all $n \ge 1$, where $np_n$ is a constant $\lambda > 0$ for all $n$ (so $p_n = \lambda / n$). Let $X \sim \text{Pois}(\lambda)$. Show that the MGF of $X_n$ converges to the MGF of $X$ (this gives another way to see that the $\text{Bin}(n, p)$ distribution can be well-approximated by the $\text{Pois}(\lambda)$ when $n$ is large, $p$ is small, and $\lambda = np$ is moderate).
+\end{tcolorbox}
+
+\noindent \textbf{Solution.} For $X_n \sim \text{Bin}(n, p_n)$, computing the MGF directly from the binomial distribution:
+\begin{align*}
+M_{X_n}(t) &= E\left( e^{t X_n} \right) \\
+&= \sum_{k=0}^{n} \binom{n}{k} p_n^k (1 - p_n)^{n-k} e^{tk} \\
+&= \sum_{k=0}^{n} \binom{n}{k} \left( p_n e^t \right)^k (1 - p_n)^{n-k} \\
+&= (1 - p_n + p_n e^t)^n \\
+&= \left( 1 + p_n(e^t - 1) \right)^n.
+\end{align*}
+Substituting $p_n = \dfrac{\lambda}{n}$ into the MGF:
+\begin{align*}
+M_{X_n}(t) &= \left( 1 + \frac{\lambda}{n}(e^t - 1) \right)^n \\
+&= \left( 1 + \frac{\lambda(e^t - 1)}{n} \right)^n.
+\end{align*}
+Taking the limit as $n \to \infty$ using the standard compound-interest limit identity $\lim_{n \to \infty} \left( 1 + \frac{x}{n} \right)^n = e^x$ with $x = \lambda(e^t - 1)$ (which does not depend on $n$):
+\begin{align*}
+\lim_{n \to \infty} M_{X_n}(t) &= \lim_{n \to \infty} \left( 1 + \frac{\lambda(e^t - 1)}{n} \right)^n \\
+&= e^{\lambda(e^t - 1)} \\
+&= M_X(t).
+\end{align*}
+
+\vspace{15pt}
+\section{Strategic Practice}
+
+\subsection{SP 6 \S2 $\cdot$ Problem 1}
+\begin{tcolorbox}[title={SP 6 \S2 $\cdot$ Problem 1}]
+Find $E(X^3)$ for $X \sim \text{Expo}(\lambda)$ using the MGF of $X$ (see also Problem 2 in the Exponential Distribution section).
+\end{tcolorbox}
+
+\noindent \textbf{Solution.} For $X \sim \text{Expo}(\lambda)$, the MGF for $t < \lambda$ is:
+\begin{align*}
+M(t) &= E\left( e^{tX} \right) \\
+&= \int_{0}^{\infty} e^{tx} \lambda e^{-\lambda x} \, dx \\
+&= \lambda \int_{0}^{\infty} e^{-(\lambda - t)x} \, dx \\
+&= \lambda \left[ -\frac{e^{-(\lambda - t)x}}{\lambda - t} \right]_{0}^{\infty} \\
+&= \lambda \left( 0 - \left(-\frac{1}{\lambda - t}\right) \right) \\
+&= \frac{\lambda}{\lambda - t} \\
+&= \left( 1 - \frac{t}{\lambda} \right)^{-1}.
+\end{align*}
+
+\noindent \textbf{Method 1: Differentiation.} Taking successive derivatives of $M(t)$ with respect to $t$:
+\begin{align*}
+M(t) &= \left( 1 - \frac{t}{\lambda} \right)^{-1} \\
+M'(t) &= (-1)\left( 1 - \frac{t}{\lambda} \right)^{-2} \left( -\frac{1}{\lambda} \right) \\
+&= \frac{1}{\lambda} \left( 1 - \frac{t}{\lambda} \right)^{-2} \\
+M''(t) &= \frac{1}{\lambda}(-2)\left( 1 - \frac{t}{\lambda} \right)^{-3} \left( -\frac{1}{\lambda} \right) \\
+&= \frac{2}{\lambda^2} \left( 1 - \frac{t}{\lambda} \right)^{-3} \\
+M'''(t) &= \frac{2}{\lambda^2}(-3)\left( 1 - \frac{t}{\lambda} \right)^{-4} \left( -\frac{1}{\lambda} \right) \\
+&= \frac{6}{\lambda^3} \left( 1 - \frac{t}{\lambda} \right)^{-4}.
+\end{align*}
+Evaluating the third derivative at $t = 0$:
+\begin{align*}
+E(X^3) &= M'''(0) \\
+&= \frac{6}{\lambda^3} \left( 1 - \frac{0}{\lambda} \right)^{-4} \\
+&= \frac{6}{\lambda^3} (1)^{-4} \\
+&= \frac{6}{\lambda^3}.
+\end{align*}
+
+\noindent \textbf{Method 2: Pattern Recognition via Geometric Series.} Expanding $M(t)$ as a geometric series for $|t| < \lambda$:
+\begin{align*}
+M(t) &= \frac{1}{1 - \frac{t}{\lambda}} \\
+&= \sum_{n=0}^{\infty} \left( \frac{t}{\lambda} \right)^n \\
+&= \sum_{n=0}^{\infty} \frac{1}{\lambda^n} t^n \\
+&= \sum_{n=0}^{\infty} \left( \frac{n!}{\lambda^n} \right) \frac{t^n}{n!}.
+\end{align*}
+Matching coefficients with the Taylor expansion $M(t) = \sum_{n=0}^{\infty} E(X^n) \frac{t^n}{n!}$:
+\begin{align*}
+E(X^n) &= \frac{n!}{\lambda^n} \quad \text{for all } n \ge 0.
+\end{align*}
+Setting $n = 3$:
+\begin{align*}
+E(X^3) &= \frac{3!}{\lambda^3} \\
+&= \frac{3 \cdot 2 \cdot 1}{\lambda^3} \\
+&= \frac{6}{\lambda^3}.
+\end{align*}
+
+\vspace{10pt}
+\subsection{SP 6 \S2 $\cdot$ Problem 2}
+\begin{tcolorbox}[title={SP 6 \S2 $\cdot$ Problem 2}]
+If $X$ has MGF $M(t)$, what is the MGF of $-X$? What is the MGF of $a + bX$ where $a$ and $b$ are constants?
+\end{tcolorbox}
+
+\noindent \textbf{Solution.} By definition of the moment generating function, substituting $-X$ for $X$:
+\begin{align*}
+M_{-X}(t) &= E\left( e^{t(-X)} \right) \\
+&= E\left( e^{(-t)X} \right) \\
+&= M(-t).
+\end{align*}
+For the linear transformation $a + bX$, where $a$ and $b$ are constants:
+\begin{align*}
+M_{a+bX}(t) &= E\left( e^{t(a + bX)} \right) \\
+&= E\left( e^{at + btX} \right) \\
+&= E\left( e^{at} e^{(bt)X} \right) \\
+&= e^{at} E\left( e^{(bt)X} \right) \\
+&= e^{at} M(bt).
+\end{align*}
+Thus, the MGF of $-X$ is $M(-t)$, and the MGF of $a+bX$ is $e^{at}M(bt)$.
+
+\vspace{10pt}
+\subsection{SP 6 \S2 $\cdot$ Problem 3}
+\begin{tcolorbox}[title={SP 6 \S2 $\cdot$ Problem 3}]
+Let $U_1, U_2, \dots, U_{60}$ be i.i.d. $\text{Uniform}(0, 1)$ and $X = U_1 + U_2 + \dots + U_{60}$. Find the MGF of $X$.
+\end{tcolorbox}
+
+\noindent \textbf{Solution.} Computing the MGF from basic principles for a single uniform random variable $U_1 \sim \text{Uniform}(0,1)$ for $t \neq 0$:
+\begin{align*}
+M_{U_1}(t) &= E\left( e^{t U_1} \right) \\
+&= \int_{0}^{1} e^{tu} f_{U_1}(u) \, du \\
+&= \int_{0}^{1} e^{tu} (1) \, du \\
+&= \left[ \frac{e^{tu}}{t} \right]_{u=0}^{u=1} \\
+&= \frac{e^{t(1)}}{t} - \frac{e^{t(0)}}{t} \\
+&= \frac{e^t - 1}{t}.
+\end{align*}
+At $t = 0$, by continuity or direct expectation:
+\begin{align*}
+M_{U_1}(0) &= E\left( e^{0 \cdot U_1} \right) \\
+&= E(1) \\
+&= 1.
+\end{align*}
+Since $U_1, U_2, \dots, U_{60}$ are independent and identically distributed, the MGF of $X = U_1 + U_2 + \dots + U_{60}$ is the product of their individual MGFs:
+\begin{align*}
+M_X(t) &= E\left( e^{t(U_1 + U_2 + \dots + U_{60})} \right) \\
+&= E\left( e^{tU_1} e^{tU_2} \dots e^{tU_{60}} \right) \\
+&= E\left(e^{tU_1}\right) E\left(e^{tU_2}\right) \dots E\left(e^{tU_{60}}\right) \\
+&= \prod_{i=1}^{60} M_{U_i}(t) \\
+&= \left( M_{U_1}(t) \right)^{60} \\
+&= \begin{cases}
+\left( \dfrac{e^t - 1}{t} \right)^{60} = \dfrac{(e^t - 1)^{60}}{t^{60}}, & t \neq 0, \\[10pt]
+1, & t = 0.
+\end{cases}
+\end{align*}
+
+\vspace{10pt}
+\subsection{SP 6 \S2 $\cdot$ Problem 4}
+\begin{tcolorbox}[title={SP 6 \S2 $\cdot$ Problem 4}]
+Let $X \sim \text{Pois}(\lambda)$, and let $M(t)$ be the MGF of $X$. The cumulant generating function is defined to be $g(t) = \ln M(t)$. Expanding $g(t)$ as a Taylor series
+\[
+g(t) = \sum_{j=1}^{\infty} \frac{c_j}{j!} t^j
+\]
+(the sum starts at $j=1$ because $g(0) = 0$), the coefficient $c_j$ is called the $j$th cumulant of $X$. Find the $j$th cumulant of $X$, for all $j \ge 1$.
+\end{tcolorbox}
+
+\noindent \textbf{Solution.} For $X \sim \text{Pois}(\lambda)$, we derive the cumulants explicitly from the MGF $M(t) = e^{\lambda(e^t - 1)}$. Computing the cumulant generating function $g(t)$:
+\begin{align*}
+g(t) &= \ln M(t) \\
+&= \ln\left( e^{\lambda(e^t - 1)} \right) \\
+&= \lambda(e^t - 1).
+\end{align*}
+Using the Taylor series expansion of the exponential function:
+\begin{align*}
+e^t &= 1 + t + \frac{t^2}{2!} + \frac{t^3}{3!} + \dots = \sum_{j=0}^{\infty} \frac{t^j}{j!} \\
+e^t - 1 &= t + \frac{t^2}{2!} + \frac{t^3}{3!} + \dots = \sum_{j=1}^{\infty} \frac{t^j}{j!}.
+\end{align*}
+Multiplying by $\lambda$:
+\begin{align*}
+g(t) &= \lambda \sum_{j=1}^{\infty} \frac{t^j}{j!} \\
+&= \sum_{j=1}^{\infty} \frac{\lambda}{j!} t^j.
+\end{align*}
+Equating coefficients of $t^j$ with the cumulant generating function expansion $g(t) = \sum_{j=1}^{\infty} \frac{c_j}{j!} t^j$:
+\begin{align*}
+\frac{c_j}{j!} t^j &= \frac{\lambda}{j!} t^j \\
+\frac{c_j}{j!} &= \frac{\lambda}{j!} \\
+c_j &= \lambda \quad \text{for all } j \ge 1.
+\end{align*}
+
+\vspace{15pt}
+\section{Homework}
+
+\subsection{HW 6 $\cdot$ Problem 6}
+\begin{tcolorbox}[title={HW 6 $\cdot$ Problem 6}]
+Let $X_n \sim \text{Bin}(n, p_n)$ for all $n \ge 1$, where $np_n$ is a constant $\lambda > 0$ for all $n$ (so $p_n = \lambda / n$). Let $X \sim \text{Pois}(\lambda)$. Show that the MGF of $X_n$ converges to the MGF of $X$ (this gives another way to see that the $\text{Bin}(n, p)$ distribution can be well-approximated by the $\text{Pois}(\lambda)$ when $n$ is large, $p$ is small, and $\lambda = np$ is moderate).
+\end{tcolorbox}
+
+\noindent \textbf{Solution.} Let $X_n \sim \text{Bin}(n, p_n)$ with $p_n = \dfrac{\lambda}{n}$. Computing the MGF of $X_n$ directly:
+\begin{align*}
+M_{X_n}(t) &= E\left( e^{tX_n} \right) \\
+&= \sum_{k=0}^{n} \binom{n}{k} p_n^k (1 - p_n)^{n-k} e^{tk} \\
+&= \sum_{k=0}^{n} \binom{n}{k} \left( p_n e^t \right)^k (1 - p_n)^{n-k} \\
+&= \left( 1 - p_n + p_n e^t \right)^n \\
+&= \left( 1 + p_n(e^t - 1) \right)^n.
+\end{align*}
+Substituting $p_n = \dfrac{\lambda}{n}$:
+\begin{align*}
+M_{X_n}(t) &= \left( 1 + \frac{\lambda}{n}(e^t - 1) \right)^n \\
+&= \left( 1 + \frac{\lambda(e^t - 1)}{n} \right)^n.
+\end{align*}
+Taking the limit as $n \to \infty$ using the exponential limit identity $\lim_{n \to \infty} \left( 1 + \frac{x}{n} \right)^n = e^x$ with constant $x = \lambda(e^t - 1)$:
+\begin{align*}
+\lim_{n \to \infty} M_{X_n}(t) &= \lim_{n \to \infty} \left( 1 + \frac{\lambda(e^t - 1)}{n} \right)^n \\
+&= e^{\lambda(e^t - 1)} \\
+&= M_X(t).
+\end{align*}
+
+\vspace{10pt}
+\subsection{HW 6 $\cdot$ Problem 7}
+\begin{tcolorbox}[title={HW 6 $\cdot$ Problem 7}]
+Let $X \sim \mathcal{N}(\mu, \sigma^2)$ and $Y = e^X$. Then $Y$ has a Log-Normal distribution (which means ``log is Normal''; note that ``log of a Normal'' doesn't make sense since Normals can be negative).
+Find the mean and variance of $Y$ using the MGF of $X$, without doing any integrals. Then for $\mu = 0, \sigma = 1$, find the $n$th moment $E(Y^n)$ (in terms of $n$).
+\end{tcolorbox}
+
+\noindent \textbf{Solution.} For $X \sim \mathcal{N}(\mu, \sigma^2)$, the moment generating function is:
+\begin{align*}
+M_X(t) &= E\left( e^{tX} \right) = e^{\mu t + \frac{1}{2}\sigma^2 t^2}.
+\end{align*}
+
+\noindent \textbf{Mean of $Y$:} Since $Y = e^X$, the expectation of $Y$ corresponds to evaluating $M_X(t)$ at $t = 1$:
+\begin{align*}
+E(Y) &= E\left( e^X \right) \\
+&= M_X(1) \\
+&= e^{\mu(1) + \frac{1}{2}\sigma^2 (1)^2} \\
+&= e^{\mu + \frac{1}{2}\sigma^2}.
+\end{align*}
+
+\noindent \textbf{Second Moment of $Y$:} Since $Y^2 = \left(e^X\right)^2 = e^{2X}$, this corresponds to evaluating $M_X(t)$ at $t = 2$:
+\begin{align*}
+E\left( Y^2 \right) &= E\left( e^{2X} \right) \\
+&= M_X(2) \\
+&= e^{\mu(2) + \frac{1}{2}\sigma^2 (2)^2} \\
+&= e^{2\mu + \frac{1}{2}\sigma^2 (4)} \\
+&= e^{2\mu + 2\sigma^2}.
+\end{align*}
+
+\noindent \textbf{Variance of $Y$:} Using $\text{Var}(Y) = E(Y^2) - [E(Y)]^2$ and factoring:
+\begin{align*}
+\text{Var}(Y) &= E\left( Y^2 \right) - \left[ E(Y) \right]^2 \\
+&= e^{2\mu + 2\sigma^2} - \left( e^{\mu + \frac{1}{2}\sigma^2} \right)^2 \\
+&= e^{2\mu + 2\sigma^2} - e^{2\mu + \sigma^2} \\
+&= e^{2\mu + \sigma^2} \cdot e^{\sigma^2} - e^{2\mu + \sigma^2} \cdot 1 \\
+&= e^{2\mu + \sigma^2} \left( e^{\sigma^2} - 1 \right).
+\end{align*}
+
+\noindent \textbf{$n$th Moment for $\mu = 0, \sigma = 1$:} For standard normal parameters, $M_X(t) = e^{0 \cdot t + \frac{1}{2}(1)^2 t^2} = e^{t^2 / 2}$. Evaluating at $t = n$:
+\begin{align*}
+E\left( Y^n \right) &= E\left( e^{nX} \right) \\
+&= M_X(n) \\
+&= e^{(0)(n) + \frac{1}{2}(1)^2 n^2} \\
+&= e^{n^2 / 2}.
+\end{align*}
+
+\vspace{10pt}
+\subsection{HW 9 $\cdot$ Problem 3}
+\begin{tcolorbox}[title={HW 9 $\cdot$ Problem 3}]
+Consider independent Bernoulli trials with probability $p$ of success for each. Let $X$ be the number of failures incurred before getting a total of $r$ successes.
+\begin{enumerate}[(a)]
+\item Determine what happens to the distribution of $\frac{p}{1-p}X$ as $p \to 0$, using MGFs; what is the PDF of the limiting distribution, and its name and parameters if it is one we have studied?
+Hint: start by finding the $\text{Geom}(p)$ MGF. Then find the MGF of $\frac{p}{1-p}X$, and use the fact that if the MGFs of r.v.s $Y_n$ converge to the MGF of a r.v. $Y$, then the CDFs of the $Y_n$ converge to the CDF of $Y$.
+\item Explain intuitively why the result of (a) makes sense.
+\end{enumerate}
+\end{tcolorbox}
+
+\noindent \textbf{Solution.} \textbf{(a) Limiting Distribution via MGFs.} Let $q = 1 - p$. The random variable $X \sim \text{NBin}(r, p)$ counts the number of failures before $r$ successes.
+
+\vspace{4pt}
+\noindent \textbf{Step 1: MGF of $\text{Geom}(p)$.} For a single geometric random variable $G \sim \text{Geom}(p)$ with probability mass function $P(G=k) = q^k p$ for $k \in \{0, 1, 2, \dots\}$:
+\begin{align*}
+M_G(t) &= E\left( e^{tG} \right) \\
+&= \sum_{k=0}^{\infty} e^{tk} P(G=k) \\
+&= \sum_{k=0}^{\infty} e^{tk} q^k p \\
+&= p \sum_{k=0}^{\infty} \left( q e^t \right)^k \\
+&= \frac{p}{1 - q e^t}, \quad \text{for } q e^t < 1.
+\end{align*}
+
+\noindent \textbf{Step 2: MGF of $\text{NBin}(r, p)$.} Since $X = G_1 + G_2 + \dots + G_r$ is the sum of $r$ independent and identically distributed $\text{Geom}(p)$ random variables:
+\begin{align*}
+M_X(t) &= E\left( e^{t(G_1 + G_2 + \dots + G_r)} \right) \\
+&= \prod_{i=1}^{r} M_{G_i}(t) \\
+&= \left( \frac{p}{1 - q e^t} \right)^r, \quad \text{for } q e^t < 1.
+\end{align*}
+
+\noindent \textbf{Step 3: MGF of the scaled random variable $\frac{p}{1-p}X = \frac{p}{q}X$.} Substituting $\frac{p}{q}t$ for $t$ in $M_X(t)$:
+\begin{align*}
+M_{\frac{p}{q}X}(t) &= E\left( e^{t \left(\frac{p}{q}X\right)} \right) \\
+&= M_X\left( \frac{tp}{q} \right) \\
+&= \left( \frac{p}{1 - q e^{tp/q}} \right)^r \\
+&= \frac{p^r}{\left( 1 - q e^{tp/q} \right)^r}, \quad \text{for } q e^{tp/q} < 1.
+\end{align*}
+
+\noindent \textbf{Step 4: Limit as $p \to 0$ for $r = 1$.} Considering the base expression inside the $r$th power as $p \to 0$ (with $q = 1-p \to 1$), we encounter a $\frac{0}{0}$ indeterminate form:
+\begin{align*}
+\lim_{p \to 0} \frac{p}{1 - q e^{tp/q}} &= \lim_{p \to 0} \frac{p}{1 - (1-p) e^{tp/(1-p)}}.
+\end{align*}
+Applying L'H\^opital's Rule by differentiating the numerator and denominator with respect to $p$:
+\begin{align*}
+\frac{d}{dp}(p) &= 1 \\
+\frac{d}{dp}\left[ 1 - (1-p) e^{tp/(1-p)} \right] &= -(-1)e^{tp/(1-p)} - (1-p) e^{tp/(1-p)} \frac{d}{dp}\left( \frac{tp}{1-p} \right) \\
+&= e^{tp/(1-p)} - (1-p) e^{tp/(1-p)} \left[ t \frac{(1-p)(1) - p(-1)}{(1-p)^2} \right] \\
+&= e^{tp/(1-p)} - (1-p) e^{tp/(1-p)} \left[ t \frac{1 - p + p}{(1-p)^2} \right] \\
+&= e^{tp/(1-p)} - \frac{t}{1-p} e^{tp/(1-p)} \\
+&= e^{tp/(1-p)} \left( 1 - \frac{t}{1-p} \right).
+\end{align*}
+Evaluating the limit of the derivative ratio as $p \to 0$ (so $e^{tp/(1-p)} \to e^0 = 1$ and $\frac{1}{1-p} \to 1$):
+\begin{align*}
+\lim_{p \to 0} \frac{p}{1 - (1-p) e^{tp/(1-p)}} &= \lim_{p \to 0} \frac{1}{e^{tp/(1-p)} \left( 1 - \frac{t}{1-p} \right)} \\
+&= \frac{1}{(1)(1 - t)} \\
+&= \frac{1}{1 - t}, \quad \text{for } t < 1.
+\end{align*}
+
+\noindent \textbf{Step 5: General $r$.} Raising the limit to the $r$th power:
+\begin{align*}
+\lim_{p \to 0} M_{\frac{p}{q}X}(t) &= \lim_{p \to 0} \left( \frac{p}{1 - q e^{tp/q}} \right)^r \\
+&= \left( \lim_{p \to 0} \frac{p}{1 - q e^{tp/q}} \right)^r \\
+&= \left( \frac{1}{1 - t} \right)^r \\
+&= \frac{1}{(1 - t)^r}, \quad \text{for } t < 1.
+\end{align*}
+
+\noindent \textbf{Step 6: Identification of the Limiting Distribution.} The limiting MGF $(1 - t)^{-r}$ for $t < 1$ is the moment generating function of the $\text{Gamma}(r, 1)$ distribution. Since MGF convergence implies convergence in distribution, $\frac{p}{1-p}X \xrightarrow{d} \text{Gamma}(r, 1)$ as $p \to 0$. The probability density function of the limiting $\text{Gamma}(r, 1)$ distribution is:
+\begin{align*}
+f(x) &= \frac{1}{\Gamma(r) 1^r} x^{r-1} e^{-x/1} \\
+&= \frac{x^{r-1} e^{-x}}{(r - 1)!}, \quad \text{for } x > 0.
+\end{align*}
+
+\vspace{4pt}
+\noindent \textbf{(b) Intuitive Explanation.} The Gamma distribution is the continuous analogue of the Negative Binomial distribution, just as the Exponential distribution is the continuous analogue of the Geometric distribution. As $p \to 0$, individual Bernoulli trials succeed with vanishingly small probability, so a large number of trials is required to achieve $r$ successes. Rescaling the failure count by $\frac{p}{1-p}$ maintains the expected value:
+\begin{align*}
+E\left( \frac{p}{1-p} X \right) &= \frac{p}{1-p} E(X) \\
+&= \frac{p}{1-p} \left( \frac{r(1-p)}{p} \right) \\
+&= r,
+\end{align*}
+which matches the mean of the $\text{Gamma}(r, 1)$ distribution ($E[Y] = r \cdot 1 = r$). In this high-frequency, low-probability limit, the discrete waiting time (measured in number of failures) transitions smoothly into a continuous waiting time modeled by the Gamma distribution.
+
+\end{document}

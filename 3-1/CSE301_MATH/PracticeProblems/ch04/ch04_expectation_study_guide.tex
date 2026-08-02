@@ -1,0 +1,1950 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{mathpazo}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,amsfonts,amsthm,mathtools}
+\usepackage[most]{tcolorbox}
+\usepackage{hyperref}
+\urlstyle{same}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage{microtype}
+\usepackage[shortlabels]{enumitem}
+
+\allowdisplaybreaks
+
+% tcolorbox setup for question statements
+\tcbset{
+  colback=blue!4!white,
+  colframe=blue!35!black,
+  arc=3pt,
+  boxrule=0.8pt,
+  left=12pt,
+  right=12pt,
+  top=10pt,
+  bottom=10pt,
+  fonttitle=\bfseries,
+  enhanced,
+  drop shadow=black!10!white
+}
+
+% Header and Footer setup
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small \textit{Chapter 4: Expectation --- Worked Study Guide}}
+\fancyhead[R]{\small \textit{Reading-Only Practice}}
+\fancyfoot[C]{\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0pt}
+
+% Section styling
+\titleformat{\section}
+  {\normalfont\Large\bfseries\color{blue!40!black}}{\thesection}{1em}{}
+\titleformat{\subsection}
+  {\normalfont\large\bfseries\color{blue!30!black}}{\thesubsection}{1em}{}
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue!50!black,
+    urlcolor=blue!50!black,
+    pdftitle={Chapter 4: Expectation - Worked Study Guide}
+}
+
+\begin{document}
+
+\begin{center}
+    {\LARGE \textbf{Chapter 4: Expectation}}\\[8pt]
+    {\Large \textbf{Complete Step-by-Step Study Document}}\\[6pt]
+    {\small \textit{Reading-Only Practice $\cdot$ Unnumbered Alignments $\cdot$ Verbatim Question Boxes}}
+\end{center}
+
+\vspace{5pt}
+\hrule
+\vspace{10pt}
+
+\tableofcontents
+
+\vspace{15pt}
+\hrule
+\vspace{15pt}
+
+\section{Textbook Exercises}
+
+\subsection{Book Ch.4, Exercise 13}
+\begin{tcolorbox}[title={Book Ch.4, Exercise 13}]
+Are there discrete random variables $X$ and $Y$ such that $E(X) > 100E(Y)$ but $Y$ is greater than $X$ with probability at least 0.99?
+\end{tcolorbox}
+
+\noindent \textbf{Solution.} Yes. We construct an explicit distribution where $X$ is usually $0$ but takes an extremely large value with probability $0.01$, while $Y$ is a moderate constant. Let $Y = 1$ deterministically, and define $X$ by:
+\begin{align*}
+P(X = 10^6) &= \frac{1}{100} = 0.01, \\
+P(X = 0) &= \frac{99}{100} = 0.99.
+\end{align*}
+Computing the expected value of $Y$:
+\begin{align*}
+E(Y) &= 1.
+\end{align*}
+Computing the expected value of $X$:
+\begin{align*}
+E(X) &= 10^6 \cdot P(X = 10^6) + 0 \cdot P(X = 0) \\
+&= 10^6 \left(\frac{1}{100}\right) + 0 \\
+&= 10000.
+\end{align*}
+Comparing the two expectations:
+\begin{align*}
+E(X) &= 10000 > 100 = 100 E(Y).
+\end{align*}
+However, computing the probability that $Y$ is strictly greater than $X$:
+\begin{align*}
+P(Y > X) &= P(X = 0) \\
+&= 0.99 \ge 0.99.
+\end{align*}
+
+\vspace{10pt}
+\subsection{Book Ch.4, Exercise 17}
+\begin{tcolorbox}[title={Book Ch.4, Exercise 17}]
+A couple decides to keep having children until they have at least one boy and at least one girl, and then stop. Assume they never have twins, that the ``trials'' are independent with probability $1/2$ of a boy, and that they are fertile enough to keep producing children indefinitely. What is the expected number of children?
+\end{tcolorbox}
+
+\noindent \textbf{Solution.} Let $T$ be the total number of children born. Regardless of whether the firstborn child is a boy or a girl, the couple must continue having children until they produce a child of the opposite gender. Let $X$ be the number of additional children required after the firstborn to obtain the opposite gender:
+\begin{align*}
+T &= 1 + X.
+\end{align*}
+Since each subsequent birth is an independent Bernoulli trial with success probability $p = \frac{1}{2}$ of being the opposite gender, $X$ follows a First Success distribution $X \sim \text{FS}\left(\frac{1}{2}\right)$ (equivalently, $X - 1 \sim \text{Geom}\left(\frac{1}{2}\right)$ counting failures before the first success):
+\begin{align*}
+E(X) &= \frac{1}{p} = \frac{1}{1/2} = 2.
+\end{align*}
+By linearity of expectation, the expected total number of children is:
+\begin{align*}
+E(T) &= E(1 + X) \\
+&= 1 + E(X) \\
+&= 1 + 2 \\
+&= 3.
+\end{align*}
+
+\vspace{10pt}
+\subsection{Book Ch.4, Exercise 18}
+\begin{tcolorbox}[title={Book Ch.4, Exercise 18}]
+A coin is tossed repeatedly until it lands Heads for the first time. Let $X$ be the number of tosses that are required (including the toss that landed Heads), and let $p$ be the probability of Heads, so that $X \sim \text{FS}(p)$. Find the CDF of $X$, and for $p = 1/2$ sketch its graph.
+\end{tcolorbox}
+
+\noindent \textbf{Solution.} For $X \sim \text{FS}(p)$, the probability mass function for any positive integer $k \in \{1, 2, 3, \dots\}$ is:
+\begin{align*}
+P(X = k) &= p(1 - p)^{k-1}.
+\end{align*}
+To find the cumulative distribution function $F(x) = P(X \le x)$ for any real number $x \ge 1$, let $\lfloor x \rfloor$ denote the greatest integer less than or equal to $x$. The event $X > x$ means that the first $\lfloor x \rfloor$ coin tosses all landed Tails:
+\begin{align*}
+P(X > x) &= (1 - p)^{\lfloor x \rfloor}.
+\end{align*}
+Therefore, the CDF of $X$ is:
+\begin{align*}
+F(x) &= P(X \le x) \\
+&= 1 - P(X > x) \\
+&= \begin{cases}
+1 - (1 - p)^{\lfloor x \rfloor}, & \text{if } x \ge 1, \\[4pt]
+0, & \text{if } x < 1.
+\end{cases}
+\end{align*}
+For $p = \frac{1}{2}$, substituting into the CDF gives:
+\begin{align*}
+F(x) &= \begin{cases}
+1 - \left(\dfrac{1}{2}\right)^{\lfloor x \rfloor} = 1 - \dfrac{1}{2^{\lfloor x \rfloor}}, & \text{if } x \ge 1, \\[10pt]
+0, & \text{if } x < 1.
+\end{cases}
+\end{align*}
+Evaluating at consecutive integers shows the step-function jumps:
+\begin{align*}
+F(1) &= 1 - \frac{1}{2} = 0.5, \\
+F(2) &= 1 - \frac{1}{4} = 0.75, \\
+F(3) &= 1 - \frac{1}{8} = 0.875, \\
+F(4) &= 1 - \frac{1}{16} = 0.9375.
+\end{align*}
+The graph is a right-continuous step function starting at $0$ for $x < 1$, jumping to $0.5$ at $x = 1$, to $0.75$ at $x = 2$, and approaching $1$ asymptotically.
+
+\vspace{10pt}
+\subsection{Book Ch.4, Exercise 20}
+\begin{tcolorbox}[title={Book Ch.4, Exercise 20}]
+Let $X \sim \text{Bin}\left(n, \frac{1}{2}\right)$ and $Y \sim \text{Bin}\left(n+1, \frac{1}{2}\right)$, independently. (This problem has been revised from that in the first printing of the book, to avoid overlap with Exercise 3.25.)
+\begin{enumerate}[(a)]
+\item Let $V = \min(X, Y)$ be the smaller of $X$ and $Y$, and let $W = \max(X, Y)$ be the larger of $X$ and $Y$. So if $X$ crystallizes to $x$ and $Y$ crystallizes to $y$, then $V$ crystallizes to $\min(x, y)$ and $W$ crystallizes to $\max(x, y)$. Find $E(V) + E(W)$.
+\item Show that $E|X - Y| = E(W) - E(V)$, with notation as in (a).
+\item Compute $\text{Var}(n - X)$ in two different ways.
+\end{enumerate}
+\end{tcolorbox}
+
+\noindent \textbf{Solution.} \textbf{(a)} For any two real numbers $x$ and $y$, the sum of their minimum and maximum equals their ordinary sum: $\min(x,y) + \max(x,y) = x + y$. Thus, for the random variables $V$ and $W$:
+\begin{align*}
+V + W &= X + Y.
+\end{align*}
+Taking expectations on both sides and applying linearity of expectation:
+\begin{align*}
+E(V) + E(W) &= E(V + W) \\
+&= E(X + Y) \\
+&= E(X) + E(Y) \\
+&= n\left(\frac{1}{2}\right) + (n+1)\left(\frac{1}{2}\right) \\
+&= \frac{2n + 1}{2} \\
+&= n + \frac{1}{2}.
+\end{align*}
+
+\vspace{4pt}
+\noindent \textbf{(b)} For any two real numbers $x$ and $y$, their absolute difference equals the larger minus the smaller: $|x - y| = \max(x,y) - \min(x,y)$. Therefore:
+\begin{align*}
+|X - Y| &= W - V.
+\end{align*}
+Taking expectations on both sides:
+\begin{align*}
+E|X - Y| &= E(W - V) \\
+&= E(W) - E(V).
+\end{align*}
+
+\vspace{4pt}
+\noindent \textbf{(c)} \textbf{Method 1: Direct distribution identification.} Since $X \sim \text{Bin}\left(n, \frac{1}{2}\right)$ counts Heads in $n$ fair coin flips, $n - X$ counts Tails in the same $n$ flips. Thus, $n - X$ follows an identical Binomial distribution:
+\begin{align*}
+n - X &\sim \text{Bin}\left(n, \frac{1}{2}\right) \\
+\text{Var}(n - X) &= n p (1 - p) \\
+&= n\left(\frac{1}{2}\right)\left(1 - \frac{1}{2}\right) \\
+&= \frac{n}{4}.
+\end{align*}
+\textbf{Method 2: Properties of variance.} Using the variance shift and scaling rule $\text{Var}(a + bX) = b^2 \text{Var}(X)$ with $a = n$ and $b = -1$:
+\begin{align*}
+\text{Var}(n - X) &= (-1)^2 \text{Var}(X) \\
+&= \text{Var}(X) \\
+&= n\left(\frac{1}{2}\right)\left(\frac{1}{2}\right) \\
+&= \frac{n}{4}.
+\end{align*}
+
+\vspace{10pt}
+\subsection{Book Ch.4, Exercise 21}
+\begin{tcolorbox}[title={Book Ch.4, Exercise 21}]
+Raindrops are falling at an average rate of 20 drops per square inch per minute. What would be a reasonable distribution to use for the number of raindrops hitting a particular region measuring 5 square inches in $t$ minutes? Why? Using your chosen distribution, compute the probability that the region has no rain drops in a given 3-second time interval.
+\end{tcolorbox}
+
+\noindent \textbf{Solution.} A reasonable distribution is the \textbf{Poisson distribution}, $N \sim \text{Pois}(\lambda)$, because raindrops arrive independently at a constant average rate across continuous space and time (satisfying the Poisson process assumptions of independence and proportionality to interval size). 
+
+The rate per minute per square inch is $20$. For a region of area $A = 5$ square inches observed for $t$ minutes, the parameter $\lambda$ is:
+\begin{align*}
+\lambda &= (20 \text{ drops}/\text{sq in}/\text{min}) \times (5 \text{ sq in}) \times t \text{ min} \\
+&= 100t.
+\end{align*}
+For a time interval of 3 seconds, converting to minutes gives $t = \frac{3}{60} = \frac{1}{20}$ minutes. Computing the Poisson parameter $\lambda_0$ for this specific interval:
+\begin{align*}
+\lambda_0 &= 100 \left(\frac{1}{20}\right) = 5.
+\end{align*}
+The probability of observing $0$ raindrops in this 3-second interval is:
+\begin{align*}
+P(N = 0) &= \frac{e^{-\lambda_0} \lambda_0^0}{0!} \\
+&= e^{-5} \\
+&\approx 0.006738.
+\end{align*}
+
+\vspace{10pt}
+\subsection{Book Ch.4, Exercise 22}
+\begin{tcolorbox}[title={Book Ch.4, Exercise 22}]
+Alice and Bob have just met, and wonder whether they have a mutual friend. Each has 50 friends, out of 1000 other people who live in their town. They think that it's unlikely that they have a friend in common, saying ``each of us is only friends with 5\% of the people here, so it would be very unlikely that our two 5\%'s overlap.''
+Assume that Alice's 50 friends are a random sample of the 1000 people (equally likely to be any 50 of the 1000), and similarly for Bob. Also assume that knowing who Alice's friends are gives no information about who Bob's friends are.
+\begin{enumerate}[(a)]
+\item Compute the expected number of mutual friends Alice and Bob have.
+\item Let $X$ be the number of mutual friends they have. Find the PMF of $X$.
+\item Is the distribution of $X$ one of the important distributions we have looked at? If so, which?
+\end{enumerate}
+\end{tcolorbox}
+
+\noindent \textbf{Solution.} \textbf{(a)} Let the 1000 townspeople be indexed $j \in \{1, 2, \dots, 1000\}$. Let $I_j$ be the indicator random variable that person $j$ is a mutual friend of both Alice and Bob:
+\begin{align*}
+I_j &= \begin{cases}
+1, & \text{if person } j \text{ is friends with both Alice and Bob}, \\
+0, & \text{otherwise}.
+\end{cases}
+\end{align*}
+Since Alice's and Bob's friend selections are independent random samples of size 50:
+\begin{align*}
+E(I_j) &= P(I_j = 1) \\
+&= P(\text{person } j \text{ is Alice's friend}) \cdot P(\text{person } j \text{ is Bob's friend}) \\
+&= \left(\frac{50}{1000}\right) \left(\frac{50}{1000}\right) \\
+&= (0.05)^2 \\
+&= 0.0025.
+\end{align*}
+By linearity of expectation, the expected total number of mutual friends is:
+\begin{align*}
+E(X) &= E\left( \sum_{j=1}^{1000} I_j \right) \\
+&= \sum_{j=1}^{1000} E(I_j) \\
+&= 1000 \times 0.0025 \\
+&= 2.5.
+\end{align*}
+
+\vspace{4pt}
+\noindent \textbf{(b)} Condition on the fixed set of Alice's 50 friends. Bob randomly selects 50 friends out of the 1000 townspeople. For Alice and Bob to share exactly $k$ mutual friends, Bob must choose exactly $k$ people from Alice's 50 friends and $50 - k$ people from the remaining 950 townspeople:
+\begin{align*}
+P(X = k) &= \frac{\binom{50}{k} \binom{950}{50 - k}}{\binom{1000}{50}}, \quad \text{for } k \in \{0, 1, \dots, 50\}.
+\end{align*}
+
+\vspace{4pt}
+\noindent \textbf{(c)} Yes, $X$ follows the \textbf{Hypergeometric distribution} with population size $N = 1000$, success states $w = 50$ (Alice's friends), and sample size $n = 50$ (Bob's friends):
+\begin{align*}
+X &\sim \text{HGeom}(50, 950, 50).
+\end{align*}
+
+\vspace{10pt}
+\subsection{Book Ch.4, Exercise 24}
+\begin{tcolorbox}[title={Book Ch.4, Exercise 24}]
+Calvin and Hobbes play a match consisting of a series of games, where Calvin has probability $p$ of winning each game (independently). They play with a ``win by two'' rule: the first player to win two games more than his opponent wins the match. Find the expected number of games played.
+Hint: Consider the first two games as a pair, then the next two as a pair, etc.
+\end{tcolorbox}
+\end{tcolorbox}
+
+\noindent \textbf{Solution.} Let $q = 1 - p$ be the probability that Hobbes wins an individual game. Group the games into consecutive pairs: (Game 1, Game 2), (Game 3, Game 4), and so on. Let each pair of games be called a ``mini-match.'' 
+
+In any mini-match of 2 independent games, there are three possible outcomes:
+\begin{align*}
+P(\text{Calvin wins both}) &= p^2, \\
+P(\text{Hobbes wins both}) &= q^2, \\
+P(\text{Tie: 1 win each}) &= 2pq.
+\end{align*}
+If either player wins both games of a mini-match, that player immediately achieves a $+2$ win differential and wins the match. If the mini-match is a tie, the overall score differential remains $0$, and the match continues to the next mini-match. 
+
+Let $s$ be the probability that a mini-match is decisive (not a tie):
+\begin{align*}
+s &= p^2 + q^2.
+\end{align*}
+Let $M$ be the number of mini-matches played until the match is decided. Since mini-matches are independent trials where a decisive outcome occurs with probability $s$, $M$ follows a First Success distribution $M \sim \text{FS}(s)$:
+\begin{align*}
+E(M) &= \frac{1}{s} = \frac{1}{p^2 + q^2}.
+\end{align*}
+Since every mini-match consists of exactly 2 games, the total number of games played is $N = 2M$. By linearity of expectation:
+\begin{align*}
+E(N) &= E(2M) \\
+&= 2 E(M) \\
+&= \frac{2}{p^2 + q^2} \\
+&= \frac{2}{p^2 + (1-p)^2} \\
+&= \frac{2}{2p^2 - 2p + 1}.
+\end{align*}
+
+\vspace{10pt}
+\subsection{Book Ch.4, Exercise 26}
+\begin{tcolorbox}[title={Book Ch.4, Exercise 26}]
+Let $X$ and $Y$ be $\text{Pois}(\lambda)$ r.v.s, and $T = X + Y$. Suppose that $X$ and $Y$ are not independent, and in fact $X = Y$. Prove or disprove the claim that $T \sim \text{Pois}(2\lambda)$ in this scenario.
+\end{tcolorbox}
+
+\noindent \textbf{Solution.} The claim is \textbf{false}. When $X = Y$, the sum is $T = X + X = 2X$. Since $X$ takes integer values in $\{0, 1, 2, 3, \dots\}$, $T = 2X$ can only take \textbf{even} integer values $\{0, 2, 4, 6, \dots\}$:
+\begin{align*}
+P(T = 1) &= P(2X = 1) = 0, \\
+P(T = 3) &= P(2X = 3) = 0.
+\end{align*}
+In contrast, any genuine Poisson random variable $W \sim \text{Pois}(2\lambda)$ has strictly positive probability for every non-negative integer, including odd numbers:
+\begin{align*}
+P(W = 1) &= e^{-2\lambda} \frac{(2\lambda)^1}{1!} = 2\lambda e^{-2\lambda} > 0.
+\end{align*}
+Furthermore, comparing the variance of $T = 2X$ with its mean:
+\begin{align*}
+E(T) &= E(2X) = 2 E(X) = 2\lambda, \\
+\text{Var}(T) &= \text{Var}(2X) = 2^2 \text{Var}(X) = 4\lambda.
+\end{align*}
+Since $\text{Var}(T) = 4\lambda \neq 2\lambda = E(T)$, $T$ violates the Poisson mean-variance equality, proving $T$ is not Poisson.
+
+\vspace{10pt}
+\subsection{Book Ch.4, Exercise 29}
+\begin{tcolorbox}[title={Book Ch.4, Exercise 29}]
+A discrete distribution has the memoryless property if for $X$ a random variable with that distribution, $P(X \ge j + k \mid X \ge j) = P(X \ge k)$ for all nonnegative integers $j, k$.
+\begin{enumerate}[(a)]
+\item If $X$ has a memoryless distribution with CDF $F$ and PMF $p_i = P(X = i)$, find an expression for $P(X \ge j + k)$ in terms of $F(j), F(k), p_j, p_k$.
+\item Name a discrete distribution which has the memoryless property. Justify your answer with a clear interpretation in words or with a computation.
+\end{enumerate}
+\end{tcolorbox}
+
+\noindent \textbf{Solution.} \textbf{(a)} Using the definition of conditional probability:
+\begin{align*}
+P(X \ge j + k \mid X \ge j) &= \frac{P(X \ge j + k \text{ and } X \ge j)}{P(X \ge j)}.
+\end{align*}
+Since $k \ge 0$, the event $\{X \ge j + k\}$ is a subset of $\{X \ge j\}$, so their intersection is simply $\{X \ge j + k\}$:
+\begin{align*}
+P(X \ge j + k \mid X \ge j) &= \frac{P(X \ge j + k)}{P(X \ge j)}.
+\end{align*}
+By the memoryless property, this conditional probability equals $P(X \ge k)$:
+\begin{align*}
+\frac{P(X \ge j + k)}{P(X \ge j)} &= P(X \ge k) \\
+P(X \ge j + k) &= P(X \ge j) P(X \ge k).
+\end{align*}
+Expressing $P(X \ge m)$ in terms of the CDF $F(m) = P(X \le m)$ and PMF $p_m = P(X = m)$:
+\begin{align*}
+P(X \ge m) &= 1 - P(X < m) \\
+&= 1 - \left( P(X \le m) - P(X = m) \right) \\
+&= 1 - F(m) + p_m.
+\end{align*}
+Substituting this for $m = j$ and $m = k$:
+\begin{align*}
+P(X \ge j + k) &= \left( 1 - F(j) + p_j \right) \left( 1 - F(k) + p_k \right).
+\end{align*}
+
+\vspace{4pt}
+\noindent \textbf{(b)} The **Geometric distribution** $X \sim \text{Geom}(p)$ (counting the number of failures before the first success) is memoryless. 
+
+\textbf{Verbal interpretation:} In a sequence of independent coin tosses, the coin has no memory. If you have already observed $j$ consecutive Tails, the number of additional Tails you must wait through before seeing the first Heads depends only on future independent tosses, identical to starting a brand-new experiment from scratch.
+
+\textbf{Computational proof:} For $X \sim \text{Geom}(p)$, $P(X \ge m) = (1 - p)^m = q^m$ for any non-negative integer $m$. Computing the conditional probability:
+\begin{align*}
+P(X \ge j + k \mid X \ge j) &= \frac{P(X \ge j + k)}{P(X \ge j)} \\
+&= \frac{q^{j+k}}{q^j} \\
+&= q^k \\
+&= P(X \ge k).
+\end{align*}
+
+\vspace{10pt}
+\subsection{Book Ch.4, Exercise 30}
+\begin{tcolorbox}[title={Book Ch.4, Exercise 30}]
+Randomly, $k$ distinguishable balls are placed into $n$ distinguishable boxes, with all possibilities equally likely. Find the expected number of empty boxes.
+\end{tcolorbox}
+
+\noindent \textbf{Solution.} Let the boxes be indexed $i \in \{1, 2, \dots, n\}$. Define the indicator random variable $I_i$ for box $i$ being empty:
+\begin{align*}
+I_i &= \begin{cases}
+1, & \text{if box } i \text{ receives } 0 \text{ balls}, \\
+0, & \text{otherwise}.
+\end{cases}
+\end{align*}
+Each of the $k$ balls is placed independently into one of the $n$ boxes with equal probability $\frac{1}{n}$. Thus, for any individual ball, the probability it avoids box $i$ is $1 - \frac{1}{n}$. Since all $k$ balls are placed independently:
+\begin{align*}
+E(I_i) &= P(I_i = 1) \\
+&= P(\text{all } k \text{ balls avoid box } i) \\
+&= \left(1 - \frac{1}{n}\right)^k.
+\end{align*}
+Let $X = \sum_{i=1}^{n} I_i$ be the total number of empty boxes. By linearity of expectation:
+\begin{align*}
+E(X) &= E\left( \sum_{i=1}^{n} I_i \right) \\
+&= \sum_{i=1}^{n} E(I_i) \\
+&= n \left(1 - \frac{1}{n}\right)^k.
+\end{align*}
+
+\vspace{10pt}
+\subsection{Book Ch.4, Exercise 31}
+\begin{tcolorbox}[title={Book Ch.4, Exercise 31}]
+A group of 50 people are comparing their birthdays (as usual, assume their birthdays are independent, are not February 29, etc.). Find the expected number of pairs of people with the same birthday, and the expected number of days in the year on which at least two of these people were born.
+\end{tcolorbox}
+
+\noindent \textbf{Solution.} \textbf{Part 1: Expected number of pairs with the same birthday.}
+Let the 50 people be labeled $1, 2, \dots, 50$. There are $\binom{50}{2} = 1225$ distinct pairs of people. For each pair $(i, j)$ with $i < j$, define the indicator random variable $I_{ij}$:
+\begin{align*}
+I_{ij} &= \begin{cases}
+1, & \text{if person } i \text{ and person } j \text{ share a birthday}, \\
+0, & \text{otherwise}.
+\end{cases}
+\end{align*}
+Under the assumption of 365 equally likely birthdays, the probability that person $j$ matches person $i$'s birthday is:
+\begin{align*}
+E(I_{ij}) &= P(I_{ij} = 1) = \frac{1}{365}.
+\end{align*}
+Let $P = \sum_{i < j} I_{ij}$ be the total number of matching pairs. By linearity of expectation:
+\begin{align*}
+E(P) &= \sum_{i < j} E(I_{ij}) \\
+&= \binom{50}{2} \left(\frac{1}{365}\right) \\
+&= \frac{1225}{365} \\
+&= \frac{245}{73} \\
+&\approx 3.356.
+\end{align*}
+
+\vspace{4pt}
+\noindent \textbf{Part 2: Expected number of days with at least two births.}
+Let the days of the year be indexed $d \in \{1, 2, \dots, 365\}$. For each day $d$, define the indicator random variable $J_d$:
+\begin{align*}
+J_d &= \begin{cases}
+1, & \text{if at least } 2 \text{ people were born on day } d, \\
+0, & \text{otherwise}.
+\end{cases}
+\end{align*}
+We compute $P(J_d = 1)$ using the complement events that day $d$ has either $0$ births or exactly $1$ birth among the 50 people:
+\begin{align*}
+P(J_d = 1) &= 1 - P(\text{0 births on day } d) - P(\text{1 birth on day } d) \\
+&= 1 - \binom{50}{0} \left(\frac{1}{365}\right)^0 \left(\frac{364}{365}\right)^{50} - \binom{50}{1} \left(\frac{1}{365}\right)^1 \left(\frac{364}{365}\right)^{49} \\
+&= 1 - \left(\frac{364}{365}\right)^{50} - \frac{50}{365} \left(\frac{364}{365}\right)^{49}.
+\end{align*}
+Let $D = \sum_{d=1}^{365} J_d$ be the total number of days with at least two births. By linearity of expectation:
+\begin{align*}
+E(D) &= \sum_{d=1}^{365} E(J_d) \\
+&= 365 \left[ 1 - \left(\frac{364}{365}\right)^{50} - \frac{50}{365} \left(\frac{364}{365}\right)^{49} \right] \\
+&= 365 - 365\left(\frac{364}{365}\right)^{50} - 50\left(\frac{364}{365}\right)^{49} \\
+&\approx 2.964.
+\end{align*}
+
+\vspace{10pt}
+\subsection{Book Ch.4, Exercise 32}
+\begin{tcolorbox}[title={Book Ch.4, Exercise 32}]
+A group of $n \ge 4$ people are comparing their birthdays (as usual, assume their birthdays are independent, are not February 29, etc.). Let $I_{ij}$ be the indicator r.v. of $i$ and $j$ having the same birthday (for $i < j$). Is $I_{12}$ independent of $I_{34}$? Is $I_{12}$ independent of $I_{13}$? Are the $I_{ij}$ independent?
+\end{tcolorbox}
+
+\noindent \textbf{Solution.} \textbf{1. Is $I_{12}$ independent of $I_{34}$? Yes.}
+The indicator $I_{12}$ depends solely on the birthdays of Person 1 and Person 2, whereas $I_{34}$ depends solely on the birthdays of Person 3 and Person 4. Because all $n$ individuals have mutually independent birthdays, disjoint pairs of individuals produce independent indicator variables:
+\begin{align*}
+P(I_{12} = 1 \text{ and } I_{34} = 1) &= \left(\frac{1}{365}\right) \left(\frac{1}{365}\right) = P(I_{12} = 1) P(I_{34} = 1).
+\end{align*}
+
+\vspace{4pt}
+\noindent \textbf{2. Is $I_{12}$ independent of $I_{13}$? Yes.}
+Although both indicators involve Person 1, knowing that Person 2 shares Person 1's birthday provides zero information about whether Person 3 also shares that birthday (since Person 3's birthday is uniformly distributed over all 365 days):
+\begin{align*}
+P(I_{13} = 1 \mid I_{12} = 1) &= P(\text{Person 3 matches Person 1's day}) \\
+&= \frac{1}{365} \\
+&= P(I_{13} = 1).
+\end{align*}
+Thus, $I_{12}$ and $I_{13}$ are pairwise independent.
+
+\vspace{4pt}
+\noindent \textbf{3. Are all the $I_{ij}$ mutually independent? No.}
+Consider the trio of indicators $I_{12}, I_{23},$ and $I_{13}$. If Person 1 shares a birthday with Person 2 ($I_{12} = 1$) and Person 2 shares a birthday with Person 3 ($I_{23} = 1$), then Person 1 and Person 3 must deterministically share the same birthday ($I_{13} = 1$):
+\begin{align*}
+P(I_{13} = 1 \mid I_{12} = 1, I_{23} = 1) &= 1 \neq \frac{1}{365} = P(I_{13} = 1).
+\end{align*}
+Because the joint probability of all three matching is $\frac{1}{365^2}$, which does not equal the product of their marginals $\left(\frac{1}{365}\right)^3$, the indicators $I_{ij}$ are not mutually independent.
+
+\vspace{10pt}
+\subsection{Book Ch.4, Exercise 33}
+\begin{tcolorbox}[title={Book Ch.4, Exercise 33}]
+A total of 20 bags of Haribo gummi bears are randomly distributed to 20 students. Each bag is obtained by a random student, and the outcomes of who gets which bag are independent. Find the average number of bags of gummi bears that the first three students get in total, and find the average number of students who get at least one bag.
+\end{tcolorbox}
+
+\noindent \textbf{Solution.} \textbf{Part 1: Average number of bags for the first three students.}
+Let $X_j$ be the number of bags received by student $j \in \{1, 2, \dots, 20\}$. Each of the 20 bags has probability $p = \frac{1}{20}$ of being assigned to student $j$, independently of all other bags. Thus, $X_j \sim \text{Bin}\left(20, \frac{1}{20}\right)$:
+\begin{align*}
+E(X_j) &= n p = 20 \left(\frac{1}{20}\right) = 1.
+\end{align*}
+Let $T = X_1 + X_2 + X_3$ be the total bags received by the first three students. By linearity of expectation:
+\begin{align*}
+E(T) &= E(X_1 + X_2 + X_3) \\
+&= E(X_1) + E(X_2) + E(X_3) \\
+&= 1 + 1 + 1 \\
+&= 3.
+\end{align*}
+
+\vspace{4pt}
+\noindent \textbf{Part 2: Average number of students who get at least one bag.}
+For each student $j \in \{1, 2, \dots, 20\}$, define the indicator random variable $I_j$:
+\begin{align*}
+I_j &= \begin{cases}
+1, & \text{if student } j \text{ receives } \ge 1 \text{ bag}, \\
+0, & \text{if student } j \text{ receives } 0 \text{ bags}.
+\end{cases}
+\end{align*}
+The probability that student $j$ receives zero bags is $\left(1 - \frac{1}{20}\right)^{20} = \left(\frac{19}{20}\right)^{20}$. Therefore:
+\begin{align*}
+E(I_j) &= P(I_j = 1) \\
+&= 1 - P(X_j = 0) \\
+&= 1 - \left(\frac{19}{20}\right)^{20}.
+\end{align*}
+Let $S = \sum_{j=1}^{20} I_j$ be the number of students receiving at least one bag. By linearity of expectation:
+\begin{align*}
+E(S) &= \sum_{j=1}^{20} E(I_j) \\
+&= 20 \left[ 1 - \left(\frac{19}{20}\right)^{20} \right] \\
+&= 20 - 20\left(\frac{19}{20}\right)^{20} \\
+&\approx 12.83.
+\end{align*}
+
+\vspace{10pt}
+\subsection{Book Ch.4, Exercise 40}
+\begin{tcolorbox}[title={Book Ch.4, Exercise 40}]
+There are 100 shoelaces in a box. At each stage, you pick two random ends and tie them together. Either this results in a longer shoelace (if the two ends came from different pieces), or it results in a loop (if the two ends came from the same piece). What are the expected number of steps until everything is in loops, and the expected number of loops after everything is in loops? (This is a famous interview problem; leave the latter answer as a sum.)
+Hint: For each step, create an indicator r.v. for whether a loop was created then, and note that the number of free ends goes down by 2 after each step.
+\end{tcolorbox}
+
+\noindent \textbf{Solution.} \textbf{Part 1: Expected number of steps.}
+Initially, there are 100 shoelaces, which means there are $2 \times 100 = 200$ free ends. At every step, picking and tying two free ends removes exactly 2 free ends from the box, regardless of whether a loop is formed or two open pieces are joined. Therefore, the total number of steps to eliminate all 200 free ends is deterministically fixed:
+\begin{align*}
+\text{Total steps} &= \frac{200}{2} = 100.
+\end{align*}
+
+\vspace{4pt}
+\noindent \textbf{Part 2: Expected number of loops created.}
+Let $k \in \{1, 2, \dots, 100\}$ represent the stage when there are exactly $k$ open shoelace pieces (and thus $2k$ free ends) remaining in the box. At this stage, you select one random end, leaving $2k - 1$ possible partner ends. Exactly $1$ of those $2k - 1$ remaining ends belongs to the same open shoelace piece.
+
+Let $I_k$ be the indicator random variable that a loop is formed when $k$ open pieces remain:
+\begin{align*}
+P(I_k = 1) &= \frac{1}{2k - 1}.
+\end{align*}
+Let $L = \sum_{k=1}^{100} I_k$ be the total number of loops formed. By linearity of expectation:
+\begin{align*}
+E(L) &= \sum_{k=1}^{100} E(I_k) \\
+&= \sum_{k=1}^{100} \frac{1}{2k - 1} \\
+&= 1 + \frac{1}{3} + \frac{1}{5} + \dots + \frac{1}{199}.
+\end{align*}
+
+\vspace{10pt}
+\subsection{Book Ch.4, Exercise 44}
+\begin{tcolorbox}[title={Book Ch.4, Exercise 44}]
+Let $X$ be Hypergeometric with parameters $w, b, n$.
+\begin{enumerate}[(a)]
+\item Find $E\binom{X}{2}$ by thinking, without any complicated calculations.
+\item Use (a) to find the variance of $X$. You should get
+\[
+\text{Var}(X) = \frac{N-n}{N-1} n p q,
+\]
+where $N = w + b$, $p = w/N$, $q = 1 - p$.
+\end{enumerate}
+\end{tcolorbox}
+
+\noindent \textbf{Solution.} \textbf{(a)} In an urn with $w$ white balls and $b$ black balls ($N = w + b$ total balls), we draw a sample of $n$ balls without replacement. The random variable $X$ counts the number of white balls in our sample. The binomial coefficient $\binom{X}{2}$ counts the number of distinct pairs of white balls present in our sample of $n$ balls.
+
+There are $\binom{n}{2}$ total pairs of drawn balls. For any specific pair of drawn balls $(i, j)$, define the indicator random variable $I_{ij}$:
+\begin{align*}
+I_{ij} &= \begin{cases}
+1, & \text{if both drawn ball } i \text{ and drawn ball } j \text{ are white}, \\
+0, & \text{otherwise}.
+\end{cases}
+\end{align*}
+The probability that any two randomly selected balls are both white is $\frac{w}{N} \cdot \frac{w-1}{N-1}$. Since $\binom{X}{2} = \sum_{i < j} I_{ij}$, linearity of expectation gives:
+\begin{align*}
+E\binom{X}{2} &= \binom{n}{2} P(\text{both balls white}) \\
+&= \frac{n(n-1)}{2} \frac{w(w-1)}{N(N-1)}.
+\end{align*}
+
+\vspace{4pt}
+\noindent \textbf{(b)} Using the algebraic identity $\binom{X}{2} = \frac{X(X-1)}{2} = \frac{X^2 - X}{2}$:
+\begin{align*}
+E\left(X^2 - X\right) &= 2 E\binom{X}{2} \\
+E(X^2) - E(X) &= n(n-1) \frac{w(w-1)}{N(N-1)}.
+\end{align*}
+Let $p = \frac{w}{N}$ and $q = 1 - p = \frac{b}{N}$, so $E(X) = n p = \frac{n w}{N}$. Adding $E(X)$ to both sides:
+\begin{align*}
+E(X^2) &= n(n-1) p \frac{w-1}{N-1} + n p.
+\end{align*}
+Computing $\text{Var}(X) = E(X^2) - [E(X)]^2$:
+\begin{align*}
+\text{Var}(X) &= n(n-1) p \frac{w-1}{N-1} + n p - (n p)^2 \\
+&= n p \left[ \frac{(n-1)(w-1)}{N-1} + 1 - n p \right] \\
+&= n p \left[ \frac{n w - n - w + 1}{N-1} + \frac{N - 1}{N-1} - \frac{n w}{N} \right] \\
+&= n p \left[ \frac{n w - n - w + N}{N-1} - \frac{n w}{N} \right] \\
+&= n p \left[ \frac{N(n w - n - w + N) - (N-1)n w}{N(N-1)} \right] \\
+&= n p \left[ \frac{N n w - N n - N w + N^2 - N n w + n w}{N(N-1)} \right] \\
+&= n p \left[ \frac{N^2 - N n - N w + n w}{N(N-1)} \right] \\
+&= n p \left[ \frac{(N - n)(N - w)}{N(N-1)} \right] \\
+&= \frac{N - n}{N - 1} n p \left(\frac{N - w}{N}\right) \\
+&= \frac{N - n}{N - 1} n p q.
+\end{align*}
+
+\vspace{10pt}
+\subsection{Book Ch.4, Exercise 47}
+\begin{tcolorbox}[title={Book Ch.4, Exercise 47}]
+A hash table is being used to store the phone numbers of $k$ people, storing each person's phone number in a uniformly random location, represented by an integer between 1 and $n$ (see Exercise 25 from Chapter 1 for a description of hash tables). Find the expected number of locations with no phone numbers stored, the expected number with exactly one phone number, and the expected number with more than one phone number (should these quantities add up to $n$?).
+\end{tcolorbox}
+
+\noindent \textbf{Solution.} Let $L_0$ be the number of empty locations, $L_1$ be the number of locations with exactly 1 phone number, and $L_{\ge 2}$ be the number of locations with $\ge 2$ phone numbers. Every location must fall into exactly one of these three categories, so $L_0 + L_1 + L_{\ge 2} = n$ deterministically. By linearity of expectation, their expected values must sum to $n$:
+\begin{align*}
+E(L_0) + E(L_1) + E(L_{\ge 2}) &= n.
+\end{align*}
+
+\vspace{4pt}
+\noindent \textbf{1. Expected number of empty locations ($E(L_0)$):}
+For each location $j \in \{1, 2, \dots, n\}$, let $I_j$ be the indicator that location $j$ receives 0 phone numbers. Since each of the $k$ phone numbers is placed independently at uniform random, the probability that all $k$ avoid location $j$ is $\left(1 - \frac{1}{n}\right)^k$:
+\begin{align*}
+E(L_0) &= \sum_{j=1}^{n} E(I_j) \\
+&= n \left(1 - \frac{1}{n}\right)^k.
+\end{align*}
+
+\vspace{4pt}
+\noindent \textbf{2. Expected number of locations with exactly 1 phone number ($E(L_1)$):}
+Let $J_j$ be the indicator that location $j$ receives exactly 1 phone number. For location $j$ to receive exactly 1 number out of $k$ independent trials, we choose which of the $k$ numbers lands in location $j$ (probability $\frac{1}{n}$), while the remaining $k-1$ numbers avoid location $j$ (probability $\left(1 - \frac{1}{n}\right)^{k-1}$):
+\begin{align*}
+P(J_j = 1) &= \binom{k}{1} \left(\frac{1}{n}\right)^1 \left(1 - \frac{1}{n}\right)^{k-1} \\
+&= \frac{k}{n} \left(1 - \frac{1}{n}\right)^{k-1}.
+\end{align*}
+By linearity of expectation:
+\begin{align*}
+E(L_1) &= \sum_{j=1}^{n} E(J_j) \\
+&= n \left[ \frac{k}{n} \left(1 - \frac{1}{n}\right)^{k-1} \right] \\
+&= k \left(1 - \frac{1}{n}\right)^{k-1}.
+\end{align*}
+
+\vspace{4pt}
+\noindent \textbf{3. Expected number of locations with more than 1 phone number ($E(L_{\ge 2})$):}
+Subtracting $E(L_0)$ and $E(L_1)$ from the total $n$:
+\begin{align*}
+E(L_{\ge 2}) &= n - E(L_0) - E(L_1) \\
+&= n - n \left(1 - \frac{1}{n}\right)^k - k \left(1 - \frac{1}{n}\right)^{k-1}.
+\end{align*}
+
+\vspace{10pt}
+\subsection{Book Ch.4, Exercise 50}
+\begin{tcolorbox}[title={Book Ch.4, Exercise 50}]
+Consider the following algorithm, known as bubble sort, for sorting a list of $n$ distinct numbers into increasing order. Initially they are in a random order, with all orders equally likely. The algorithm compares the numbers in positions 1 and 2, and swaps them if needed, then it compares the new numbers in positions 2 and 3, and swaps them if needed, etc., until it has gone through the whole list. Call this one ``sweep'' through the list. After the first sweep, the largest number is at the end, so the second sweep (if needed) only needs to work with the first $n-1$ positions. Similarly, the third sweep (if needed) only needs to work with the first $n-2$ positions, etc. Sweeps are performed until $n-1$ sweeps have been completed or there is a swapless sweep.
+For example, if the initial list is 53241 (omitting commas), then the following 4 sweeps are performed to sort the list, with a total of 10 comparisons:
+\[
+53241 \rightarrow 35241 \rightarrow 32541 \rightarrow 32451 \rightarrow 32415
+\]
+\[
+32415 \rightarrow 23415 \rightarrow 23415 \rightarrow 23145
+\]
+\[
+23145 \rightarrow 23145 \rightarrow 21345
+\]
+\[
+21345 \rightarrow 12345
+\]
+\begin{enumerate}[(a)]
+\item An inversion is a pair of numbers that are out of order (e.g., 12345 has no inversions, while 53241 has 8 inversions). Find the expected number of inversions in the original list.
+\item Show that the expected number of comparisons is between $\frac{1}{2}\binom{n}{2}$ and $\binom{n}{2}$.
+Hint: For one bound, think about how many comparisons are made if $n-1$ sweeps are done; for the other bound, use Part (a).
+\end{enumerate}
+\end{tcolorbox}
+
+\noindent \textbf{Solution.} \textbf{(a)} There are $\binom{n}{2}$ distinct pairs of numbers $(i, j)$ in the list. For each pair, define the indicator random variable $I_{ij}$:
+\begin{align*}
+I_{ij} &= \begin{cases}
+1, & \text{if pair } (i, j) \text{ is out of order (an inversion)}, \\
+0, & \text{otherwise}.
+\end{cases}
+\end{align*}
+Since all $n!$ permutations of the list are equally likely, any pair of numbers is equally likely to appear in increasing order or decreasing order:
+\begin{align*}
+E(I_{ij}) &= P(I_{ij} = 1) = \frac{1}{2}.
+\end{align*}
+Let $V = \sum I_{ij}$ be the total number of inversions in the list. By linearity of expectation:
+\begin{align*}
+E(V) &= \sum E(I_{ij}) \\
+&= \binom{n}{2} \left(\frac{1}{2}\right) \\
+&= \frac{1}{2}\binom{n}{2} \\
+&= \frac{n(n-1)}{4}.
+\end{align*}
+
+\vspace{4pt}
+\noindent \textbf{(b)} Let $C$ be the total number of comparisons performed by bubble sort. 
+
+\textbf{Lower Bound:} Every single swap performed by bubble sort eliminates exactly 1 inversion from the list. Therefore, the algorithm must perform at least as many comparisons as there are inversions ($C \ge V$). Taking expectations:
+\begin{align*}
+E(C) &\ge E(V) = \frac{1}{2}\binom{n}{2}.
+\end{align*}
+
+\textbf{Upper Bound:} In the absolute worst-case scenario where the algorithm performs all $n-1$ possible sweeps, the number of comparisons made in sweep 1 is $n-1$, in sweep 2 is $n-2$, and in sweep $n-1$ is $1$. Thus, the maximum possible number of comparisons is:
+\begin{align*}
+C &\le (n - 1) + (n - 2) + \dots + 1 \\
+&= \frac{n(n-1)}{2} \\
+&= \binom{n}{2}.
+\end{align*}
+Taking expectations of this deterministic upper bound:
+\begin{align*}
+E(C) &\le \binom{n}{2}.
+\end{align*}
+Combining the two bounds:
+\begin{align*}
+\frac{1}{2}\binom{n}{2} \le E(C) \le \binom{n}{2}.
+\end{align*}
+
+\vspace{10pt}
+\subsection{Book Ch.4, Exercise 52}
+\begin{tcolorbox}[title={Book Ch.4, Exercise 52}]
+An urn contains red, green, and blue balls. Balls are chosen randomly with replacement (each time, the color is noted and then the ball is put back). Let $r, g, b$ be the probabilities of drawing a red, green, blue ball, respectively ($r + g + b = 1$).
+\begin{enumerate}[(a)]
+\item Find the expected number of balls chosen before obtaining the first red ball, not including the red ball itself.
+\item Find the expected number of different colors of balls obtained before getting the first red ball.
+\item Find the probability that at least 2 of $n$ balls drawn are red, given that at least 1 is red.
+\end{enumerate}
+\end{tcolorbox}
+
+\noindent \textbf{Solution.} \textbf{(a)} Let $X$ be the number of non-red draws before the first red ball. Drawing a red ball is a success with probability $r$. Since we count the number of failures prior to the first success, $X$ follows a Geometric distribution $X \sim \text{Geom}(r)$:
+\begin{align*}
+E(X) &= \frac{1 - r}{r}.
+\end{align*}
+
+\vspace{4pt}
+\noindent \textbf{(b)} Let $I_G$ be the indicator that at least one green ball is drawn before the first red ball, and $I_B$ be the indicator that at least one blue ball is drawn before the first red ball. The number of different non-red colors seen before red is $C = I_G + I_B$. 
+
+Consider the sequence of draws ignoring blue balls: every non-blue draw is either green (probability $\frac{g}{g+r}$) or red (probability $\frac{r}{g+r}$). The event $I_G = 1$ occurs if and only if the first non-blue ball in this sequence is green:
+\begin{align*}
+E(I_G) &= P(I_G = 1) = \frac{g}{g + r}.
+\end{align*}
+By identical symmetry between blue and red:
+\begin{align*}
+E(I_B) &= P(I_B = 1) = \frac{b}{b + r}.
+\end{align*}
+By linearity of expectation:
+\begin{align*}
+E(C) &= E(I_G + I_B) \\
+&= \frac{g}{g + r} + \frac{b}{b + r}.
+\end{align*}
+
+\vspace{4pt}
+\noindent \textbf{(c)} Let $R \sim \text{Bin}(n, r)$ be the number of red balls in $n$ draws with replacement. We seek the conditional probability $P(R \ge 2 \mid R \ge 1)$:
+\begin{align*}
+P(R \ge 2 \mid R \ge 1) &= \frac{P(R \ge 2 \text{ and } R \ge 1)}{P(R \ge 1)} \\
+&= \frac{P(R \ge 2)}{P(R \ge 1)} \\
+&= \frac{1 - P(R = 0) - P(R = 1)}{1 - P(R = 0)} \\
+&= \frac{1 - (1 - r)^n - n r (1 - r)^{n-1}}{1 - (1 - r)^n}.
+\end{align*}
+
+\vspace{10pt}
+\subsection{Book Ch.4, Exercise 53}
+\begin{tcolorbox}[title={Book Ch.4, Exercise 53}]
+Job candidates $C_1, C_2, \dots$ are interviewed one by one, and the interviewer compares them and keeps an updated list of rankings (if $n$ candidates have been interviewed so far, this is a list of the $n$ candidates, from best to worst). Assume that there is no limit on the number of candidates available, that for any $n$ the candidates $C_1, C_2, \dots, C_n$ are equally likely to arrive in any order, and that there are no ties in the rankings given by the interview.
+Let $X$ be the index of the first candidate to come along who ranks as better than the very first candidate $C_1$ (so $C_X$ is better than $C_1$, but the candidates after 1 but prior to $X$ (if any) are worse than $C_1$. For example, if $C_2$ and $C_3$ are worse than $C_1$ but $C_4$ is better than $C_1$, then $X = 4$. All 4! orderings of the first 4 candidates are equally likely, so it could have happened that the first candidate was the best out of the first 4 candidates, in which case $X > 4$.)
+What is $E(X)$ (which is a measure of how long, on average, the interviewer needs to wait to find someone better than the very first candidate)?
+Hint: Find $P(X > n)$ by interpreting what $X > n$ says about how $C_1$ compares with other candidates, and then apply the result of Theorem 4.4.8.
+\end{tcolorbox}
+
+\noindent \textbf{Solution.} For any integer $n \ge 1$, the event $X > n$ means that none of the candidates $C_2, C_3, \dots, C_n$ are better than $C_1$. In other words, candidate $C_1$ is the uniquely highest-ranked candidate among the first $n$ candidates.
+
+Since all $n!$ arrival orderings of the first $n$ candidates are equally likely, each of the $n$ candidates has an identical probability $\frac{1}{n}$ of being the best among the first $n$:
+\begin{align*}
+P(X > n) &= \frac{1}{n}, \quad \text{for all } n \ge 1.
+\end{align*}
+For $n = 0$, $P(X > 0) = 1$ trivially since the index $X$ is at least $2$. Using Theorem 4.4.8 (the tail-sum formula for expectation of non-negative integer-valued random variables):
+\begin{align*}
+E(X) &= \sum_{n=0}^{\infty} P(X > n) \\
+&= P(X > 0) + \sum_{n=1}^{\infty} P(X > n) \\
+&= 1 + \sum_{n=1}^{\infty} \frac{1}{n} \\
+&= 1 + \left(1 + \frac{1}{2} + \frac{1}{3} + \frac{1}{4} + \dots \right) \\
+&= \infty.
+\end{align*}
+The expected waiting time is infinite because the harmonic series $\sum \frac{1}{n}$ diverges.
+
+\vspace{10pt}
+\subsection{Book Ch.4, Exercise 56}
+\begin{tcolorbox}[title={Book Ch.4, Exercise 56}]
+For $X \sim \text{Pois}(\lambda)$, find $E(X!)$ (the average factorial of $X$), if it is finite.
+\end{tcolorbox}
+
+\noindent \textbf{Solution.} By the Law of the Unconscious Statistician (LOTUS), the expectation of $g(X) = X!$ for a Poisson random variable $X \sim \text{Pois}(\lambda)$ is:
+\begin{align*}
+E(X!) &= \sum_{k=0}^{\infty} k! P(X = k) \\
+&= \sum_{k=0}^{\infty} k! \left( \frac{e^{-\lambda} \lambda^k}{k!} \right) \\
+&= e^{-\lambda} \sum_{k=0}^{\infty} \lambda^k.
+\end{align*}
+The infinite sum $\sum_{k=0}^{\infty} \lambda^k$ is a geometric series with common ratio $\lambda$. 
+\begin{itemize}
+    \item \textbf{Case 1: $0 < \lambda < 1$.} The geometric series converges to $\frac{1}{1 - \lambda}$:
+    \begin{align*}
+    E(X!) &= \frac{e^{-\lambda}}{1 - \lambda}.
+    \end{align*}
+    \item \textbf{Case 2: $\lambda \ge 1$.} The terms $\lambda^k$ do not approach zero, so the series diverges to $\infty$:
+    \begin{align*}
+    E(X!) &= \infty.
+    \end{align*}
+\end{itemize}
+
+\vspace{10pt}
+\subsection{Book Ch.4, Exercise 59}
+\begin{tcolorbox}[title={Book Ch.4, Exercise 59}]
+Let $X \sim \text{Geom}(p)$ and let $t$ be a constant. Find $E(e^{tX})$, as a function of $t$ (this is known as the moment generating function---we will see in Chapter 6 how this function is useful).
+\end{tcolorbox}
+
+\noindent \textbf{Solution.} Let $q = 1 - p$. For a Geometric random variable $X \sim \text{Geom}(p)$ counting failures before the first success ($k \in \{0, 1, 2, \dots\}$ with PMF $P(X = k) = p q^k$), applying LOTUS gives:
+\begin{align*}
+E\left(e^{tX}\right) &= \sum_{k=0}^{\infty} e^{tk} P(X = k) \\
+&= \sum_{k=0}^{\infty} e^{tk} p q^k \\
+&= p \sum_{k=0}^{\infty} \left( q e^t \right)^k.
+\end{align*}
+This is a geometric series with common ratio $r = q e^t$. It converges if and only if $q e^t < 1$ (equivalently, $t < -\ln q$):
+\begin{align*}
+E\left(e^{tX}\right) &= \frac{p}{1 - q e^t}, \quad \text{for } t < -\ln(1 - p).
+\end{align*}
+
+\vspace{10pt}
+\subsection{Book Ch.4, Exercise 60}
+\begin{tcolorbox}[title={Book Ch.4, Exercise 60}]
+The number of fish in a certain lake is a $\text{Pois}(\lambda)$ random variable. Worried that there might be no fish at all, a statistician adds one fish to the lake. Let $Y$ be the resulting number of fish (so $Y$ is 1 plus a $\text{Pois}(\lambda)$ random variable).
+\begin{enumerate}[(a)]
+\item Find $E(Y^2)$.
+\item Find $E(1/Y)$.
+\end{enumerate}
+\end{tcolorbox}
+
+\noindent \textbf{Solution.} \textbf{(a)} Let $X \sim \text{Pois}(\lambda)$ be the initial number of fish, so $Y = X + 1$. For a Poisson random variable, the mean is $E(X) = \lambda$ and the variance is $\text{Var}(X) = \lambda$, which gives the second moment:
+\begin{align*}
+E(X^2) &= \text{Var}(X) + [E(X)]^2 = \lambda + \lambda^2.
+\end{align*}
+Expanding $Y^2 = (X + 1)^2 = X^2 + 2X + 1$ and applying linearity of expectation:
+\begin{align*}
+E(Y^2) &= E\left(X^2 + 2X + 1\right) \\
+&= E(X^2) + 2 E(X) + 1 \\
+&= (\lambda + \lambda^2) + 2\lambda + 1 \\
+&= \lambda^2 + 3\lambda + 1.
+\end{align*}
+
+\vspace{4pt}
+\noindent \textbf{(b)} Using LOTUS for $g(X) = \frac{1}{X+1}$:
+\begin{align*}
+E\left(\frac{1}{Y}\right) &= E\left(\frac{1}{X + 1}\right) \\
+&= \sum_{k=0}^{\infty} \frac{1}{k + 1} P(X = k) \\
+&= \sum_{k=0}^{\infty} \frac{1}{k + 1} \frac{e^{-\lambda} \lambda^k}{k!} \\
+&= e^{-\lambda} \sum_{k=0}^{\infty} \frac{\lambda^k}{(k + 1)!}.
+\end{align*}
+Multiplying and dividing by $\lambda$ to complete the Taylor series expansion of $e^\lambda$:
+\begin{align*}
+E\left(\frac{1}{Y}\right) &= \frac{e^{-\lambda}}{\lambda} \sum_{k=0}^{\infty} \frac{\lambda^{k+1}}{(k + 1)!} \\
+&= \frac{e^{-\lambda}}{\lambda} \left( \frac{\lambda^1}{1!} + \frac{\lambda^2}{2!} + \frac{\lambda^3}{3!} + \dots \right) \\
+&= \frac{e^{-\lambda}}{\lambda} \left( e^\lambda - 1 \right) \\
+&= \frac{1 - e^{-\lambda}}{\lambda}.
+\end{align*}
+
+\vspace{10pt}
+\subsection{Book Ch.4, Exercise 61}
+\begin{tcolorbox}[title={Book Ch.4, Exercise 61}]
+Let $X$ be a $\text{Pois}(\lambda)$ random variable, where $\lambda$ is fixed but unknown. Let $\theta = e^{-3\lambda}$, and suppose that we are interested in estimating $\theta$ based on the data. Since $X$ is what we observe, our estimator is a function of $X$, call it $g(X)$. The bias of the estimator $g(X)$ is defined to be $E(g(X)) - \theta$, i.e., how far off the estimate is on average; the estimator is unbiased if its bias is 0.
+\begin{enumerate}[(a)]
+\item For estimating $\lambda$, the r.v. $X$ itself is an unbiased estimator. Compute the bias of the estimator $T = e^{-3X}$. Is it unbiased for estimating $\theta$?
+\item Show that $g(X) = (-2)^X$ is an unbiased estimator for $\theta$. (In fact, it turns out to be the only unbiased estimator for $\theta$.)
+\item Explain intuitively why $g(X)$ is a silly choice for estimating $\theta$, despite (b), and show how to improve it by finding an estimator $h(X)$ for $\theta$ that is always at least as good as $g(X)$ and sometimes strictly better than $g(X)$. That is,
+\[
+|h(X) - \theta| \le |g(X) - \theta|,
+\]
+with the inequality sometimes strict.
+\end{enumerate}
+\end{tcolorbox}
+
+\noindent \textbf{Solution.} \textbf{(a)} We compute the expected value of $T = e^{-3X}$ using LOTUS:
+\begin{align*}
+E(T) &= E\left(e^{-3X}\right) \\
+&= \sum_{k=0}^{\infty} e^{-3k} \frac{e^{-\lambda} \lambda^k}{k!} \\
+&= e^{-\lambda} \sum_{k=0}^{\infty} \frac{\left(\lambda e^{-3}\right)^k}{k!} \\
+&= e^{-\lambda} e^{\lambda e^{-3}} \\
+&= e^{-\lambda\left(1 - e^{-3}\right)}.
+\end{align*}
+Computing the bias $b(T) = E(T) - \theta$:
+\begin{align*}
+b(T) &= e^{-\lambda\left(1 - e^{-3}\right)} - e^{-3\lambda} \neq 0.
+\end{align*}
+Since the bias is non-zero, $T = e^{-3X}$ is **biased** for estimating $\theta$.
+
+\vspace{4pt}
+\noindent \textbf{(b)} We compute the expected value of $g(X) = (-2)^X$ using LOTUS:
+\begin{align*}
+E(g(X)) &= \sum_{k=0}^{\infty} (-2)^k \frac{e^{-\lambda} \lambda^k}{k!} \\
+&= e^{-\lambda} \sum_{k=0}^{\infty} \frac{(-2\lambda)^k}{k!} \\
+&= e^{-\lambda} e^{-2\lambda} \\
+&= e^{-3\lambda} \\
+&= \theta.
+\end{align*}
+Since $E(g(X)) - \theta = 0$, $g(X) = (-2)^X$ is an **unbiased** estimator for $\theta$.
+
+\vspace{4pt}
+\noindent \textbf{(c)} The true parameter $\theta = e^{-3\lambda}$ represents a probability/exponential decay factor and is strictly bounded in $(0, 1]$. However, $g(X) = (-2)^X$ produces wild, alternating integers:
+\begin{align*}
+g(0) &= 1, \\
+g(1) &= -2, \\
+g(2) &= 4, \\
+g(3) &= -8, \dots
+\end{align*}
+Whenever $X$ is odd, $g(X)$ is strictly negative (impossible for $\theta > 0$), and whenever $X \ge 2$ is even, $g(X) \ge 4$ (impossible for $\theta \le 1$). 
+
+We define the improved estimator $h(X)$ by projecting $g(X)$ onto the valid parameter interval $[0, 1]$:
+\begin{align*}
+h(X) &= \begin{cases}
+1, & \text{if } X = 0, \\
+0, & \text{if } X \ge 1.
+\end{cases}
+\end{align*}
+Because $\theta \in (0, 1]$, whenever $g(X) < 0$ we have $|0 - \theta| < |g(X) - \theta|$, and whenever $g(X) > 1$ we have $|1 - \theta| < |g(X) - \theta|$. For $X = 0$, $h(0) = g(0) = 1$. Thus:
+\begin{align*}
+|h(X) - \theta| \le |g(X) - \theta| \quad \text{for all } X,
+\end{align*}
+with strict inequality whenever $X \ge 1$.
+
+\vspace{10pt}
+\subsection{Book Ch.4, Exercise 62}
+\begin{tcolorbox}[title={Book Ch.4, Exercise 62}]
+Law school courses often have assigned seating to facilitate the Socratic method. Suppose that there are 100 first-year law students, and each takes the same two courses: Torts and Contracts. Both are held in the same lecture hall (which has 100 seats), and the seating is uniformly random and independent for the two courses.
+\begin{enumerate}[(a)]
+\item Find the probability that no one has the same seat for both courses (exactly; you should leave your answer as a sum).
+\item Find a simple but accurate approximation to the probability that no one has the same seat for both courses.
+\item Find a simple but accurate approximation to the probability that at least two students have the same seat for both courses.
+\end{enumerate}
+\end{tcolorbox}
+
+\noindent \textbf{Solution.} \textbf{(a)} Let the 100 students be indexed $j \in \{1, 2, \dots, 100\}$. Fix the seating arrangement of Torts. The seating arrangement of Contracts is a uniformly random permutation of the 100 students. Let $E_j$ be the event that student $j$ sits in the same seat in both classes. 
+
+We seek $P(N = 0) = 1 - P\left(\bigcup_{j=1}^{100} E_j\right)$, where $N$ is the number of students with matching seats. By the Inclusion-Exclusion Principle (de Montmort's matching problem):
+\begin{align*}
+P\left(\bigcup_{j=1}^{100} E_j\right) &= \sum_{j=1}^{100} (-1)^{j-1} \binom{100}{j} P(E_1 \cap E_2 \cap \dots \cap E_j).
+\end{align*}
+The probability that $j$ specific students all sit in their matching seats is $\frac{(100 - j)!}{100!}$:
+\begin{align*}
+P\left(\bigcup_{j=1}^{100} E_j\right) &= \sum_{j=1}^{100} (-1)^{j-1} \frac{100!}{j!(100-j)!} \frac{(100-j)!}{100!} \\
+&= \sum_{j=1}^{100} \frac{(-1)^{j-1}}{j!}.
+\end{align*}
+Subtracting from 1 gives the exact probability of zero matches:
+\begin{align*}
+P(N = 0) &= 1 - \sum_{j=1}^{100} \frac{(-1)^{j-1}}{j!} \\
+&= \sum_{j=0}^{100} \frac{(-1)^j}{j!}.
+\end{align*}
+
+\vspace{4pt}
+\noindent \textbf{(b)} For each student $i$, let $I_i$ be the indicator that student $i$ has matching seats ($P(I_i = 1) = \frac{1}{100}$). By linearity of expectation, the expected number of matches is:
+\begin{align*}
+E(N) &= \sum_{i=1}^{100} E(I_i) = 100 \left(\frac{1}{100}\right) = 1.
+\end{align*}
+By the **Poisson Paradigm**, since $N$ is a sum of many weakly dependent indicator variables with small probabilities, $N$ is well-approximated by a Poisson distribution with parameter $\lambda = E(N) = 1$:
+\begin{align*}
+P(N = 0) &\approx \frac{e^{-1} 1^0}{0!} \\
+&= e^{-1} \\
+&\approx 0.367879.
+\end{align*}
+
+\vspace{4pt}
+\noindent \textbf{(c)} Using the same Poisson approximation $N \sim \text{Pois}(1)$:
+\begin{align*}
+P(N \ge 2) &= 1 - P(N = 0) - P(N = 1) \\
+&\approx 1 - \frac{e^{-1} 1^0}{0!} - \frac{e^{-1} 1^1}{1!} \\
+&= 1 - 2e^{-1} \\
+&\approx 1 - 2(0.367879) \\
+&= 0.264241.
+\end{align*}
+
+\vspace{10pt}
+\subsection{Book Ch.4, Exercise 63}
+\begin{tcolorbox}[title={Book Ch.4, Exercise 63}]
+A group of $n$ people play ``Secret Santa'' as follows: each puts his or her name on a slip of paper in a hat, picks a name randomly from the hat (without replacement), and then buys a gift for that person. Unfortunately, they overlook the possibility of drawing one's own name, so some may have to buy gifts for themselves (on the bright side, some may like self-selected gifts better). Assume $n \ge 2$.
+\begin{enumerate}[(a)]
+\item Find the expected value of the number $X$ of people who pick their own names.
+\item Find the expected number of pairs of people, A and B, such that A picks B's name and B picks A's name (where $A \neq B$ and order doesn't matter).
+\item Let $X$ be the number of people who pick their own names. What is the approximate distribution of $X$ if $n$ is large (specify the parameter value or values)? What does $P(X = 0)$ converge to as $n \rightarrow \infty$?
+\end{enumerate}
+\end{tcolorbox}
+
+\noindent \textbf{Solution.} \textbf{(a)} For each person $j \in \{1, 2, \dots, n\}$, let $I_j$ be the indicator that person $j$ draws their own name. Because each person is equally likely to draw any of the $n$ slips:
+\begin{align*}
+E(I_j) &= P(I_j = 1) = \frac{1}{n}.
+\end{align*}
+Let $X = \sum_{j=1}^{n} I_j$ be the total number of people who pick their own names. By linearity of expectation:
+\begin{align*}
+E(X) &= \sum_{j=1}^{n} E(I_j) = n \left(\frac{1}{n}\right) = 1.
+\end{align*}
+
+\vspace{4pt}
+\noindent \textbf{(b)} There are $\binom{n}{2} = \frac{n(n-1)}{2}$ distinct pairs of people $(i, j)$ with $i < j$. For each pair, let $J_{ij}$ be the indicator that person $i$ draws $j$'s name **and** person $j$ draws $i$'s name. 
+
+There are $n!$ total permutations of name drawings. Exactly $(n-2)!$ of those permutations have $i$ draw $j$ and $j$ draw $i$ simultaneously:
+\begin{align*}
+E(J_{ij}) &= P(J_{ij} = 1) \\
+&= \frac{(n - 2)!}{n!} \\
+&= \frac{1}{n(n - 1)}.
+\end{align*}
+Let $S = \sum_{i < j} J_{ij}$ be the total number of mutual gift-exchange pairs. By linearity of expectation:
+\begin{align*}
+E(S) &= \sum_{i < j} E(J_{ij}) \\
+&= \binom{n}{2} \frac{1}{n(n - 1)} \\
+&= \frac{n(n - 1)}{2} \frac{1}{n(n - 1)} \\
+&= \frac{1}{2}.
+\end{align*}
+
+\vspace{4pt}
+\noindent \textbf{(c)} By the **Poisson Paradigm**, since $X$ is a sum of $n$ weakly dependent indicator variables each with success probability $\frac{1}{n}$, the distribution of $X$ for large $n$ is approximately **Poisson with parameter $\lambda = E(X) = 1$**:
+\begin{align*}
+X &\stackrel{\text{approx}}{\sim} \text{Pois}(1).
+\end{align*}
+As $n \to \infty$, the probability of zero self-draws converges to:
+\begin{align*}
+\lim_{n \to \infty} P(X = 0) &= \frac{e^{-1} 1^0}{0!} = e^{-1} \approx 0.367879.
+\end{align*}
+
+\vspace{10pt}
+\subsection{Book Ch.4, Exercise 65}
+\begin{tcolorbox}[title={Book Ch.4, Exercise 65}]
+Ten million people enter a certain lottery. For each person, the chance of winning is one in ten million, independently.
+\begin{enumerate}[(a)]
+\item Find a simple, good approximation for the PMF of the number of people who win the lottery.
+\item Congratulations! You won the lottery. However, there may be other winners. Assume now that the number of winners other than you is $W \sim \text{Pois}(1)$, and that if there is more than one winner, then the prize is awarded to one randomly chosen winner. Given this information, find the probability that you win the prize (simplify).
+\end{enumerate}
+\end{tcolorbox}
+
+\noindent \textbf{Solution.} \textbf{(a)} Let $X$ be the total number of lottery winners among $n = 10^7$ people, where each wins independently with probability $p = 10^{-7}$. The exact distribution is $X \sim \text{Bin}\left(10^7, 10^{-7}\right)$, with expected value:
+\begin{align*}
+E(X) &= n p = 10^7 \times 10^{-7} = 1.
+\end{align*}
+Because $n$ is extremely large and $p$ is extremely small, the Binomial distribution is excellently approximated by a **Poisson distribution with parameter $\lambda = 1$**:
+\begin{align*}
+P(X = k) &\approx \frac{e^{-1} 1^k}{k!} = \frac{1}{e \cdot k!}, \quad \text{for } k \in \{0, 1, 2, \dots\}.
+\end{align*}
+
+\vspace{4pt}
+\noindent \textbf{(b)} Let $A$ be the event that you are selected to receive the prize. If there are $W = k$ other winners, then there are $k + 1$ total winners including yourself. Since the prize is awarded to one winner uniformly at random, your conditional probability of winning is:
+\begin{align*}
+P(A \mid W = k) &= \frac{1}{k + 1}.
+\end{align*}
+Using the Law of Total Probability over all possible values of $W \sim \text{Pois}(1)$:
+\begin{align*}
+P(A) &= \sum_{k=0}^{\infty} P(A \mid W = k) P(W = k) \\
+&= \sum_{k=0}^{\infty} \left(\frac{1}{k + 1}\right) \frac{e^{-1} 1^k}{k!} \\
+&= \frac{1}{e} \sum_{k=0}^{\infty} \frac{1}{(k + 1)!} \\
+&= \frac{1}{e} \left( \frac{1}{1!} + \frac{1}{2!} + \frac{1}{3!} + \dots \right) \\
+&= \frac{1}{e} (e^1 - 1) \\
+&= 1 - \frac{1}{e} \\
+&\approx 0.632121.
+\end{align*}
+
+\vspace{10pt}
+\subsection{Book Ch.4, Exercise 68}
+\begin{tcolorbox}[title={Book Ch.4, Exercise 68}]
+Each of 111 people names his or her 5 favorite movies out of a list of 11 movies.
+\begin{enumerate}[(a)]
+\item Alice and Bob are 2 of the 111 people. Assume for this part only that Alice's 5 favorite movies out of the 11 are random, with all sets of 5 equally likely, and likewise for Bob, independently. Find the expected number of movies in common to Alice's and Bob's lists of favorite movies.
+\item Show that there are 2 movies such that at least 21 of the people name both of these movies as favorites.
+\end{enumerate}
+\end{tcolorbox}
+
+\noindent \textbf{Solution.} \textbf{(a)} Let the 11 movies be indexed $j \in \{1, 2, \dots, 11\}$. Let $I_j$ be the indicator that movie $j$ is on both Alice's list and Bob's list. Since Alice and Bob independently choose 5 movies out of 11:
+\begin{align*}
+E(I_j) &= P(\text{movie } j \text{ on Alice's list}) \cdot P(\text{movie } j \text{ on Bob's list}) \\
+&= \left(\frac{5}{11}\right) \left(\frac{5}{11}\right) \\
+&= \frac{25}{121}.
+\end{align*}
+Let $C = \sum_{j=1}^{11} I_j$ be the number of common movies. By linearity of expectation:
+\begin{align*}
+E(C) &= \sum_{j=1}^{11} E(I_j) \\
+&= 11 \left(\frac{25}{121}\right) \\
+&= \frac{25}{11} \\
+&\approx 2.273.
+\end{align*}
+
+\vspace{4pt}
+\noindent \textbf{(b)} We use the **Probabilistic Method**. Choose a pair of distinct movies $(M_1, M_2)$ uniformly at random out of the $\binom{11}{2} = 55$ possible pairs of movies. 
+
+For each person $i \in \{1, 2, \dots, 111\}$, let $X_i$ be the indicator that person $i$ named **both** $M_1$ and $M_2$ as favorites. Since person $i$'s list contains 5 fixed movies out of 11, the probability that a random pair of movies falls entirely within person $i$'s 5 favorites is:
+\begin{align*}
+E(X_i) &= P(\text{both } M_1, M_2 \text{ in person } i\text{'s list}) \\
+&= \frac{\binom{5}{2}}{\binom{11}{2}} \\
+&= \frac{10}{55} \\
+&= \frac{2}{11}.
+\end{align*}
+Let $T = \sum_{i=1}^{111} X_i$ be the total number of people who named both $M_1$ and $M_2$ as favorites. By linearity of expectation over all 111 people:
+\begin{align*}
+E(T) &= \sum_{i=1}^{111} E(X_i) \\
+&= 111 \left(\frac{2}{11}\right) \\
+&= \frac{222}{11} \\
+&= 20 + \frac{2}{11} \\
+&\approx 20.18.
+\end{align*}
+Since the expected value of $T$ over all 55 pairs of movies is strictly greater than $20$, there must exist at least one specific pair of movies for which $T \ge 21$.
+
+\vspace{10pt}
+\subsection{Book Ch.4, Exercise 69}
+\begin{tcolorbox}[title={Book Ch.4, Exercise 69}]
+The circumference of a circle is colored with red and blue ink such that $2/3$ of the circumference is red and $1/3$ is blue. Prove that no matter how complicated the coloring scheme is, there is a way to inscribe a square in the circle such that at least three of the four corners of the square touch red ink.
+\end{tcolorbox}
+
+\noindent \textbf{Solution.} We use the **Probabilistic Method**. Select a point $U_1$ uniformly at random along the circumference of the circle. Let $U_2, U_3,$ and $U_4$ be the points at angular distances $\frac{\pi}{2}, \pi,$ and $\frac{3\pi}{2}$ radians clockwise from $U_1$, so that $(U_1, U_2, U_3, U_4)$ form the four corners of an inscribed square.
+
+For each corner $j \in \{1, 2, 3, 4\}$, let $I_j$ be the indicator that corner $U_j$ touches red ink. Because the initial orientation of the square is uniformly random around the entire circle, every individual corner $U_j$ is uniformly distributed over the circumference:
+\begin{align*}
+E(I_j) &= P(U_j \text{ is red}) = \frac{2}{3}.
+\end{align*}
+Let $R = I_1 + I_2 + I_3 + I_4$ be the total number of corners touching red ink. By linearity of expectation:
+\begin{align*}
+E(R) &= \sum_{j=1}^{4} E(I_j) \\
+&= 4 \left(\frac{2}{3}\right) \\
+&= \frac{8}{3} \\
+&= 2 + \frac{2}{3}.
+\end{align*}
+Because a random variable must take a value greater than or equal to its expected value with positive probability, there must exist at least one orientation of the inscribed square for which $R \ge \frac{8}{3}$. Since $R$ can only take integer values $\{0, 1, 2, 3, 4\}$, any square with $R \ge \frac{8}{3}$ must have $R \ge 3$ corners touching red ink.
+
+\vspace{10pt}
+\subsection{Book Ch.4, Exercise 70}
+\begin{tcolorbox}[title={Book Ch.4, Exercise 70}]
+A hundred students have taken an exam consisting of 8 problems, and for each problem at least 65 of the students got the right answer. Show that there exist two students who collectively got everything right, in the sense that for each problem, at least one of the two got it right.
+\end{tcolorbox}
+
+\noindent \textbf{Solution.} We use the **Probabilistic Method**. Choose a pair of students $(S_1, S_2)$ uniformly at random out of the $\binom{100}{2} = 4950$ distinct pairs of students. 
+
+For each problem $j \in \{1, 2, \dots, 8\}$, define the indicator random variable $I_j$:
+\begin{align*}
+I_j &= \begin{cases}
+1, & \text{if at least one of } (S_1, S_2) \text{ solved problem } j \text{ correctly}, \\
+0, & \text{if both } S_1 \text{ and } S_2 \text{ got problem } j \text{ wrong}.
+\end{cases}
+\end{align*}
+For problem $j$, at most $100 - 65 = 35$ students got the problem wrong. The number of pairs where **both** students got problem $j$ wrong is at most $\binom{35}{2} = \frac{35 \times 34}{2} = 595$. Therefore, the probability that a random pair solved problem $j$ correctly is:
+\begin{align*}
+E(I_j) &= P(I_j = 1) \\
+&= 1 - P(\text{both wrong}) \\
+&\ge 1 - \frac{\binom{35}{2}}{\binom{100}{2}} \\
+&= 1 - \frac{595}{4950} \\
+&= 1 - \frac{119}{990} \\
+&= \frac{871}{990}.
+\end{align*}
+Let $C = \sum_{j=1}^{8} I_j$ be the total number of problems solved by at least one student in the pair. By linearity of expectation:
+\begin{align*}
+E(C) &= \sum_{j=1}^{8} E(I_j) \\
+&\ge 8 \left(\frac{871}{990}\right) \\
+&= \frac{6968}{990} \\
+&\approx 7.038.
+\end{align*}
+Since the average score $E(C) > 7$, there must exist at least one pair of students with a collective score $C \ge 8$, meaning they collectively solved all 8 problems correctly.
+
+\vspace{10pt}
+\subsection{Book Ch.4, Exercise 71}
+\begin{tcolorbox}[title={Book Ch.4, Exercise 71}]
+Ten points in the plane are designated. You have ten circular coins (of the same radius). Show that you can position the coins in the plane (without stacking them) so that all ten points are covered.
+Hint: Consider a honeycomb tiling of the plane (this is a way to divide the plane into hexagons). You can use the fact from geometry that if a circle is inscribed in a hexagon then the ratio of the area of the circle to the area of the hexagon is $\frac{\pi}{2\sqrt{3}} > 0.9$.
+\end{tcolorbox}
+
+\noindent \textbf{Solution.} Consider a regular honeycomb tiling of the plane using hexagons of such size that a circular coin of the given radius can be inscribed perfectly inside each hexagon. Inscribe a circular coin inside every hexagon of the tiling. By the geometric hint, the fraction of the plane's area covered by these inscribed circles is:
+\begin{align*}
+\text{Coverage ratio} &= \frac{\pi}{2\sqrt{3}} \approx 0.9069 > 0.9.
+\end{align*}
+Now, shift the entire honeycomb-and-circles tiling uniformly at random across the plane (by periodicity, shifting uniformly over one fundamental hexagonal cell suffices). 
+
+For each of the 10 designated points $p_j$ ($j \in \{1, 2, \dots, 10\}$), let $I_j$ be the indicator that point $p_j$ falls inside one of the inscribed circular coins:
+\begin{align*}
+E(I_j) &= P(\text{point } p_j \text{ covered by a circle}) = \frac{\pi}{2\sqrt{3}} > 0.9.
+\end{align*}
+Let $N = \sum_{j=1}^{10} I_j$ be the total number of points covered by circles. By linearity of expectation:
+\begin{align*}
+E(N) &= \sum_{j=1}^{10} E(I_j) \\
+&> 10 (0.9) \\
+&= 9.
+\end{align*}
+Since the expected number of covered points is strictly greater than 9, there must exist at least one shift position where $N \ge 10$, covering all 10 points. Placing the 10 coins onto the 10 hexagons containing the designated points covers all 10 points without stacking.
+
+\vspace{10pt}
+\subsection{Book Ch.4, Exercise 72}
+\begin{tcolorbox}[title={Book Ch.4, Exercise 72}]
+Let $S$ be a set of binary strings $a_1 \dots a_n$ of length $n$ (where juxtaposition means concatenation). We call $S$ $k$-complete if for any indices $1 \le i_1 < \dots < i_k \le n$ and any binary string $b_1 \dots b_k$ of length $k$, there is a string $s_1 \dots s_n$ in $S$ such that $s_{i_1} s_{i_2} \dots s_{i_k} = b_1 b_2 \dots b_k$. For example, for $n = 3$ the set $S = \{001, 010, 011, 100, 101, 110\}$ is 2-complete since all 4 patterns of 0's and 1's of length 2 can be found in any 2 positions. Show that if $\binom{n}{k} 2^k \left(1 - 2^{-k}\right)^m < 1$, then there exists a $k$-complete set of size at most $m$.
+\end{tcolorbox}
+
+\noindent \textbf{Solution.} We use the **Probabilistic Method**. Generate a random set $S$ consisting of $m$ binary strings of length $n$, where every bit of every string is chosen independently and uniformly at random from $\{0, 1\}$.
+
+There are $\binom{n}{k}$ ways to choose $k$ coordinate indices $i_1 < i_2 < \dots < i_k$, and $2^k$ possible binary patterns $b_1 b_2 \dots b_k$ of length $k$. Therefore, there are $N = \binom{n}{k} 2^k$ total "target requirements" that a $k$-complete set must satisfy.
+
+For a fixed choice of indices $(i_1, \dots, i_k)$ and a fixed target pattern $(b_1, \dots, b_k)$, let $B$ be the bad event that **none** of the $m$ random strings in $S$ matches the pattern $(b_1, \dots, b_k)$ at coordinates $(i_1, \dots, i_k)$. 
+
+For a single random string, the probability that it matches the target pattern at the $k$ specified coordinates is $\left(\frac{1}{2}\right)^k = 2^{-k}$. Thus, the probability that a single string fails to match is $1 - 2^{-k}$. Since all $m$ strings in $S$ are generated independently:
+\begin{align*}
+P(B) &= \left(1 - 2^{-k}\right)^m.
+\end{align*}
+Let $B_1, B_2, \dots, B_N$ be the bad failure events for all $N = \binom{n}{k} 2^k$ target requirements. By Boole's Inequality (the Union Bound), the probability that $S$ fails at least one requirement is bounded by:
+\begin{align*}
+P\left( \bigcup_{r=1}^{N} B_r \right) &\le \sum_{r=1}^{N} P(B_r) \\
+&= N \left(1 - 2^{-k}\right)^m \\
+&= \binom{n}{k} 2^k \left(1 - 2^{-k}\right)^m.
+\end{align*}
+Under the given hypothesis $\binom{n}{k} 2^k \left(1 - 2^{-k}\right)^m < 1$, the probability of failure is strictly less than 1. Therefore, the probability that $S$ succeeds at every requirement is strictly positive:
+\begin{align*}
+P(\text{set } S \text{ is } k\text{-complete}) &= 1 - P\left( \bigcup_{r=1}^{N} B_r \right) > 0.
+\end{align*}
+Thus, there exists at least one $k$-complete set of size at most $m$.
+
+\vspace{10pt}
+\subsection{Book Ch.4, Exercise 75}
+\begin{tcolorbox}[title={Book Ch.4, Exercise 75}]
+A group of 360 people is going to be split into 120 teams of 3 (where the order of teams and the order within a team don't matter).
+\begin{enumerate}[(a)]
+\item How many ways are there to do this?
+\item The group consists of 180 married couples. A random split into teams of 3 is chosen, with all possible splits equally likely. Find the expected number of teams containing married couples.
+\end{enumerate}
+\end{tcolorbox}
+
+\noindent \textbf{Solution.} \textbf{(a)} Line up all 360 people in a row ($360!$ ways) and group them sequentially: the first 3 form Team 1, the next 3 form Team 2, and so on. Since order within each of the 120 teams does not matter (divide by $3!^{120} = 6^{120}$) and the order of the 120 teams does not matter (divide by $120!$), the total number of valid team splits is:
+\begin{align*}
+N &= \frac{360!}{(3!)^{120} 120!} = \frac{360!}{6^{120} \cdot 120!}.
+\end{align*}
+
+\vspace{4pt}
+\noindent \textbf{(b)} Let the 120 teams be indexed $t \in \{1, 2, \dots, 120\}$. Let $I_t$ be the indicator that team $t$ contains a married couple. 
+
+Consider Team 1: it consists of 3 people chosen uniformly at random out of the 360 people ($\binom{360}{3}$ possible triplets). To form a team containing a married couple, we choose 1 of the 180 married couples ($\binom{180}{1} = 180$ ways) and then choose any 1 of the remaining $360 - 2 = 358$ people as the third member:
+\begin{align*}
+E(I_t) &= P(\text{team } t \text{ contains a married couple}) \\
+&= \frac{180 \times 358}{\binom{360}{3}} \\
+&= \frac{180 \times 358}{\frac{360 \times 359 \times 358}{6}} \\
+&= \frac{6 \times 180}{360 \times 359} \\
+&= \frac{3}{359}.
+\end{align*}
+Let $X = \sum_{t=1}^{120} I_t$ be the total number of teams containing a married couple. By linearity of expectation:
+\begin{align*}
+E(X) &= \sum_{t=1}^{120} E(I_t) \\
+&= 120 \left(\frac{3}{359}\right) \\
+&= \frac{360}{359} \\
+&\approx 1.0028.
+\end{align*}
+
+\vspace{10pt}
+\subsection{Book Ch.4, Exercise 76}
+\begin{tcolorbox}[title={Book Ch.4, Exercise 76}]
+The gambler de Méré asked Pascal whether it is more likely to get at least one six in 4 rolls of a die, or to get at least one double-six in 24 rolls of a pair of dice. Continuing this pattern, suppose that a group of $n$ fair dice is rolled $4 \cdot 6^{n-1}$ times.
+\begin{enumerate}[(a)]
+\item Find the expected number of times that ``all sixes'' is achieved (i.e., how often among the $4 \cdot 6^{n-1}$ rolls it happens that all $n$ dice land 6 simultaneously).
+\item Give a simple but accurate approximation of the probability of having at least one occurrence of ``all sixes'', for $n$ large (in terms of $e$ but not $n$).
+\item de Méré finds it tedious to re-roll so many dice. So after one normal roll of the $n$ dice, in going from one roll to the next, with probability $6/7$ he leaves the dice in the same configuration and with probability $1/7$ he re-rolls. For example, if $n = 3$ and the 7th roll is (3,1,4), then $6/7$ of the time the 8th roll remains (3,1,4) and $1/7$ of the time the 8th roll is a new random outcome. Does the expected number of times that ``all sixes'' is achieved stay the same, increase, or decrease (compared with (a))? Give a short but clear explanation.
+\end{enumerate}
+\end{tcolorbox}
+
+\noindent \textbf{Solution.} \textbf{(a)} In a single simultaneous roll of $n$ fair dice, the probability that all $n$ dice land 6 is $p = \left(\frac{1}{6}\right)^n = 6^{-n}$. For each roll $j \in \{1, 2, \dots, 4 \cdot 6^{n-1}\}$, let $I_j$ be the indicator of ``all sixes.'' By linearity of expectation:
+\begin{align*}
+E(X) &= \sum_{j=1}^{4 \cdot 6^{n-1}} E(I_j) \\
+&= \left(4 \cdot 6^{n-1}\right) \left(6^{-n}\right) \\
+&= \frac{4}{6} \\
+&= \frac{2}{3}.
+\end{align*}
+
+\vspace{4pt}
+\noindent \textbf{(b)} By the **Poisson Paradigm**, since $X$ counts rare successes over a large number of trials, $X$ is well-approximated by a Poisson distribution with parameter $\lambda = E(X) = \frac{2}{3}$:
+\begin{align*}
+P(X \ge 1) &= 1 - P(X = 0) \\
+&\approx 1 - \frac{e^{-2/3} (2/3)^0}{0!} \\
+&= 1 - e^{-2/3} \\
+&\approx 0.48658.
+\end{align*}
+
+\vspace{4pt}
+\noindent \textbf{(c) It stays exactly the same ($E(X) = 2/3$).}
+In de Méré's lazy rolling scheme, every individual stage $j$ remains marginally uniformly distributed over all $6^n$ dice outcomes ($P(I_j = 1) = 6^{-n}$ for every $j$). Because **linearity of expectation holds even for dependent random variables**, summing $E(I_j) = 6^{-n}$ over all $4 \cdot 6^{n-1}$ stages yields the exact same expected value $\frac{2}{3}$.
+
+\vspace{10pt}
+\subsection{Book Ch.4, Exercise 77}
+\begin{tcolorbox}[title={Book Ch.4, Exercise 77}]
+Five people have just won a \$100 prize, and are deciding how to divide the \$100 up between them. Assume that whole dollars are used, not cents. Also, for example, giving \$50 to the first person and \$10 to the second is different from vice versa.
+\begin{enumerate}[(a)]
+\item How many ways are there to divide up the \$100, such that each gets at least \$10?
+\item Assume that the \$100 is randomly divided up, with all of the possible allocations counted in (a) equally likely. Find the expected amount of money that the first person receives.
+\item Let $A_j$ be the event that the $j$th person receives more than the first person (for $2 \le j \le 5$), when the \$100 is randomly allocated as in (b). Are $A_2$ and $A_3$ independent?
+\end{enumerate}
+\end{tcolorbox}
+
+\noindent \textbf{Solution.} \textbf{(a)} Let $x_j \ge 10$ be the integer dollar amount received by person $j \in \{1, 2, 3, 4, 5\}$, such that $\sum_{j=1}^{5} x_j = 100$. Give \$10 to each of the 5 people immediately (\$50 total), leaving $\$100 - \$50 = \$50$ to distribute arbitrarily among 5 people. By Bose-Einstein stars-and-bars ($n = 50$ balls into $k = 5$ boxes):
+\begin{align*}
+N &= \binom{n + k - 1}{k - 1} = \binom{50 + 5 - 1}{5 - 1} = \binom{54}{4} = 316251.
+\end{align*}
+
+\vspace{4pt}
+\noindent \textbf{(b)} Let $X_j$ be the amount received by person $j$. By symmetry across all 5 people, every person has the exact same expected payout: $E(X_1) = E(X_2) = E(X_3) = E(X_4) = E(X_5)$. Since $\sum_{j=1}^{5} X_j = 100$ deterministically, linearity of expectation gives:
+\begin{align*}
+E(X_1 + X_2 + X_3 + X_4 + X_5) &= 100 \\
+5 E(X_1) &= 100 \\
+E(X_1) &= \$20.
+\end{align*}
+
+\vspace{4pt}
+\noindent \textbf{(c) No, $A_2$ and $A_3$ are not independent (they are negatively correlated).}
+If $A_2$ occurs ($X_2 > X_1$), person 2 consumes a larger share of the fixed \$100 prize pool. This leaves fewer remaining dollars available for person 3, reducing the conditional probability that person 3 can also exceed person 1's share:
+\begin{align*}
+P(A_3 \mid A_2) &< P(A_3).
+\end{align*}
+
+\vspace{10pt}
+\subsection{Book Ch.4, Exercise 78}
+\begin{tcolorbox}[title={Book Ch.4, Exercise 78}]
+Joe's iPod has 500 different songs, consisting of 50 albums of 10 songs each. He listens to 11 random songs on his iPod, with all songs equally likely and chosen independently (so repetitions may occur).
+\begin{enumerate}[(a)]
+\item What is the PMF of how many of the 11 songs are from his favorite album?
+\item What is the probability that there are 2 (or more) songs from the same album among the 11 songs he listens to?
+\item A pair of songs is a match if they are from the same album. If, say, the 1st, 3rd, and 7th songs are all from the same album, this counts as 3 matches. Among the 11 songs he listens to, how many matches are there on average?
+\end{enumerate}
+\end{tcolorbox}
+
+\noindent \textbf{Solution.} \textbf{(a)} Let $X$ be the number of songs from his favorite album. Each of the 11 independent selections has probability $p = \frac{10}{500} = \frac{1}{50}$ of being from his favorite album. Thus, $X \sim \text{Bin}\left(11, \frac{1}{50}\right)$ with PMF:
+\begin{align*}
+P(X = k) &= \binom{11}{k} \left(\frac{1}{50}\right)^k \left(\frac{49}{50}\right)^{11 - k}, \quad \text{for } k \in \{0, 1, \dots, 11\}.
+\end{align*}
+
+\vspace{4pt}
+\noindent \textbf{(b)} We find the probability of at least one album match using the complement event that all 11 songs belong to 11 **different** albums out of the 50 albums. Since there are $500^{11}$ total song sequences and $50 \times 49 \times \dots \times 40 \times 10^{11}$ sequences with distinct albums:
+\begin{align*}
+P(\text{at least 2 from same album}) &= 1 - P(\text{all 11 from different albums}) \\
+&= 1 - \frac{50 \times 49 \times 48 \times \dots \times 40 \times 10^{11}}{500^{11}} \\
+&= 1 - \frac{50 \times 49 \times 48 \times \dots \times 40}{50^{11}} \\
+&= 1 - \frac{50!}{39! \cdot 50^{11}} \\
+&\approx 0.6985.
+\end{align*}
+
+\vspace{4pt}
+\noindent \textbf{(c)} There are $\binom{11}{2} = 55$ distinct pairs of songs $(i, j)$ among the 11 songs played. For each pair, let $I_{ij}$ be the indicator that song $i$ and song $j$ belong to the same album. Since song $i$ belongs to some album, the probability that song $j$ falls into that same 10-song album is:
+\begin{align*}
+E(I_{ij}) &= P(\text{same album}) = \frac{10}{500} = \frac{1}{50}.
+\end{align*}
+Let $M = \sum_{i < j} I_{ij}$ be the total number of matching pairs. By linearity of expectation:
+\begin{align*}
+E(M) &= \sum_{i < j} E(I_{ij}) \\
+&= \binom{11}{2} \left(\frac{1}{50}\right) \\
+&= \frac{55}{50} \\
+&= 1.1.
+\end{align*}
+
+\vspace{10pt}
+\subsection{Book Ch.4, Exercise 79}
+\begin{tcolorbox}[title={Book Ch.4, Exercise 79}]
+In each day that the Mass Cash lottery is run in Massachusetts, 5 of the integers from 1 to 35 are chosen (randomly and without replacement).
+\begin{enumerate}[(a)]
+\item When playing this lottery, find the probability of guessing exactly 3 numbers right, given that you guess at least 1 of the numbers right.
+\item Find an exact expression for the expected number of days needed so that all of the $\binom{35}{5}$ possible lottery outcomes will have occurred.
+\item Approximate the probability that after 50 days of the lottery, every number from 1 to 35 has been picked at least once.
+\end{enumerate}
+\end{tcolorbox}
+
+\noindent \textbf{Solution.} \textbf{(a)} Let $X$ be the number of correct guesses on your ticket of 5 numbers. Under random drawing without replacement, $X$ follows a Hypergeometric distribution $X \sim \text{HGeom}(5, 30, 5)$:
+\begin{align*}
+P(X = k) &= \frac{\binom{5}{k} \binom{30}{5 - k}}{\binom{35}{5}}.
+\end{align*}
+We compute the conditional probability $P(X = 3 \mid X \ge 1)$:
+\begin{align*}
+P(X = 3 \mid X \ge 1) &= \frac{P(X = 3)}{P(X \ge 1)} \\
+&= \frac{P(X = 3)}{1 - P(X = 0)} \\
+&= \frac{\dfrac{\binom{5}{3} \binom{30}{2}}{\binom{35}{5}}}{1 - \dfrac{\binom{5}{0} \binom{30}{5}}{\binom{35}{5}}} \\
+&= \frac{\binom{5}{3} \binom{30}{2}}{\binom{35}{5} - \binom{30}{5}} \\
+&= \frac{10 \times 435}{324632 - 142506} \\
+&= \frac{4350}{182126} \\
+&\approx 0.02388.
+\end{align*}
+
+\vspace{4pt}
+\noindent \textbf{(b)} This is the **Coupon Collector's Problem** with $N = \binom{35}{5} = 324632$ distinct possible lottery outcomes. Let $T$ be the number of days until all $N$ outcomes have appeared. By linearity of expectation over the time between discovering new outcomes:
+\begin{align*}
+E(T) &= N \sum_{j=1}^{N} \frac{1}{j} \\
+&= \binom{35}{5} \sum_{j=1}^{\binom{35}{5}} \frac{1}{j}.
+\end{align*}
+
+\vspace{4pt}
+\noindent \textbf{(c)} For each integer $i \in \{1, 2, \dots, 35\}$, let $A_i$ be the event that number $i$ is **never** picked in 50 days. On any single day, the probability that number $i$ is not among the 5 chosen numbers is $\frac{30}{35} = \frac{6}{7}$. Over 50 independent days:
+\begin{align*}
+P(A_i) &= \left(\frac{6}{7}\right)^{50}.
+\end{align*}
+Let $Y = \sum_{i=1}^{35} I(A_i)$ be the number of integers never picked in 50 days. By linearity of expectation:
+\begin{align*}
+E(Y) &= 35 \left(\frac{6}{7}\right)^{50} \approx 0.01575.
+\end{align*}
+By the **Poisson Paradigm**, since $Y$ counts rare, weakly dependent non-occurrences, $Y \sim \text{Pois}(\lambda)$ with $\lambda = E(Y) = 35(6/7)^{50}$:
+\begin{align*}
+P(\text{every number picked } \ge 1 \text{ time}) &= P(Y = 0) \\
+&\approx e^{-\lambda} \\
+&= \exp\left[ -35 \left(\frac{6}{7}\right)^{50} \right] \\
+&\approx e^{-0.01575} \\
+&\approx 0.98437.
+\end{align*}
+
+\vspace{15pt}
+\section{Strategic Practice}
+
+\subsection{SP 4 \S1 $\cdot$ Problem 1}
+\begin{tcolorbox}[title={SP 4 \S1 $\cdot$ Problem 1}]
+Find an example of two discrete random variables $X$ and $Y$ (on the same sample space) such that $X$ and $Y$ have the same distribution (i.e., same PMF and same CDF), but the event $X = Y$ never occurs.
+\end{tcolorbox}
+
+\noindent \textbf{Solution.} Let $X \sim \text{Bern}\left(\frac{1}{2}\right)$ be the outcome of a fair coin toss ($1$ for Heads, $0$ for Tails). Define $Y$ as the opposite outcome of the same coin toss:
+\begin{align*}
+Y &= 1 - X.
+\end{align*}
+Both $X$ and $Y$ share the exact same Bernoulli PMF:
+\begin{align*}
+P(X = 1) &= P(Y = 1) = \frac{1}{2}, \\
+P(X = 0) &= P(Y = 0) = \frac{1}{2}.
+\end{align*}
+However, their difference is $X - Y = X - (1 - X) = 2X - 1 \in \{-1, 1\}$, which means $X$ and $Y$ can never be equal:
+\begin{align*}
+P(X = Y) &= 0.
+\end{align*}
+
+\vspace{10pt}
+\subsection{SP 4 \S1 $\cdot$ Problem 2}
+\begin{tcolorbox}[title={SP 4 \S1 $\cdot$ Problem 2}]
+Let $X$ be a random day of the week, coded so that Monday is 1, Tuesday is 2, etc. (so $X$ takes values 1, 2, \dots, 7, with equal probabilities). Let $Y$ be the next day after $X$ (again represented as an integer between 1 and 7). Do $X$ and $Y$ have the same distribution? What is $P(X < Y)$?
+\end{tcolorbox}
+
+\noindent \textbf{Solution.} Yes, $X$ and $Y$ have the same uniform distribution on $\{1, 2, \dots, 7\}$ because a cyclic shift of a uniform distribution remains uniform ($P(Y = k) = \frac{1}{7}$ for all $k$).
+
+To compute $P(X < Y)$, note that $Y = X + 1$ for all days except Sunday ($X = 7$), where Monday follows ($Y = 1$):
+\begin{align*}
+X < Y &\iff X \in \{1, 2, 3, 4, 5, 6\} \\
+P(X < Y) &= P(X \neq 7) \\
+&= 1 - \frac{1}{7} \\
+&= \frac{6}{7}.
+\end{align*}
+
+\vspace{10pt}
+\subsection{SP 4 \S1 $\cdot$ Problem 3}
+\begin{tcolorbox}[title={SP 4 \S1 $\cdot$ Problem 3}]
+A coin is tossed repeatedly until it lands Heads for the first time. Let $X$ be the number of tosses that are required (including the toss that landed Heads), and let $p$ be the probability of Heads. Find the CDF of $X$, and for $p = 1/2$ sketch its graph.
+\end{tcolorbox}
+
+\noindent \textbf{Solution.} For $X \sim \text{FS}(p)$, the probability that $X > x$ for any real number $x \ge 1$ is the probability that the first $\lfloor x \rfloor$ tosses are all Tails:
+\begin{align*}
+P(X > x) &= (1 - p)^{\lfloor x \rfloor}.
+\end{align*}
+Therefore, the CDF of $X$ is:
+\begin{align*}
+F(x) &= P(X \le x) = \begin{cases}
+1 - (1 - p)^{\lfloor x \rfloor}, & \text{if } x \ge 1, \\[4pt]
+0, & \text{if } x < 1.
+\end{cases}
+\end{align*}
+For a fair coin ($p = 1/2$), $F(x) = 1 - 2^{-\lfloor x \rfloor}$ for $x \ge 1$, which is a step function jumping at integer values: $F(1) = 0.5$, $F(2) = 0.75$, $F(3) = 0.875$, and $F(4) = 0.9375$.
+
+\vspace{10pt}
+\subsection{SP 4 \S1 $\cdot$ Problem 4}
+\begin{tcolorbox}[title={SP 4 \S1 $\cdot$ Problem 4}]
+Are there discrete random variables $X$ and $Y$ such that $E(X) > 100E(Y)$ but $Y$ is greater than $X$ with probability at least 0.99?
+\end{tcolorbox}
+
+\noindent \textbf{Solution.} Yes. Let $Y = 1$ deterministically, and define $X$ by:
+\begin{align*}
+P(X = 10^6) &= 0.01, \\
+P(X = 0) &= 0.99.
+\end{align*}
+We have $E(Y) = 1$ and $E(X) = 10^6(0.01) = 10000 > 100 E(Y)$, yet $P(Y > X) = P(X = 0) = 0.99 \ge 0.99$.
+
+\vspace{10pt}
+\subsection{SP 4 \S1 $\cdot$ Problem 5}
+\begin{tcolorbox}[title={SP 4 \S1 $\cdot$ Problem 5}]
+Let $X$ be a discrete r.v. with possible values $1, 2, 3, \dots$. Let $F(x) = P(X \le x)$ be the CDF of $X$. Show that
+\[
+E(X) = \sum_{n=0}^{\infty} (1 - F(n)).
+\]
+Hint: Organize the order of summation carefully, using the fact that, for example, $P(X > 3) = P(X = 4) + P(X = 5) + \dots$.
+\end{tcolorbox}
+
+\noindent \textbf{Solution.} Since $1 - F(n) = P(X > n)$, we expand each tail probability into a sum over the PMF $p_k = P(X = k)$:
+\begin{align*}
+\sum_{n=0}^{\infty} (1 - F(n)) &= \sum_{n=0}^{\infty} P(X > n) \\
+&= \sum_{n=0}^{\infty} \sum_{k=n+1}^{\infty} P(X = k).
+\end{align*}
+Because all probabilities are non-negative, we can interchange the order of summation. The integer $k$ ranges from $1$ to $\infty$, and for a fixed $k$, the integer $n$ ranges from $0$ to $k-1$ (exactly $k$ terms):
+\begin{align*}
+\sum_{n=0}^{\infty} (1 - F(n)) &= \sum_{k=1}^{\infty} \sum_{n=0}^{k-1} P(X = k) \\
+&= \sum_{k=1}^{\infty} k P(X = k) \\
+&= E(X).
+\end{align*}
+
+\vspace{10pt}
+\subsection{SP 4 \S1 $\cdot$ Problem 6}
+\begin{tcolorbox}[title={SP 4 \S1 $\cdot$ Problem 6}]
+Job candidates $C_1, C_2, \dots$ are interviewed one by one, and the interviewer compares them and keeps an updated list of rankings (if $n$ candidates have been interviewed so far, this is a list of the $n$ candidates, from best to worst).
+Assume that there is no limit on the number of candidates available, that for any $n$ the candidates $C_1, C_2, \dots, C_n$ are equally likely to arrive in any order, and that there are no ties in the rankings given by the interview.
+Let $X$ be the index of the first candidate to come along who ranks as better than the very first candidate $C_1$ (so $C_X$ is better than $C_1$, but the candidates after 1 but prior to $X$ (if any) are worse than $C_1$. For example, if $C_2$ and $C_3$ are worse than $C_1$ but $C_4$ is better than $C_1$, then $X = 4$. All 4! orderings of the first 4 candidates are equally likely, so it could have happened that the first candidate was the best out of the first 4 candidates, in which case $X > 4$.)
+What is $E(X)$ (which is a measure of how long, on average, the interviewer needs to wait to find someone better than the very first candidate)? Hint: Find $P(X > n)$ by interpreting what $X > n$ says about how $C_1$ compares with other candidates, and then apply the result of the previous problem.
+\end{tcolorbox}
+
+\noindent \textbf{Solution.} The event $X > n$ means candidate $C_1$ is the best among the first $n$ candidates. By symmetry among all $n!$ orderings, $P(X > n) = \frac{1}{n}$ for $n \ge 1$, and $P(X > 0) = 1$. Using the tail-sum formula from Problem 5:
+\begin{align*}
+E(X) &= \sum_{n=0}^{\infty} P(X > n) \\
+&= 1 + \sum_{n=1}^{\infty} \frac{1}{n} \\
+&= \infty.
+\end{align*}
+
+\vspace{10pt}
+\subsection{SP 4 \S2 $\cdot$ Problem 1}
+\begin{tcolorbox}[title={SP 4 \S2 $\cdot$ Problem 1}]
+A group of 50 people are comparing their birthdays (as usual, assume their birthdays are independent, are not February 29, etc.). Find the expected number of pairs of people with the same birthday, and the expected number of days in the year on which at least two of these people were born.
+\end{tcolorbox}
+
+\noindent \textbf{Solution.} Let $I_{ij}$ be the indicator that person $i$ and person $j$ share a birthday ($E(I_{ij}) = \frac{1}{365}$). By linearity of expectation over all $\binom{50}{2} = 1225$ pairs:
+\begin{align*}
+E(\text{matching pairs}) &= \binom{50}{2} \left(\frac{1}{365}\right) = \frac{1225}{365} = \frac{245}{73} \approx 3.356.
+\end{align*}
+Let $J_d$ be the indicator that day $d$ has $\ge 2$ births ($P(J_d = 1) = 1 - (364/365)^{50} - \frac{50}{365}(364/365)^{49}$). By linearity over all 365 days:
+\begin{align*}
+E(\text{days with } \ge 2 \text{ births}) &= 365 - 365\left(\frac{364}{365}\right)^{50} - 50\left(\frac{364}{365}\right)^{49} \approx 2.964.
+\end{align*}
+
+\vspace{10pt}
+\subsection{SP 4 \S2 $\cdot$ Problem 2}
+\begin{tcolorbox}[title={SP 4 \S2 $\cdot$ Problem 2}]
+A total of 20 bags of Haribo gummi bears are randomly distributed to the 20 students in a certain Stat 110 section. Each bag is obtained by a random student, and the outcomes of who gets which bag are independent. Find the average number of bags of gummi bears that the first three students get in total, and find the average number of students who get at least one bag.
+\end{tcolorbox}
+
+\noindent \textbf{Solution.} Let $X_j \sim \text{Bin}\left(20, \frac{1}{20}\right)$ be the bags received by student $j$ ($E(X_j) = 1$). By linearity of expectation:
+\begin{align*}
+E(X_1 + X_2 + X_3) &= 1 + 1 + 1 = 3.
+\end{align*}
+Let $I_j$ be the indicator that student $j$ gets $\ge 1$ bag ($E(I_j) = 1 - (19/20)^{20}$). Summing over all 20 students:
+\begin{align*}
+E(\text{students with } \ge 1 \text{ bag}) &= 20 \left[ 1 - \left(\frac{19}{20}\right)^{20} \right] \approx 12.83.
+\end{align*}
+
+\vspace{10pt}
+\subsection{SP 4 \S2 $\cdot$ Problem 3}
+\begin{tcolorbox}[title={SP 4 \S2 $\cdot$ Problem 3}]
+There are 100 shoelaces in a box. At each stage, you pick two random ends and tie them together. Either this results in a longer shoelace (if the two ends came from different pieces), or it results in a loop (if the two ends came from the same piece). What are the expected number of steps until everything is in loops, and the expected number of loops after everything is in loops? (This is a famous interview problem; leave the latter answer as a sum.)
+Hint: For each step, create an indicator r.v. for whether a loop was created then, and note that the number of free ends goes down by 2 after each step.
+\end{tcolorbox}
+
+\noindent \textbf{Solution.} Each step removes 2 free ends from the 200 initial ends, so the number of steps is deterministically $\frac{200}{2} = 100$. 
+
+When $k$ open shoelaces ($2k$ free ends) remain, picking one end leaves $2k - 1$ possible partners, exactly 1 of which forms a loop ($P(I_k = 1) = \frac{1}{2k-1}$). By linearity of expectation:
+\begin{align*}
+E(\text{total loops}) &= \sum_{k=1}^{100} \frac{1}{2k - 1} = 1 + \frac{1}{3} + \frac{1}{5} + \dots + \frac{1}{199}.
+\end{align*}
+
+\vspace{10pt}
+\subsection{SP 4 \S2 $\cdot$ Problem 4}
+\begin{tcolorbox}[title={SP 4 \S2 $\cdot$ Problem 4}]
+A hash table is a commonly used data structure in computer science, allowing for fast information retrieval. For example, suppose we want to store some people's phone numbers. Assume that no two of the people have the same name. For each name $x$, a hash function $h$ is used, where $h(x)$ is the location to store $x$'s phone number. After such a table has been computed, to look up $x$'s phone number one just recomputes $h(x)$ and then looks up what is stored in that location.
+The hash function $h$ is deterministic, since we don't want to get different results every time we compute $h(x)$. But $h$ is often chosen to be pseudorandom. For this problem, assume that true randomness is used. So let there be $k$ people, with each person's phone number stored in a random location (independently), represented by an integer between 1 and $n$. It then might happen that one location has more than one phone number stored there, if two different people $x$ and $y$ end up with the same random location for their information to be stored.
+Find the expected number of locations with no phone numbers stored, the expected number with exactly one phone number, and the expected number with more than one phone number (should these quantities add up to $n$?).
+\end{tcolorbox}
+
+\noindent \textbf{Solution.} For each location $j \in \{1, 2, \dots, n\}$, the number of stored phone numbers is $X_j \sim \text{Bin}\left(k, \frac{1}{n}\right)$. By linearity of expectation over all $n$ locations:
+\begin{align*}
+E(\text{empty locations}) &= n \left(1 - \frac{1}{n}\right)^k, \\
+E(\text{exactly 1 number}) &= k \left(1 - \frac{1}{n}\right)^{k-1}, \\
+E(\text{more than 1 number}) &= n - n\left(1 - \frac{1}{n}\right)^k - k\left(1 - \frac{1}{n}\right)^{k-1}.
+\end{align*}
+Their sum is $n$ because every location falls into exactly one category.
+
+\vspace{10pt}
+\subsection{SP 5 \S1 $\cdot$ Problem 1}
+\begin{tcolorbox}[title={SP 5 \S1 $\cdot$ Problem 1}]
+Raindrops are falling at an average rate of 20 drops per square inch per minute. What would be a reasonable distribution to use for the number of raindrops hitting a particular region measuring 5 square inches in $t$ minutes? Why? Using your chosen distribution, compute the probability that the region has no rain drops in a given 3-second time interval.
+\end{tcolorbox}
+
+\noindent \textbf{Solution.} We use a Poisson distribution $N \sim \text{Pois}(100t)$ because raindrops arrive independently at a constant average rate across space and time. For a 3-second interval ($t = \frac{1}{20}$ minutes), the parameter is $\lambda = 100(1/20) = 5$:
+\begin{align*}
+P(N = 0) &= \frac{e^{-5} 5^0}{0!} = e^{-5} \approx 0.006738.
+\end{align*}
+
+\vspace{10pt}
+\subsection{SP 5 \S1 $\cdot$ Problem 2}
+\begin{tcolorbox}[title={SP 5 \S1 $\cdot$ Problem 2}]
+Harvard Law School courses often have assigned seating to facilitate the ``Socratic method.'' Suppose that there are 100 first year Harvard Law students, and each takes two courses: Torts and Contracts. Both are held in the same lecture hall (which has 100 seats), and the seating is uniformly random and independent for the two courses.
+\begin{enumerate}[(a)]
+\item Find the probability that no one has the same seat for both courses (exactly; you should leave your answer as a sum).
+\item Find a simple but accurate approximation to the probability that no one has the same seat for both courses.
+\item Find a simple but accurate approximation to the probability that at least two students have the same seat for both courses.
+\end{enumerate}
+\end{tcolorbox}
+
+\noindent \textbf{Solution.} \textbf{(a)} By Inclusion-Exclusion for de Montmort's matching problem:
+\begin{align*}
+P(N = 0) &= \sum_{j=0}^{100} \frac{(-1)^j}{j!}.
+\end{align*}
+\textbf{(b)} By the Poisson Paradigm with $\lambda = E(N) = 1$:
+\begin{align*}
+P(N = 0) &\approx e^{-1} \approx 0.367879.
+\end{align*}
+\textbf{(c)} Using $N \sim \text{Pois}(1)$:
+\begin{align*}
+P(N \ge 2) &= 1 - P(N = 0) - P(N = 1) \approx 1 - 2e^{-1} \approx 0.264241.
+\end{align*}
+
+\vspace{10pt}
+\subsection{SP 5 \S1 $\cdot$ Problem 3}
+\begin{tcolorbox}[title={SP 5 \S1 $\cdot$ Problem 3}]
+Let $X$ be a $\text{Pois}(\lambda)$ random variable, where $\lambda$ is fixed but unknown. Let $\theta = e^{-3\lambda}$, and suppose that we are interested in estimating $\theta$ based on the data. Since $X$ is what we observe, our estimator is a function of $X$, call it $g(X)$. The bias of the estimator $g(X)$ is defined to be $E(g(X)) - \theta$, i.e., how far off the estimate is on average; the estimator is unbiased if its bias is 0.
+\begin{enumerate}[(a)]
+\item For estimating $\lambda$, the r.v. $X$ itself is an unbiased estimator. Compute the bias of the estimator $T = e^{-3X}$. Is it unbiased for estimating $\theta$?
+\item Show that $g(X) = (-2)^X$ is an unbiased estimator for $\theta$. (In fact, it is the best unbiased estimator, in the sense of minimizing the average squared error.)
+\item Explain intuitively why $g(X)$ is a silly choice for estimating $\theta$, despite (b), and show how to improve it by finding an estimator $h(X)$ for $\theta$ that is always at least as good as $g(X)$ and sometimes strictly better than $g(X)$. That is,
+\[
+|h(X) - \theta| \le |g(X) - \theta|,
+\]
+with the inequality sometimes strict.
+\end{enumerate}
+\end{tcolorbox}
+
+\noindent \textbf{Solution.} \textbf{(a)} By LOTUS, $E(e^{-3X}) = e^{-\lambda(1 - e^{-3})} \neq e^{-3\lambda}$, so $T = e^{-3X}$ is **biased**.
+\textbf{(b)} By LOTUS, $E((-2)^X) = e^{-\lambda} \sum \frac{(-2\lambda)^k}{k!} = e^{-3\lambda} = \theta$, so $g(X) = (-2)^X$ is **unbiased**.
+\textbf{(c)} $g(X)$ alternates between negative numbers and large positive integers, whereas $\theta \in (0, 1]$. We improve it by projecting onto $[0, 1]$: let $h(X) = 1$ if $X = 0$, and $h(X) = 0$ if $X \ge 1$. Then $|h(X) - \theta| \le |g(X) - \theta|$ strictly for all $X \ge 1$.
+
+\vspace{10pt}
+\subsection{SP 5 \S2 $\cdot$ Problem 1}
+\begin{tcolorbox}[title={SP 5 \S2 $\cdot$ Problem 1}]
+Let $Z \sim \mathcal{N}(0, 1)$ and let $S$ be a ``random sign'' independent of $Z$, i.e., $S$ is 1 with probability $1/2$ and $-1$ with probability $1/2$. Show that $SZ \sim \mathcal{N}(0, 1)$.
+\end{tcolorbox}
+
+\noindent \textbf{Solution.} Conditioning on $S \in \{-1, 1\}$ and using the Normal symmetry $P(-Z \le x) = P(Z \le x)$:
+\begin{align*}
+P(SZ \le x) &= P(SZ \le x \mid S = 1) P(S = 1) + P(SZ \le x \mid S = -1) P(S = -1) \\
+&= P(Z \le x) \left(\frac{1}{2}\right) + P(-Z \le x) \left(\frac{1}{2}\right) \\
+&= P(Z \le x) \left(\frac{1}{2}\right) + P(Z \le x) \left(\frac{1}{2}\right) \\
+&= P(Z \le x) \\
+&= \Phi(x).
+\end{align*}
+Since the CDF of $SZ$ equals the standard normal CDF $\Phi(x)$, $SZ \sim \mathcal{N}(0, 1)$.
+
+\vspace{10pt}
+\subsection{SP 5 \S2 $\cdot$ Problem 2}
+\begin{tcolorbox}[title={SP 5 \S2 $\cdot$ Problem 2}]
+Explain why $P(X < Y) = P(Y < X)$ if $X$ and $Y$ are i.i.d. Does it follow that $P(X < Y) = 1/2$? Is it still always true that $P(X < Y) = P(Y < X)$ if $X$ and $Y$ have the same distribution but are not independent?
+\end{tcolorbox}
+
+\noindent \textbf{Solution.} Since $X$ and $Y$ are i.i.d., their joint distribution is symmetric under label exchange: $(X, Y) \stackrel{d}{=} (Y, X)$, which proves $P(X < Y) = P(Y < X)$. 
+
+It does **not** follow that $P(X < Y) = 1/2$ for discrete distributions because ties occur with positive probability ($P(X = Y) > 0$, so $P(X < Y) = \frac{1 - P(X = Y)}{2} < \frac{1}{2}$). 
+
+It is **not** always true when $X$ and $Y$ are dependent: for example, let $X \sim \text{Unif}\{1, 2, \dots, 7\}$ and $Y = X + 1 \pmod 7$, where $P(X < Y) = \frac{6}{7} \neq \frac{1}{7} = P(Y < X)$.
+
+\vspace{10pt}
+\subsection{SP 5 \S2 $\cdot$ Problem 3}
+\begin{tcolorbox}[title={SP 5 \S2 $\cdot$ Problem 3}]
+Explain why if $X \sim \text{Bin}(n, p)$, then $n - X \sim \text{Bin}(n, 1-p)$.
+\end{tcolorbox}
+
+\noindent \textbf{Solution.} If $X$ counts the number of successes in $n$ independent Bernoulli trials with success probability $p$, then $n - X$ counts the number of failures in the exact same $n$ trials. Since each trial fails independently with probability $1 - p$, $n - X \sim \text{Bin}(n, 1-p)$.
+
+\vspace{10pt}
+\subsection{SP 5 \S2 $\cdot$ Problem 4}
+\begin{tcolorbox}[title={SP 5 \S2 $\cdot$ Problem 4}]
+There are 100 passengers lined up to board an airplane with 100 seats (with each seat assigned to one of the passengers). The first passenger in line crazily decides to sit in a randomly chosen seat (with all seats equally likely). Each subsequent passenger takes his or her assigned seat if available, and otherwise sits in a random available seat. What is the probability that the last passenger in line gets to sit in his or her assigned seat? (This is another common interview problem, and a beautiful example of the power of symmetry.)
+Hint: Call the seat assigned to the $j$th passenger in line ``Seat $j$'' (regardless of whether the airline calls it seat 23A or whatever). What are the possibilities for which seats are available to the last passenger in line, and what is the probability of each of these possibilities?
+\end{tcolorbox}
+
+\noindent \textbf{Solution.} When the 100th passenger boards, exactly 1 seat remains empty. That remaining seat can only be **Seat 1 or Seat 100**. Any intermediate Seat $k \in \{2, 3, \dots, 99\}$ cannot be the final empty seat because passenger $k$ would have sat in Seat $k$ if it were empty when they boarded.
+
+Throughout the entire boarding process, Seat 1 and Seat 100 are treated with perfect symmetry by all random choices made by passengers $1$ through $99$. Therefore, Seat 1 and Seat 100 are equally likely to be the final available seat:
+\begin{align*}
+P(\text{passenger 100 gets Seat 100}) &= \frac{1}{2}.
+\end{align*}
+
+\vspace{10pt}
+\subsection{SP 8 \S3 $\cdot$ Problem 1}
+\begin{tcolorbox}[title={SP 8 \S3 $\cdot$ Problem 1}]
+Let $S$ be a set of binary strings $a_1 \dots a_n$ of length $n$ (where juxtaposition means concatenation). We call $S$ $k$-complete if for any indices $1 \le i_1 < \dots < i_k \le n$ and any binary string $b_1 \dots b_k$ of length $k$, there is a string $s_1 \dots s_n$ in $S$ such that $s_{i_1} s_{i_2} \dots s_{i_k} = b_1 b_2 \dots b_k$. For example, for $n = 3$ the set $S = \{001, 010, 011, 100, 101, 110\}$ is 2-complete since all 4 patterns of 0's and 1's of length 2 can be found in any 2 positions. Show that if $\binom{n}{k} 2^k \left(1 - 2^{-k}\right)^m < 1$, then there exists a $k$-complete set of size at most $m$.
+\end{tcolorbox}
+
+\noindent \textbf{Solution.} Generate $m$ random binary strings of length $n$ independently. For any of the $N = \binom{n}{k} 2^k$ target patterns across $k$ coordinates, the probability that all $m$ strings fail to match is $\left(1 - 2^{-k}\right)^m$. By the Union Bound, the probability that the set fails at least one requirement is bounded by $\binom{n}{k} 2^k \left(1 - 2^{-k}\right)^m < 1$. Thus, a $k$-complete set of size at most $m$ exists with positive probability.
+
+\vspace{10pt}
+\subsection{SP 8 \S3 $\cdot$ Problem 2}
+\begin{tcolorbox}[title={SP 8 \S3 $\cdot$ Problem 2}]
+A hundred students have taken an exam consisting of 8 problems, and for each problem at least 65 of the students got the right answer. Show that there exist two students who collectively got everything right, in the sense that for each problem, at least one of the two got it right.
+\end{tcolorbox}
+
+\noindent \textbf{Solution.} Choose a random pair of students. For problem $j$, at most 35 students got it wrong, so at most $\binom{35}{2} = 595$ pairs got it wrong out of $\binom{100}{2} = 4950$ pairs ($P(\text{at least one right}) \ge 1 - \frac{595}{4950} = \frac{871}{990}$). By linearity of expectation over all 8 problems:
+\begin{align*}
+E(\text{collective score}) &\ge 8 \left(\frac{871}{990}\right) \approx 7.038 > 7.
+\end{align*}
+An integer-valued score with average $>7$ must achieve 8 for at least one pair.
+
+\vspace{10pt}
+\subsection{SP 8 \S3 $\cdot$ Problem 3}
+\begin{tcolorbox}[title={SP 8 \S3 $\cdot$ Problem 3}]
+The circumference of a circle is colored with red and blue ink such that $2/3$ of the circumference is red and $1/3$ is blue. Prove that no matter how complicated the coloring scheme is, there is a way to inscribe a square in the circle such that at least three of the four corners of the square touch red ink.
+\end{tcolorbox}
+
+\noindent \textbf{Solution.} Inscribe a uniformly random square. Each corner has probability $\frac{2}{3}$ of touching red ink. By linearity of expectation over all 4 corners, the expected number of red corners is $E(R) = 4(2/3) = \frac{8}{3} = 2.667$. Since $R$ must exceed its expectation with positive probability, there exists a square with $R \ge 3$ red corners.
+
+\vspace{10pt}
+\subsection{SP 8 \S3 $\cdot$ Problem 4}
+\begin{tcolorbox}[title={SP 8 \S3 $\cdot$ Problem 4}]
+Ten points in the plane are designated. You have ten circular coins (of the same radius). Show that you can position the coins in the plane (without stacking them) so that all ten points are covered.
+Hint: Consider a honeycomb tiling as in \url{http://mathworld.wolfram.com/Honeycomb}. You can use the fact from geometry that if a circle is inscribed in a hexagon then the ratio of the area of the circle to the area of the hexagon is $\frac{\pi}{2\sqrt{3}} > 0.9$.
+\end{tcolorbox}
+
+\noindent \textbf{Solution.} Inscribe circular coins inside a honeycomb hexagonal tiling ($\text{area ratio} = \frac{\pi}{2\sqrt{3}} > 0.9$). Shift the entire tiling uniformly at random. Each of the 10 points is covered by a circle with probability $>0.9$. By linearity of expectation, the expected number of covered points is $E(N) > 10(0.9) = 9$. Thus, there exists a shift where $N = 10$, covering all 10 points without stacking.
+
+\vspace{15pt}
+\section{Homework}
+
+\subsection{HW 4 $\cdot$ Problem 3}
+\begin{tcolorbox}[title={HW 4 $\cdot$ Problem 3}]
+A couple decides to keep having children until they have at least one boy and at least one girl, and then stop. Assume they never have twins, that the ``trials'' are independent with probability $1/2$ of a boy, and that they are fertile enough to keep producing children indefinitely. What is the expected number of children?
+\end{tcolorbox}
+
+\noindent \textbf{Solution.} After the firstborn child, the number of additional births needed to achieve the opposite gender is $X \sim \text{FS}(1/2)$, with $E(X) = 2$. By linearity of expectation, the expected total number of children is:
+\begin{align*}
+E(T) &= 1 + E(X) = 1 + 2 = 3.
+\end{align*}
+
+\vspace{10pt}
+\subsection{HW 4 $\cdot$ Problem 4}
+\begin{tcolorbox}[title={HW 4 $\cdot$ Problem 4}]
+Randomly, $k$ distinguishable balls are placed into $n$ distinguishable boxes, with all possibilities equally likely. Find the expected number of empty boxes.
+\end{tcolorbox}
+
+\noindent \textbf{Solution.} For box $i \in \{1, 2, \dots, n\}$, the indicator $I_i$ of being empty has expectation $E(I_i) = \left(1 - \frac{1}{n}\right)^k$. By linearity of expectation:
+\begin{align*}
+E(\text{empty boxes}) &= \sum_{i=1}^{n} E(I_i) = n \left(1 - \frac{1}{n}\right)^k.
+\end{align*}
+
+\vspace{10pt}
+\subsection{HW 4 $\cdot$ Problem 6}
+\begin{tcolorbox}[title={HW 4 $\cdot$ Problem 6}]
+Consider the following algorithm for sorting a list of $n$ distinct numbers into increasing order. Initially they are in a random order, with all orders equally likely.
+The algorithm compares the numbers in positions 1 and 2, and swaps them if needed, then it compares the new numbers in positions 2 and 3, and swaps them if needed, etc., until it has gone through the whole list. Call this one ``sweep'' through the list. After the first sweep, the largest number is at the end, so the second sweep (if needed) only needs to work with the first $n-1$ positions. Similarly, the third sweep (if needed) only needs to work with the first $n-2$ positions, etc. Sweeps are performed until $n-1$ sweeps have been completed or there is a swapless sweep.
+For example, if the initial list is 53241 (omitting commas), then the following 4 sweeps are performed to sort the list, with a total of 10 comparisons:
+\[
+53241 \rightarrow 35241 \rightarrow 32541 \rightarrow 32451 \rightarrow 32415
+\]
+\[
+32415 \rightarrow 23415 \rightarrow 23415 \rightarrow 23145
+\]
+\[
+23145 \rightarrow 23145 \rightarrow 21345
+\]
+\[
+21345 \rightarrow 12345
+\]
+\begin{enumerate}[(a)]
+\item An inversion is a pair of numbers that are out of order (e.g., 12345 has no inversions, while 53241 has 8 inversions). Find the expected number of inversions in the original list.
+\item Show that the expected number of comparisons is between $\frac{1}{2}\binom{n}{2}$ and $\binom{n}{2}$.
+Hint for (b): For one bound, think about how many comparisons are made if $n-1$ sweeps are done; for the other bound, use Part (a).
+\end{enumerate}
+\end{tcolorbox}
+
+\noindent \textbf{Solution.} \textbf{(a)} For each of the $\binom{n}{2}$ pairs of numbers, the probability of being inverted is $\frac{1}{2}$ by symmetry. By linearity of expectation:
+\begin{align*}
+E(\text{inversions}) &= \frac{1}{2}\binom{n}{2} = \frac{n(n-1)}{4}.
+\end{align*}
+\textbf{(b)} Every swap repairs exactly 1 inversion, so comparisons $C \ge V$, proving $E(C) \ge \frac{1}{2}\binom{n}{2}$. In the worst case of $n-1$ sweeps, $C \le (n-1) + (n-2) + \dots + 1 = \binom{n}{2}$, proving $E(C) \le \binom{n}{2}$.
+
+\vspace{10pt}
+\subsection{HW 4 $\cdot$ Problem 7}
+\begin{tcolorbox}[title={HW 4 $\cdot$ Problem 7}]
+Athletes compete one at a time at the high jump. Let $X_j$ be how high the $j$th jumper jumped, with $X_1, X_2, \dots$ i.i.d. with a continuous distribution. We say that the $j$th jumper set a record if $X_j$ is greater than all of $X_{j-1}, \dots, X_1$.
+\begin{enumerate}[(a)]
+\item Is the event ``the 110th jumper sets a record'' independent of the event ``the 111th jumper sets a record''? Justify your answer by finding the relevant probabilities in the definition of independence and with an intuitive explanation.
+\item Find the mean number of records among the first $n$ jumpers (as a sum). What happens to the mean as $n \rightarrow \infty$?
+\end{enumerate}
+\end{tcolorbox}
+
+\noindent \textbf{Solution.} \textbf{(a) Yes, they are independent.}
+Let $I_j$ be the indicator that jumper $j$ sets a record. By symmetry among continuous i.i.d. jumps, $P(I_j = 1) = \frac{1}{j}$. For both 110 and 111 to set records, the highest of the first 111 jumps must be at position 111, and the second highest must be at position 110:
+\begin{align*}
+P(I_{110} = 1 \text{ and } I_{111} = 1) &= \frac{109!}{111!} = \frac{1}{110 \times 111} = P(I_{110} = 1) P(I_{111} = 1).
+\end{align*}
+
+\vspace{4pt}
+\noindent \textbf{(b)} Let $R = \sum_{j=1}^{n} I_j$ be the number of records. By linearity of expectation:
+\begin{align*}
+E(R) &= \sum_{j=1}^{n} E(I_j) = \sum_{j=1}^{n} \frac{1}{j}.
+\end{align*}
+As $n \to \infty$, the harmonic series diverges to $\infty$.
+
+\vspace{10pt}
+\subsection{HW 5 $\cdot$ Problem 1}
+\begin{tcolorbox}[title={HW 5 $\cdot$ Problem 1}]
+A group of $n \ge 4$ people are comparing their birthdays (as usual, assume their birthdays are independent, are not February 29, etc.).
+\begin{enumerate}[(a)]
+\item Let $I_{ij}$ be the indicator r.v. of $i$ and $j$ having the same birthday (for $i < j$). Is $I_{12}$ independent of $I_{34}$? Is $I_{12}$ independent of $I_{13}$? Are the $I_{ij}$ independent?
+\item Explain why the Poisson Paradigm is applicable here even for moderate $n$, and use it to get a good approximation to the probability of at least 1 match when $n = 23$.
+\item About how many people are needed so that there is a 50\% chance (or better) that two either have the same birthday or are only 1 day apart? (Note that this is much harder than the birthday problem to do exactly, but the Poisson Paradigm makes it possible to get fairly accurate approximations quickly.)
+\end{enumerate}
+\end{tcolorbox}
+
+\noindent \textbf{Solution.} \textbf{(a)} $I_{12}$ and $I_{34}$ are independent (disjoint people). $I_{12}$ and $I_{13}$ are pairwise independent ($P(I_{13}=1 \mid I_{12}=1) = \frac{1}{365}$). All $I_{ij}$ are **not** mutually independent (if $I_{12}=1$ and $I_{23}=1$, then $I_{13}=1$ deterministically).
+\textbf{(b)} There are $\binom{n}{2}$ weakly dependent indicator variables with small probability $p = \frac{1}{365}$. For $n = 23$, $\lambda = \binom{23}{2} / 365 = \frac{253}{365} \approx 0.69315$:
+\begin{align*}
+P(\text{at least 1 match}) &\approx 1 - e^{-0.69315} \approx 0.500002.
+\end{align*}
+\textbf{(c)} Let $J_{ij}$ indicate birthdays within $\le 1$ day ($P(J_{ij} = 1) = \frac{3}{365}$). Using $\lambda = \binom{n}{2} \frac{3}{365} = \frac{3n(n-1)}{730}$:
+\begin{align*}
+1 - e^{-\frac{3n(n-1)}{730}} &= 0.5 \\
+3n^2 - 3n - 730 \ln 2 &= 0 \\
+n &\approx 13.5.
+\end{align*}
+Thus, **14 people** are needed.
+
+\vspace{10pt}
+\subsection{HW 6 $\cdot$ Problem 3}
+\begin{tcolorbox}[title={HW 6 $\cdot$ Problem 3}]
+Consider an experiment where we observe the value of a random variable $X$, and estimate the value of an unknown constant $\theta$ using some random variable $T = g(X)$ that is a function of $X$. The r.v. $T$ is called an estimator. Think of $X$ as the data observed in the experiment, and $\theta$ as an unknown parameter related to the distribution of $X$.
+For example, consider the experiment of flipping a coin $n$ times, where the coin has an unknown probability $\theta$ of Heads. After the experiment is performed, we have observed the value of $X \sim \text{Bin}(n, \theta)$. The most natural estimator for $\theta$ is then $X/n$.
+\begin{enumerate}[(a)]
+\item The bias of an estimator $T$ for $\theta$ is defined as $b(T) = E(T) - \theta$. The mean squared error is the average squared error when using $T(X)$ to estimate $\theta$:
+\[
+\text{MSE}(T) = E(T - \theta)^2.
+\]
+Show that
+\[
+\text{MSE}(T) = \text{Var}(T) + (b(T))^2.
+\]
+This implies that for fixed MSE, lower bias can only be attained at the cost of higher variance and vice versa; this is a form of the bias-variance tradeoff, a phenomenon which arises throughout statistics.
+\item Show without using calculus that the constant $c$ that minimizes $E(X - c)^2$ is the expected value of $X$. (This means that in choosing a single number to summarize $X$, the mean is the best choice if the goal is to minimize the average squared error.)
+\item For the case that $X$ is continuous with PDF $f(x)$ which is positive everywhere, show that the value of $c$ that minimizes $E|X - c|$ is the median of $X$ (which is the value $m$ with $P(X \le m) = 1/2$).
+Hint: This can be done either with or without calculus. For the calculus method, use LOTUS to write $E|X - c|$ as an integral, and then split the integral into 2 pieces to get rid of the absolute values. Then use the fundamental theorem of calculus (after writing, for example, $\int_{-\infty}^{c} (c - x) f(x) \, dx = c \int_{-\infty}^{c} f(x) \, dx - \int_{-\infty}^{c} x f(x) \, dx$).
+\end{enumerate}
+\end{tcolorbox}
+
+\noindent \textbf{Solution.} \textbf{(a)} Adding and subtracting $E(T)$ inside the squared error:
+\begin{align*}
+\text{MSE}(T) &= E\left[ (T - E(T)) + (E(T) - \theta) \right]^2 \\
+&= E\left[ (T - E(T))^2 + 2(T - E(T))(E(T) - \theta) + (E(T) - \theta)^2 \right] \\
+&= E\left[ (T - E(T))^2 \right] + 2(E(T) - \theta) E(T - E(T)) + (E(T) - \theta)^2 \\
+&= \text{Var}(T) + 2(E(T) - \theta)(0) + (b(T))^2 \\
+&= \text{Var}(T) + (b(T))^2.
+\end{align*}
+
+\vspace{4pt}
+\noindent \textbf{(b)} Applying part (a) with the deterministic estimator $T = c$ and true parameter $\theta = X$ (treating $c$ as an estimator of the random variable $X$):
+\begin{align*}
+E(X - c)^2 &= \text{Var}(X) + (E(X) - c)^2.
+\end{align*}
+Since $(E(X) - c)^2 \ge 0$, this expression is minimized if and only if $c = E(X)$, achieving minimum value $\text{Var}(X)$.
+
+\vspace{4pt}
+\noindent \textbf{(c)} Splitting the absolute value integral at $c$:
+\begin{align*}
+E|X - c| &= \int_{-\infty}^{c} (c - x) f(x) \, dx + \int_{c}^{\infty} (x - c) f(x) \, dx \\
+&= c \int_{-\infty}^{c} f(x) \, dx - \int_{-\infty}^{c} x f(x) \, dx + \int_{c}^{\infty} x f(x) \, dx - c \int_{c}^{\infty} f(x) \, dx.
+\end{align*}
+Differentiating with respect to $c$ using the Fundamental Theorem of Calculus:
+\begin{align*}
+\frac{d}{dc} E|X - c| &= \int_{-\infty}^{c} f(x) \, dx + c f(c) - c f(c) - c f(c) - \int_{c}^{\infty} f(x) \, dx + c f(c) \\
+&= P(X \le c) - P(X > c) \\
+&= 2 P(X \le c) - 1.
+\end{align*}
+Setting the derivative to 0 yields $P(X \le c) = \frac{1}{2}$, which is the definition of the median $m$.
+
+\vspace{10pt}
+\subsection{HW 7 $\cdot$ Problem 7}
+\begin{tcolorbox}[title={HW 7 $\cdot$ Problem 7}]
+Shakespeare wrote a total of 884647 words in his known works. Of course, many words are used more than once, and the number of distinct words in Shakespeare's known writings is 31534 (according to one computation). This puts a lower bound on the size of Shakespeare's vocabulary, but it is likely that Shakespeare knew words which he did not use in these known writings.
+More specifically, suppose that a new poem of Shakespeare were uncovered, and consider the following (seemingly impossible) problem: give a good prediction of the number of words in the new poem that do not appear anywhere in Shakespeare's previously known works.
+The statisticians Ronald Thisted and Bradley Efron studied this problem in a paper called ``Did Shakespeare write a newly-discovered poem?'', which performed statistical tests to try to determine whether Shakespeare was the author of a poem discovered by a Shakespearean scholar in 1985. A simplified version of their method is developed in the problem below. The method was originally invented by Alan Turing (the founder of computer science) and I.J. Good as part of the effort to break the German Enigma code during World War II.
+Let $N$ be the number of distinct words that Shakespeare knew, and assume these words are numbered from 1 to $N$. Suppose for simplicity that Shakespeare wrote only two plays, A and B. The plays are reasonably long and they are of the same length. Let $X_j$ be the number of times that word $j$ appears in play A, and $Y_j$ be the number of times it appears in play B, for $1 \le j \le N$.
+\begin{enumerate}[(a)]
+\item Explain why it is reasonable to model $X_j$ as being Poisson, and $Y_j$ as being Poisson with the same parameter as $X_j$.
+\item Let the numbers of occurrences of the word ``eyeball'' (which was coined by Shakespeare) in the two plays be independent $\text{Pois}(\lambda)$ r.v.s. Show that the probability that ``eyeball'' is used in play B but not in play A is
+\[
+e^{-\lambda}(\lambda - \lambda^2/2! + \lambda^3/3! - \lambda^4/4! + \dots).
+\]
+\item Now assume that $\lambda$ from (b) is unknown and is itself taken to be a random variable to reflect this uncertainty. So let $\lambda$ have a PDF $f_0$. Let $X$ be the number of times the word ``eyeball'' appears in play A and $Y$ be the corresponding value for play B. Assume that the conditional distribution of $X, Y$ given $\lambda$ is that they are independent $\text{Pois}(\lambda)$ r.v.s. Show that the probability that ``eyeball'' is used in play B but not in play A is the alternating series
+\[
+P(X = 1) - P(X = 2) + P(X = 3) - P(X = 4) + \dots
+\]
+Hint: Condition on $\lambda$ and use (b).
+\item Assume that every word's numbers of occurrences in A and B are distributed as in (c), where $\lambda$ may be different for different words but $f_0$ is fixed. Let $W_j$ be the number of words that appear exactly $j$ times in play A. Show that the expected number of distinct words appearing in play B but not in play A is
+\[
+E(W_1) - E(W_2) + E(W_3) - E(W_4) + \dots
+\]
+(This shows that $W_1 - W_2 + W_3 - W_4 + \dots$ is an unbiased predictor of the number of distinct words appearing in play B but not in play A: on average it is correct. Moreover, it can be computed just from having seen play A, without needing to know $f_0$ or any of the $\lambda_j$. This method can be extended in various ways to give predictions for unobserved plays based on observed plays.)
+\end{enumerate}
+\end{tcolorbox}
+
+\noindent \textbf{Solution.} \textbf{(a)} By the Poisson Paradigm, words appear as rare, independent occurrences across a vast text. Since plays A and B have equal length by the same author, they share the same word frequency rate $\lambda_j$.
+\textbf{(b)} For independent $X, Y \sim \text{Pois}(\lambda)$:
+\begin{align*}
+P(X = 0, Y > 0) &= P(X = 0)(1 - P(Y = 0)) \\
+&= e^{-\lambda} \left(1 - e^{-\lambda}\right) \\
+&= e^{-\lambda} \left[ \lambda - \frac{\lambda^2}{2!} + \frac{\lambda^3}{3!} - \dots \right].
+\end{align*}
+\textbf{(c)} Integrating over the prior PDF $f_0(\lambda)$:
+\begin{align*}
+P(X = 0, Y > 0) &= \int_{0}^{\infty} \left[ \sum_{i=1}^{\infty} (-1)^{i+1} \frac{e^{-\lambda} \lambda^i}{i!} \right] f_0(\lambda) \, d\lambda \\
+&= \sum_{i=1}^{\infty} (-1)^{i+1} P(X = i) \\
+&= P(X = 1) - P(X = 2) + P(X = 3) - \dots
+\end{align*}
+\textbf{(d)} Summing over all vocabulary words $j \in \{1, \dots, N\}$ and applying linearity of expectation:
+\begin{align*}
+E(\text{new words in B}) &= \sum_{j=1}^{N} P(X_j = 0, Y_j > 0) \\
+&= \sum_{j=1}^{N} \sum_{i=1}^{\infty} (-1)^{i+1} P(X_j = i) \\
+&= \sum_{i=1}^{\infty} (-1)^{i+1} E(W_i) \\
+&= E(W_1) - E(W_2) + E(W_3) - \dots
+\end{align*}
+
+\vspace{10pt}
+\subsection{HW 8 $\cdot$ Problem 7}
+\begin{tcolorbox}[title={HW 8 $\cdot$ Problem 7}]
+A network consists of $n$ nodes, each pair of which may or may not have an edge joining them. For example, a social network can be modeled as a group of $n$ nodes (representing people), where an edge between $i$ and $j$ means they know each other. Assume the network is undirected and does not have edges from a node to itself (for a social network, this says that if $i$ knows $j$, then $j$ knows $i$ and that, contrary to Socrates' advice, a person does not know himself or herself). A clique of size $k$ is a set of $k$ nodes where every node has an edge to every other node (i.e., within the clique, everyone knows everyone). An anticlique of size $k$ is a set of $k$ nodes where there are no edges between them (i.e., within the anticlique, no one knows anyone else). For example, the picture below shows a network with nodes labeled 1, 2, \dots, 7, where \{1,2,3,4\} is a clique of size 4, and \{3, 5, 7\} is an anticlique of size 3.
+\begin{enumerate}[(a)]
+\item Form a random network with $n$ nodes by independently flipping fair coins to decide for each pair $\{x, y\}$ whether there is an edge joining them. Find the expected number of cliques of size $k$ (in terms of $n$ and $k$).
+\item A triangle is a clique of size 3. For a random network as in (a), find the variance of the number of triangles (in terms of $n$).
+Hint: Find the covariances of the indicator random variables for each possible clique. There are $\binom{n}{3}$ such indicator r.v.s, some pairs of which are dependent.
+\item Suppose that $\binom{n}{k} < 2^{\binom{k}{2} - 1}$. Show that there is a network with $n$ nodes containing no cliques of size $k$ or anticliques of size $k$.
+Hint: Explain why it is enough to show that for a random network with $n$ nodes, the probability of the desired property is positive; then consider the complement.
+\end{enumerate}
+\end{tcolorbox}
+
+\noindent \textbf{Solution.} \textbf{(a)} There are $\binom{n}{k}$ subsets of size $k$. Each subset contains $\binom{k}{2}$ distinct pairs of nodes. For a subset to be a clique, all $\binom{k}{2}$ independent coin flips must land Heads ($P(I = 1) = 2^{-\binom{k}{2}}$). By linearity of expectation:
+\begin{align*}
+E(\text{cliques of size } k) &= \binom{n}{k} 2^{-\binom{k}{2}}.
+\end{align*}
+
+\vspace{4pt}
+\noindent \textbf{(b)} For triangles ($k = 3$), $P(I_i = 1) = 2^{-3} = \frac{1}{8}$ and $\text{Var}(I_i) = \frac{1}{8}\left(\frac{7}{8}\right) = \frac{7}{64}$. 
+For two triangles $i \neq j$, they share an edge (2 nodes in common) in $\binom{n}{4}\binom{4}{2} = 6\binom{n}{4}$ pairs, where $\text{Cov}(I_i, I_j) = E(I_i I_j) - E(I_i)E(I_j) = 2^{-5} - 2^{-6} = \frac{1}{64}$. All other pairs share $\le 1$ node and have zero covariance:
+\begin{align*}
+\text{Var}(\text{triangles}) &= \sum_{i} \text{Var}(I_i) + 2 \sum_{i < j} \text{Cov}(I_i, I_j) \\
+&= \binom{n}{3} \left(\frac{7}{64}\right) + 2\left[6\binom{n}{4}\left(\frac{1}{64}\right)\right] \\
+&= \frac{7}{64}\binom{n}{3} + \frac{3}{16}\binom{n}{4}.
+\end{align*}
+
+\vspace{4pt}
+\noindent \textbf{(c)} Let $T = C + A$ be the sum of cliques and anticliques of size $k$. Since cliques and anticliques are symmetric, $E(A) = E(C) = \binom{n}{k} 2^{-\binom{k}{2}}$. By linearity of expectation:
+\begin{align*}
+E(T) &= E(C) + E(A) = \binom{n}{k} 2^{-\binom{k}{2} + 1}.
+\end{align*}
+Under the hypothesis $\binom{n}{k} < 2^{\binom{k}{2}-1}$, we have $E(T) < 1$. Since $T$ is a non-negative integer, $E(T) < 1$ implies $P(T = 0) > 0$. Thus, a network with zero cliques and zero anticliques of size $k$ exists.
+
+\end{document}

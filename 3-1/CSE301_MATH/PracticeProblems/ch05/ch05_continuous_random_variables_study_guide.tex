@@ -1,0 +1,1117 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{mathpazo}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,amsfonts,amsthm,mathtools}
+\usepackage[most]{tcolorbox}
+\usepackage{hyperref}
+\urlstyle{same}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage{microtype}
+\usepackage[shortlabels]{enumitem}
+
+\allowdisplaybreaks
+
+% tcolorbox setup for question statements
+\tcbset{
+  colback=blue!4!white,
+  colframe=blue!35!black,
+  arc=3pt,
+  boxrule=0.8pt,
+  left=12pt,
+  right=12pt,
+  top=10pt,
+  bottom=10pt,
+  fonttitle=\bfseries,
+  enhanced,
+  drop shadow=black!10!white
+}
+
+% Header and Footer setup
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small \textit{Chapter 5: Continuous Random Variables --- Worked Study Guide}}
+\fancyhead[R]{\small \textit{Reading-Only Practice}}
+\fancyfoot[C]{\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0pt}
+
+% Section styling
+\titleformat{\section}
+  {\normalfont\Large\bfseries\color{blue!40!black}}{\thesection}{1em}{}
+\titleformat{\subsection}
+  {\normalfont\large\bfseries\color{blue!30!black}}{\thesubsection}{1em}{}
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue!50!black,
+    urlcolor=blue!50!black,
+    pdftitle={Chapter 5: Continuous Random Variables - Worked Study Guide}
+}
+
+\begin{document}
+
+\begin{center}
+    {\LARGE \textbf{Chapter 5: Continuous Random Variables}}\\[8pt]
+    {\Large \textbf{Complete Step-by-Step Study Document}}\\[6pt]
+    {\small \textit{Reading-Only Practice $\cdot$ Unnumbered Alignments $\cdot$ Verbatim Question Boxes}}
+\end{center}
+
+\vspace{5pt}
+\hrule
+\vspace{10pt}
+
+\tableofcontents
+
+\vspace{15pt}
+\hrule
+\vspace{15pt}
+
+\section{Textbook Exercises}
+
+\subsection{Book Ch.5, Exercise 11}
+\begin{tcolorbox}[title={Book Ch.5, Exercise 11}]
+Let $U$ be a Uniform r.v. on the interval $(-1, 1)$ (be careful about minus signs).
+\begin{enumerate}[(a)]
+\item Compute $E(U)$, $\text{Var}(U)$, and $E(U^4)$.
+\item Find the CDF and PDF of $U^2$. Is the distribution of $U^2$ Uniform on $(0, 1)$?
+\end{enumerate}
+\end{tcolorbox}
+
+\noindent \textbf{Solution.} \textbf{(a)} For $U \sim \text{Unif}(-1, 1)$, the probability density function is $f_U(u) = \frac{1}{1 - (-1)} = \frac{1}{2}$ for $-1 < u < 1$. Because the distribution is symmetric about $0$:
+\begin{align*}
+E(U) &= 0.
+\end{align*}
+Using LOTUS to compute the second moment $E(U^2)$:
+\begin{align*}
+E(U^2) &= \int_{-1}^{1} u^2 f_U(u) \, du \\
+&= \frac{1}{2} \int_{-1}^{1} u^2 \, du \\
+&= \frac{1}{2} \left[ \frac{u^3}{3} \right]_{-1}^{1} \\
+&= \frac{1}{2} \left( \frac{1}{3} - \left(-\frac{1}{3}\right) \right) \\
+&= \frac{1}{3}.
+\end{align*}
+Computing the variance $\text{Var}(U) = E(U^2) - [E(U)]^2$:
+\begin{align*}
+\text{Var}(U) &= \frac{1}{3} - 0^2 = \frac{1}{3}.
+\end{align*}
+Using LOTUS to compute the fourth moment $E(U^4)$:
+\begin{align*}
+E(U^4) &= \int_{-1}^{1} u^4 f_U(u) \, du \\
+&= \frac{1}{2} \int_{-1}^{1} u^4 \, du \\
+&= \frac{1}{2} \left[ \frac{u^5}{5} \right]_{-1}^{1} \\
+&= \frac{1}{2} \left( \frac{1}{5} - \left(-\frac{1}{5}\right) \right) \\
+&= \frac{1}{5}.
+\end{align*}
+
+\vspace{4pt}
+\noindent \textbf{(b)} Let $Y = U^2$ and let $G(t) = P(Y \le t)$ be its CDF. Since $-1 < U < 1$, the support of $Y$ is $(0, 1)$. Thus, $G(t) = 0$ for $t \le 0$ and $G(t) = 1$ for $t \ge 1$. For $0 < t < 1$:
+\begin{align*}
+G(t) &= P(U^2 \le t) \\
+&= P(-\sqrt{t} \le U \le \sqrt{t}) \\
+&= \int_{-\sqrt{t}}^{\sqrt{t}} \frac{1}{2} \, du \\
+&= \frac{1}{2} \left( \sqrt{t} - (-\sqrt{t}) \right) \\
+&= \sqrt{t}.
+\end{align*}
+Differentiating $G(t)$ with respect to $t$ gives the PDF of $Y = U^2$:
+\begin{align*}
+g(t) &= \frac{d}{dt} G(t) \\
+&= \frac{d}{dt} \left( t^{1/2} \right) \\
+&= \begin{cases}
+\dfrac{1}{2\sqrt{t}}, & \text{if } 0 < t < 1, \\[6pt]
+0, & \text{otherwise}.
+\end{cases}
+\end{align*}
+No, the distribution of $U^2$ is \textbf{not} Uniform on $(0, 1)$ because its PDF $g(t) = \frac{1}{2\sqrt{t}}$ is not constant on $(0, 1)$ (it is a Beta distribution with parameters $\alpha = 1/2, \beta = 1$).
+
+\vspace{10pt}
+\subsection{Book Ch.5, Exercise 12}
+\begin{tcolorbox}[title={Book Ch.5, Exercise 12}]
+A stick is broken into two pieces, at a uniformly random break point. Find the CDF and average of the length of the longer piece.
+\end{tcolorbox}
+
+\noindent \textbf{Solution.} Choose units such that the total length of the stick is $1$. Let the break point be $U \sim \text{Unif}(0, 1)$, so the lengths of the two pieces are $U$ and $1 - U$. Let $L = \max(U, 1 - U)$ be the length of the longer piece. 
+
+Since the longer piece must be at least half the total length, the support of $L$ is $\left[\frac{1}{2}, 1\right]$. Thus, $F_L(l) = 0$ for $l < \frac{1}{2}$ and $F_L(l) = 1$ for $l \ge 1$. For any $l \in \left[\frac{1}{2}, 1\right]$, the event $L < l$ is equivalent to both pieces being shorter than $l$:
+\begin{align*}
+F_L(l) &= P(L < l) \\
+&= P(U < l \text{ and } 1 - U < l) \\
+&= P(1 - l < U < l) \\
+&= l - (1 - l) \\
+&= 2l - 1.
+\end{align*}
+Since the CDF $F_L(l) = 2l - 1$ is linear on $\left[\frac{1}{2}, 1\right]$, $L$ is uniformly distributed on $\left(\frac{1}{2}, 1\right)$:
+\begin{align*}
+L &\sim \text{Unif}\left(\frac{1}{2}, 1\right).
+\end{align*}
+The average length of the longer piece is the midpoint of this interval:
+\begin{align*}
+E(L) &= \frac{1/2 + 1}{2} = \frac{3}{4}.
+\end{align*}
+
+\vspace{10pt}
+\subsection{Book Ch.5, Exercise 16}
+\begin{tcolorbox}[title={Book Ch.5, Exercise 16}]
+Let $U \sim \text{Unif}(0, 1)$, and
+\[
+X = \log\left(\frac{U}{1 - U}\right).
+\]
+Then $X$ has the Logistic distribution, as defined in Example 5.1.6.
+\begin{enumerate}[(a)]
+\item Write down (but do not compute) an integral giving $E(X^2)$.
+\item Find $E(X)$ without using calculus.
+Hint: A useful symmetry property here is that $1 - U$ has the same distribution as $U$.
+\end{enumerate}
+\end{tcolorbox}
+
+\noindent \textbf{Solution.} \textbf{(a)} By LOTUS, since $U$ has PDF $f_U(u) = 1$ on $(0, 1)$:
+\begin{align*}
+E(X^2) &= E\left[ \left( \log\left(\frac{U}{1 - U}\right) \right)^2 \right] \\
+&= \int_{0}^{1} \left( \log\left(\frac{u}{1 - u}\right) \right)^2 \, du.
+\end{align*}
+
+\vspace{4pt}
+\noindent \textbf{(b)} Using the logarithmic quotient property $\log(a/b) = \log a - \log b$ and linearity of expectation:
+\begin{align*}
+E(X) &= E\left( \log U - \log(1 - U) \right) \\
+&= E(\log U) - E(\log(1 - U)).
+\end{align*}
+Since $U \sim \text{Unif}(0, 1)$, by symmetry $1 - U$ follows the exact same $\text{Unif}(0, 1)$ distribution as $U$, meaning $\log(1 - U) \stackrel{d}{=} \log U$. Therefore, their expected values are identical:
+\begin{align*}
+E(\log U) &= E(\log(1 - U)) \\
+E(X) &= E(\log U) - E(\log U) = 0.
+\end{align*}
+
+\vspace{10pt}
+\subsection{Book Ch.5, Exercise 19}
+\begin{tcolorbox}[title={Book Ch.5, Exercise 19}]
+Let $F$ be a CDF which is continuous and strictly increasing. Let $\mu$ be the mean of the distribution. The quantile function, $F^{-1}$, has many applications in statistics and econometrics. Show that the area under the curve of the quantile function from 0 to 1 is $\mu$.
+Hint: Use LOTUS and universality of the Uniform.
+\end{tcolorbox}
+
+\noindent \textbf{Solution.} The area under the curve of the quantile function $F^{-1}(u)$ from $u = 0$ to $u = 1$ is given by the definite integral:
+\begin{align*}
+\text{Area} &= \int_{0}^{1} F^{-1}(u) \, du.
+\end{align*}
+Let $U \sim \text{Unif}(0, 1)$, which has PDF $f_U(u) = 1$ on $(0, 1)$. By LOTUS, the integral represents the expected value of $F^{-1}(U)$:
+\begin{align*}
+\int_{0}^{1} F^{-1}(u) \, du &= \int_{0}^{1} F^{-1}(u) f_U(u) \, du = E\left( F^{-1}(U) \right).
+\end{align*}
+By the **Universality of the Uniform** (Probability Integral Transform), if $U \sim \text{Unif}(0, 1)$ and $F$ is a continuous and strictly increasing CDF, then the random variable $X = F^{-1}(U)$ has CDF $F$. Since $X \sim F$, its expected value is the mean $\mu$ of the distribution $F$:
+\begin{align*}
+\int_{0}^{1} F^{-1}(u) \, du &= E(X) = \mu.
+\end{align*}
+Alternatively, using the change of variables $u = F(x)$, so $du = f(x) \, dx$ where $f(x) = F'(x)$ is the PDF:
+\begin{align*}
+\int_{0}^{1} F^{-1}(u) \, du &= \int_{-\infty}^{\infty} F^{-1}(F(x)) f(x) \, dx \\
+&= \int_{-\infty}^{\infty} x f(x) \, dx \\
+&= \mu.
+\end{align*}
+
+\vspace{10pt}
+\subsection{Book Ch.5, Exercise 32}
+\begin{tcolorbox}[title={Book Ch.5, Exercise 32}]
+Let $Z \sim \mathcal{N}(0, 1)$ and let $S$ be a random sign independent of $Z$, i.e., $S$ is 1 with probability $1/2$ and $-1$ with probability $1/2$. Show that $SZ \sim \mathcal{N}(0, 1)$.
+\end{tcolorbox}
+
+\noindent \textbf{Solution.} We find the cumulative distribution function of $SZ$ by conditioning on $S \in \{-1, 1\}$ using the Law of Total Probability:
+\begin{align*}
+P(SZ \le x) &= P(SZ \le x \mid S = 1) P(S = 1) + P(SZ \le x \mid S = -1) P(S = -1) \\
+&= P(Z \le x) \left(\frac{1}{2}\right) + P(-Z \le x) \left(\frac{1}{2}\right).
+\end{align*}
+Because the standard normal distribution is symmetric about zero ($Z \stackrel{d}{=} -Z$), we have $P(-Z \le x) = P(Z \le x) = \Phi(x)$ for all real $x$:
+\begin{align*}
+P(SZ \le x) &= \Phi(x) \left(\frac{1}{2}\right) + \Phi(x) \left(\frac{1}{2}\right) \\
+&= \Phi(x).
+\end{align*}
+Since the CDF of $SZ$ is identical to the standard normal CDF $\Phi(x)$, we conclude $SZ \sim \mathcal{N}(0, 1)$.
+
+\vspace{10pt}
+\subsection{Book Ch.5, Exercise 33}
+\begin{tcolorbox}[title={Book Ch.5, Exercise 33}]
+Let $Z \sim \mathcal{N}(0, 1)$. Find $E(\Phi(Z))$ without using LOTUS, where $\Phi$ is the CDF of $Z$.
+\end{tcolorbox}
+
+\noindent \textbf{Solution.} By the **Universality of the Uniform** (Probability Integral Transform), for any continuous random variable $X$ with cumulative distribution function $F$, the transformed random variable $F(X)$ follows a Uniform distribution on $(0, 1)$. 
+
+Since $Z \sim \mathcal{N}(0, 1)$ is a continuous random variable with CDF $\Phi$, the random variable $U = \Phi(Z)$ is uniformly distributed on $(0, 1)$:
+\begin{align*}
+\Phi(Z) &\sim \text{Unif}(0, 1).
+\end{align*}
+The expected value of a $\text{Unif}(0, 1)$ random variable is the midpoint of the interval:
+\begin{align*}
+E(\Phi(Z)) &= \frac{1}{2}.
+\end{align*}
+
+\vspace{10pt}
+\subsection{Book Ch.5, Exercise 34}
+\begin{tcolorbox}[title={Book Ch.5, Exercise 34}]
+Let $Z \sim \mathcal{N}(0, 1)$ and $X = Z^2$. Then the distribution of $X$ is called Chi-Square with 1 degree of freedom. This distribution appears in many statistical methods.
+\begin{enumerate}[(a)]
+\item Find a good numerical approximation to $P(1 \le X \le 4)$ using facts about the Normal distribution, without querying a calculator/computer/table about values of the Normal CDF.
+\item Let $\Phi$ and $\varphi$ be the CDF and PDF of $Z$, respectively. Show that for any $t > 0$,
+\[
+I(Z > t) \le (Z/t) I(Z > t).
+\]
+Using this and LOTUS, show that $\Phi(t) \ge 1 - \varphi(t)/t$.
+\end{enumerate}
+\end{tcolorbox}
+
+\noindent \textbf{Solution.} \textbf{(a)} Since $X = Z^2$, the event $1 \le X \le 4$ is equivalent to $1 \le Z^2 \le 4$, which means $Z \in [-2, -1] \cup [1, 2]$. By symmetry of the Normal distribution around $0$:
+\begin{align*}
+P(1 \le X \le 4) &= P(-2 \le Z \le -1) + P(1 \le Z \le 2) \\
+&= 2 P(1 \le Z \le 2).
+\end{align*}
+By the 68-95-99.7\% empirical rule for the standard normal distribution:
+\begin{align*}
+P(-1 \le Z \le 1) &\approx 0.68 \implies P(0 \le Z \le 1) \approx 0.34, \\
+P(-2 \le Z \le 2) &\approx 0.95 \implies P(0 \le Z \le 2) \approx 0.475.
+\end{align*}
+Subtracting the two probabilities:
+\begin{align*}
+P(1 \le Z \le 2) &= P(0 \le Z \le 2) - P(0 \le Z \le 1) \\
+&\approx 0.475 - 0.34 \\
+&= 0.135.
+\end{align*}
+Therefore:
+\begin{align*}
+P(1 \le X \le 4) &= 2 (0.135) = 0.27.
+\end{align*}
+
+\vspace{4pt}
+\noindent \textbf{(b)} For any $t > 0$, consider the indicator random variable $I(Z > t)$:
+\begin{itemize}
+    \item If $Z \le t$, then $I(Z > t) = 0$, so both sides of $I(Z > t) \le (Z/t) I(Z > t)$ equal $0$.
+    \item If $Z > t$, then $I(Z > t) = 1$ and $\frac{Z}{t} > 1$, so $1 \le \frac{Z}{t}(1)$.
+\end{itemize}
+Thus, $I(Z > t) \le \frac{Z}{t} I(Z > t)$ holds deterministically for all $Z$. Taking expectations on both sides:
+\begin{align*}
+E(I(Z > t)) &\le E\left[ \frac{Z}{t} I(Z > t) \right].
+\end{align*}
+The left side is the probability $P(Z > t) = 1 - \Phi(t)$. For the right side, applying LOTUS with $\varphi(z) = \frac{1}{\sqrt{2\pi}} e^{-z^2/2}$:
+\begin{align*}
+E\left[ \frac{Z}{t} I(Z > t) \right] &= \frac{1}{t} \int_{t}^{\infty} z \varphi(z) \, dz \\
+&= \frac{1}{t \sqrt{2\pi}} \int_{t}^{\infty} z e^{-z^2/2} \, dz.
+\end{align*}
+Using the substitution $u = z^2/2$, so $du = z \, dz$:
+\begin{align*}
+\int_{t}^{\infty} z e^{-z^2/2} \, dz &= \left[ -e^{-z^2/2} \right]_{t}^{\infty} \\
+&= 0 - \left(-e^{-t^2/2}\right) \\
+&= e^{-t^2/2}.
+\end{align*}
+Substituting this back into the expectation:
+\begin{align*}
+E\left[ \frac{Z}{t} I(Z > t) \right] &= \frac{1}{t} \left( \frac{1}{\sqrt{2\pi}} e^{-t^2/2} \right) = \frac{\varphi(t)}{t}.
+\end{align*}
+Therefore:
+\begin{align*}
+1 - \Phi(t) &\le \frac{\varphi(t)}{t} \\
+\Phi(t) &\ge 1 - \frac{\varphi(t)}{t}.
+\end{align*}
+
+\vspace{10pt}
+\subsection{Book Ch.5, Exercise 36}
+\begin{tcolorbox}[title={Book Ch.5, Exercise 36}]
+Let $Z \sim \mathcal{N}(0, 1)$. A measuring device is used to observe $Z$, but the device can only handle positive values, and gives a reading of 0 if $Z \le 0$---this is an example of censored data. So assume that $X = Z I_{Z > 0}$ is observed rather than $Z$, where $I_{Z > 0}$ is the indicator of $Z > 0$. Find $E(X)$ and $\text{Var}(X)$.
+\end{tcolorbox}
+
+\noindent \textbf{Solution.} Using LOTUS to compute $E(X) = E(Z I_{Z > 0})$ with the standard normal PDF $\varphi(z) = \frac{1}{\sqrt{2\pi}} e^{-z^2/2}$:
+\begin{align*}
+E(X) &= \int_{-\infty}^{\infty} z I(z > 0) \varphi(z) \, dz \\
+&= \frac{1}{\sqrt{2\pi}} \int_{0}^{\infty} z e^{-z^2/2} \, dz \\
+&= \frac{1}{\sqrt{2\pi}} \left[ -e^{-z^2/2} \right]_{0}^{\infty} \\
+&= \frac{1}{\sqrt{2\pi}} (0 - (-1)) \\
+&= \frac{1}{\sqrt{2\pi}}.
+\end{align*}
+Using LOTUS to compute the second moment $E(X^2) = E\left( Z^2 I_{Z > 0} \right)$:
+\begin{align*}
+E(X^2) &= \int_{-\infty}^{\infty} z^2 I(z > 0) \varphi(z) \, dz \\
+&= \int_{0}^{\infty} z^2 \varphi(z) \, dz.
+\end{align*}
+Because $z^2 \varphi(z)$ is an even function symmetric about $0$, integrating over $[0, \infty)$ yields exactly half the integral over $(-\infty, \infty)$:
+\begin{align*}
+E(X^2) &= \frac{1}{2} \int_{-\infty}^{\infty} z^2 \varphi(z) \, dz \\
+&= \frac{1}{2} E(Z^2) \\
+&= \frac{1}{2} (1) \\
+&= \frac{1}{2}.
+\end{align*}
+Computing the variance $\text{Var}(X) = E(X^2) - [E(X)]^2$:
+\begin{align*}
+\text{Var}(X) &= \frac{1}{2} - \left( \frac{1}{\sqrt{2\pi}} \right)^2 \\
+&= \frac{1}{2} - \frac{1}{2\pi} \\
+&= \frac{\pi - 1}{2\pi}.
+\end{align*}
+
+\vspace{10pt}
+\subsection{Book Ch.5, Exercise 38}
+\begin{tcolorbox}[title={Book Ch.5, Exercise 38}]
+A post office has 2 clerks. Alice enters the post office while 2 other customers, Bob and Claire, are being served by the 2 clerks. She is next in line. Assume that the time a clerk spends serving a customer has the $\text{Exponential}(\lambda)$ distribution.
+\begin{enumerate}[(a)]
+\item What is the probability that Alice is the last of the 3 customers to be done being served?
+Hint: No integrals are needed.
+\item What is the expected total time that Alice needs to spend at the post office?
+\end{enumerate}
+\end{tcolorbox}
+
+\noindent \textbf{Solution.} \textbf{(a)} Alice begins to be served as soon as either Bob or Claire finishes. Suppose Bob finishes first. At that exact instant, Alice goes to Clerk 1 while Claire is still being served by Clerk 2. 
+
+By the **memoryless property** of the Exponential distribution, the remaining service time for Claire is $\text{Expo}(\lambda)$, which has the exact same distribution as Alice's new service time $\text{Expo}(\lambda)$. By symmetry between two independent $\text{Expo}(\lambda)$ random variables, Alice is equally likely to finish after Claire or before Claire:
+\begin{align*}
+P(\text{Alice is last to finish}) &= \frac{1}{2}.
+\end{align*}
+
+\vspace{4pt}
+\noindent \textbf{(b)} Let $T = W + S$ be Alice's total time at the post office, where $W$ is her waiting time in line and $S$ is her service time. 
+\begin{itemize}
+    \item $W$ is the time until the first of Bob or Claire finishes, which is the minimum of two independent $\text{Expo}(\lambda)$ random variables. Thus, $W \sim \text{Expo}(2\lambda)$ with expected value $E(W) = \frac{1}{2\lambda}$.
+    \item $S \sim \text{Expo}(\lambda)$ is Alice's own service time, with expected value $E(S) = \frac{1}{\lambda}$.
+\end{itemize}
+By linearity of expectation:
+\begin{align*}
+E(T) &= E(W) + E(S) \\
+&= \frac{1}{2\lambda} + \frac{1}{\lambda} \\
+&= \frac{3}{2\lambda}.
+\end{align*}
+
+\vspace{10pt}
+\subsection{Book Ch.5, Exercise 41}
+\begin{tcolorbox}[title={Book Ch.5, Exercise 41}]
+Fred wants to sell his car, after moving back to Blissville (where he is happy with the bus system). He decides to sell it to the first person to offer at least \$15,000 for it. Assume that the offers are independent Exponential random variables with mean \$10,000.
+\begin{enumerate}[(a)]
+\item Find the expected number of offers Fred will have.
+\item Find the expected amount of money that Fred will get for the car.
+\end{enumerate}
+\end{tcolorbox}
+
+\noindent \textbf{Solution.} \textbf{(a)} Let $X_i \sim \text{Expo}(\lambda)$ be the dollar amount of offer $i$, where the mean is $\frac{1}{\lambda} = 10000$, so $\lambda = \frac{1}{10000}$. An offer is acceptable if $X_i \ge 15000$. The success probability $p$ of an individual offer being acceptable is:
+\begin{align*}
+p &= P(X_i \ge 15000) \\
+&= e^{-\lambda (15000)} \\
+&= e^{-15000/10000} \\
+&= e^{-1.5} \\
+&\approx 0.22313.
+\end{align*}
+Let $N$ be the total number of offers received up to and including the first acceptable offer. Since $N$ follows a First Success distribution $N \sim \text{FS}(p)$:
+\begin{align*}
+E(N) &= \frac{1}{p} = e^{1.5} \approx 4.4817.
+\end{align*}
+
+\vspace{4pt}
+\noindent \textbf{(b)} Let $Y$ be the dollar amount Fred receives for the car. Then $Y$ is an Exponential random variable conditioned on being at least 15000: $Y = (X \mid X \ge 15000)$. 
+
+By the **memoryless property** of the Exponential distribution, the amount by which $X$ exceeds 15000 has the same $\text{Expo}(\lambda)$ distribution as $X$ itself:
+\begin{align*}
+E(Y) &= E(X \mid X \ge 15000) \\
+&= 15000 + E(X) \\
+&= 15000 + 10000 \\
+&= \$25,000.
+\end{align*}
+
+\vspace{10pt}
+\subsection{Book Ch.5, Exercise 44}
+\begin{tcolorbox}[title={Book Ch.5, Exercise 44}]
+Joe is waiting in continuous time for a book called \textit{The Winds of Winter} to be released. Suppose that the waiting time $T$ until news of the book's release is posted, measured in years relative to some starting point, has an Exponential distribution with $\lambda = 1/5$.
+Joe is not so obsessive as to check multiple times a day; instead, he checks the website once at the end of each day. Therefore, he observes the day on which the news was posted, rather than the exact time $T$. Let $X$ be this measurement, where $X = 0$ means that the news was posted within the first day (after the starting point), $X = 1$ means it was posted on the second day, etc. (assume that there are 365 days in a year). Find the PMF of $X$. Is this a named distribution that we have studied?
+\end{tcolorbox}
+
+\noindent \textbf{Solution.} The continuous waiting time in years is $T \sim \text{Expo}(1/5)$, which has CDF $F_T(t) = 1 - e^{-t/5}$ for $t > 0$. The discrete day count $X \in \{0, 1, 2, \dots\}$ represents the number of full days completed before the release. Thus, $X = k$ if and only if the release time $T$ falls in the $k$th day interval $\left[ \frac{k}{365}, \frac{k+1}{365} \right)$ years:
+\begin{align*}
+P(X = k) &= P\left( \frac{k}{365} \le T < \frac{k+1}{365} \right) \\
+&= F_T\left(\frac{k+1}{365}\right) - F_T\left(\frac{k}{365}\right) \\
+&= \left( 1 - e^{-(k+1)/1825} \right) - \left( 1 - e^{-k/1825} \right) \\
+&= e^{-k/1825} - e^{-(k+1)/1825} \\
+&= \left( e^{-1/1825} \right)^k \left( 1 - e^{-1/1825} \right).
+\end{align*}
+Letting $p = 1 - e^{-1/1825} \approx 0.0005478$ and $q = 1 - p = e^{-1/1825}$, the PMF is:
+\begin{align*}
+P(X = k) &= p q^k, \quad \text{for } k \in \{0, 1, 2, \dots\}.
+\end{align*}
+Yes, this is the **Geometric distribution** $X \sim \text{Geom}(p)$ counting the number of failures (completed days without release) before the first success (the day of release), with parameter $p = 1 - e^{-1/1825}$.
+
+\vspace{10pt}
+\subsection{Book Ch.5, Exercise 50}
+\begin{tcolorbox}[title={Book Ch.5, Exercise 50}]
+Find $E(X^3)$ for $X \sim \text{Expo}(\lambda)$ using LOTUS and the fact that $E(X) = 1/\lambda$ and $\text{Var}(X) = 1/\lambda^2$, and integration by parts at most once. In the next chapter, we'll learn how to find $E(X^n)$ for all $n$.
+\end{tcolorbox}
+
+\noindent \textbf{Solution.} For $X \sim \text{Expo}(\lambda)$, the second moment is given by:
+\begin{align*}
+E(X^2) &= \text{Var}(X) + [E(X)]^2 \\
+&= \frac{1}{\lambda^2} + \left(\frac{1}{\lambda}\right)^2 \\
+&= \frac{2}{\lambda^2}.
+\end{align*}
+Using LOTUS to write the integral for the third moment $E(X^3)$:
+\begin{align*}
+E(X^3) &= \int_{0}^{\infty} x^3 \lambda e^{-\lambda x} \, dx.
+\end{align*}
+We apply integration by parts $\int u \, dv = [uv]_0^\infty - \int v \, du$ once, setting:
+\begin{align*}
+u &= x^3 \implies du = 3x^2 \, dx, \\
+dv &= \lambda e^{-\lambda x} \, dx \implies v = -e^{-\lambda x}.
+\end{align*}
+Substituting these into the integration by parts formula:
+\begin{align*}
+E(X^3) &= \left[ -x^3 e^{-\lambda x} \right]_{0}^{\infty} - \int_{0}^{\infty} \left(-e^{-\lambda x}\right) \left(3x^2\right) \, dx \\
+&= (0 - 0) + \frac{3}{\lambda} \int_{0}^{\infty} x^2 \lambda e^{-\lambda x} \, dx \\
+&= \frac{3}{\lambda} E(X^2) \\
+&= \frac{3}{\lambda} \left( \frac{2}{\lambda^2} \right) \\
+&= \frac{6}{\lambda^3}.
+\end{align*}
+
+\vspace{10pt}
+\subsection{Book Ch.5, Exercise 51}
+\begin{tcolorbox}[title={Book Ch.5, Exercise 51}]
+The Gumbel distribution is the distribution of $-\log X$ with $X \sim \text{Expo}(1)$.
+\begin{enumerate}[(a)]
+\item Find the CDF of the Gumbel distribution.
+\item Let $X_1, X_2, \dots$ be i.i.d. $\text{Expo}(1)$ and let $M_n = \max(X_1, \dots, X_n)$. Show that $M_n - \log n$ converges in distribution to the Gumbel distribution, i.e., as $n \rightarrow \infty$, the CDF of $M_n - \log n$ converges to the Gumbel CDF.
+\end{enumerate}
+\end{tcolorbox}
+
+\noindent \textbf{Solution.} \textbf{(a)} Let $G = -\log X$ where $X \sim \text{Expo}(1)$. Since $X$ has support $(0, \infty)$, $G$ has support $(-\infty, \infty)$. For any real number $t \in \mathbb{R}$:
+\begin{align*}
+F_G(t) &= P(G \le t) \\
+&= P(-\log X \le t) \\
+&= P(\log X \ge -t) \\
+&= P\left(X \ge e^{-t}\right).
+\end{align*}
+Since the survival function of $X \sim \text{Expo}(1)$ is $P(X \ge x) = e^{-x}$ for $x > 0$:
+\begin{align*}
+F_G(t) &= \exp\left( -e^{-t} \right), \quad \text{for } t \in \mathbb{R}.
+\end{align*}
+
+\vspace{4pt}
+\noindent \textbf{(b)} Let $F_n(t) = P(M_n - \log n \le t)$ be the CDF of $M_n - \log n$. Using the independence of $X_1, \dots, X_n$:
+\begin{align*}
+F_n(t) &= P(M_n \le t + \log n) \\
+&= P\left(\max(X_1, \dots, X_n) \le t + \log n\right) \\
+&= P(X_1 \le t + \log n, \dots, X_n \le t + \log n) \\
+&= \prod_{i=1}^{n} P(X_i \le t + \log n) \\
+&= \left[ 1 - \exp\left( -(t + \log n) \right) \right]^n \\
+&= \left[ 1 - e^{-t} e^{-\log n} \right]^n \\
+&= \left( 1 - \frac{e^{-t}}{n} \right)^n.
+\end{align*}
+Taking the limit as $n \to \infty$ using the standard compound interest limit $\lim_{n \to \infty} \left(1 + \frac{z}{n}\right)^n = e^z$ with constant $z = -e^{-t}$:
+\begin{align*}
+\lim_{n \to \infty} F_n(t) &= \lim_{n \to \infty} \left( 1 - \frac{e^{-t}}{n} \right)^n \\
+&= \exp\left( -e^{-t} \right) \\
+&= F_G(t).
+\end{align*}
+Since the CDF converges pointwise to the Gumbel CDF for all real $t$, $M_n - \log n$ converges in distribution to the Gumbel distribution.
+
+\vspace{10pt}
+\subsection{Book Ch.5, Exercise 55}
+\begin{tcolorbox}[title={Book Ch.5, Exercise 55}]
+Consider an experiment where we observe the value of a random variable $X$, and estimate the value of an unknown constant $\theta$ using some random variable $T = g(X)$ that is a function of $X$. The r.v. $T$ is called an estimator. Think of $X$ as the data observed in the experiment, and $\theta$ as an unknown parameter related to the distribution of $X$. For example, consider the experiment of flipping a coin $n$ times, where the coin has an unknown probability $\theta$ of Heads. After the experiment is performed, we have observed the value of $X \sim \text{Bin}(n, \theta)$. The most natural estimator for $\theta$ is then $X/n$.
+The bias of an estimator $T$ for $\theta$ is defined as $b(T) = E(T) - \theta$. The mean squared error is the average squared error when using $T(X)$ to estimate $\theta$:
+\[
+\text{MSE}(T) = E(T - \theta)^2.
+\]
+Show that
+\[
+\text{MSE}(T) = \text{Var}(T) + (b(T))^2.
+\]
+This implies that for fixed MSE, lower bias can only be attained at the cost of higher variance and vice versa; this is a form of the bias-variance tradeoff, a phenomenon which arises throughout statistics.
+\end{tcolorbox}
+
+\noindent \textbf{Solution.} We add and subtract the expected value $E(T)$ inside the squared term of the mean squared error:
+\begin{align*}
+\text{MSE}(T) &= E\left[ (T - \theta)^2 \right] \\
+&= E\left[ \left( (T - E(T)) + (E(T) - \theta) \right)^2 \right].
+\end{align*}
+Expanding the square $(A + B)^2 = A^2 + 2AB + B^2$ with $A = T - E(T)$ and $B = E(T) - \theta$:
+\begin{align*}
+\text{MSE}(T) &= E\left[ (T - E(T))^2 + 2(T - E(T))(E(T) - \theta) + (E(T) - \theta)^2 \right].
+\end{align*}
+Applying linearity of expectation and noting that $E(T) - \theta = b(T)$ is a deterministic constant:
+\begin{align*}
+\text{MSE}(T) &= E\left[ (T - E(T))^2 \right] + 2(E(T) - \theta) E(T - E(T)) + (E(T) - \theta)^2 \\
+&= \text{Var}(T) + 2(E(T) - \theta)(E(T) - E(T)) + (b(T))^2 \\
+&= \text{Var}(T) + 2(E(T) - \theta)(0) + (b(T))^2 \\
+&= \text{Var}(T) + (b(T))^2.
+\end{align*}
+
+\vspace{10pt}
+\subsection{Book Ch.5, Exercise 56}
+\begin{tcolorbox}[title={Book Ch.5, Exercise 56}]
+\begin{enumerate}[(a)]
+\item Suppose that we have a list of the populations of every country in the world. Guess, without looking at data yet, what percentage of the populations have the digit 1 as their first digit (e.g., a country with a population of 1,234,567 has first digit 1 and a country with population 89,012,345 does not).
+\item After having done (a), look through a list of populations and count how many start with a 1. What percentage of countries is this?
+Benford's law states that in a very large variety of real-life data sets, the first digit approximately follows a particular distribution with about a 30\% chance of a 1, an 18\% chance of a 2, and in general
+\[
+P(D = j) = \log_{10}\left(\frac{j+1}{j}\right), \quad \text{for } j \in \{1, 2, 3, \dots, 9\},
+\]
+where $D$ is the first digit of a randomly chosen element. (Exercise from Chapter 3 asks for a proof that this is a valid PMF.) How closely does the percentage found in the data agree with that predicted by Benford's law?
+\item Suppose that we write the random value in some problem (e.g., the population of a random country) in scientific notation as $X \times 10^N$, where $N$ is a nonnegative integer and $1 \le X < 10$. Assume that $X$ is a continuous r.v. with PDF
+\[
+f(x) = c/x, \quad \text{for } 1 \le x \le 10,
+\]
+and 0 otherwise, with $c$ a constant. What is the value of $c$ (be careful with the bases of logs)? Intuitively, we might hope that the distribution of $X$ does not depend on the choice of units in which $X$ is measured. To see whether this holds, let $Y = aX$ with $a > 0$. What is the PDF of $Y$ (specifying where it is nonzero)?
+\item Show that if we have a random number $X \times 10^N$ (written in scientific notation) and $X$ has the PDF $f$ from (c), then the first digit (which is also the first digit of $X$) has Benford's law as PMF.
+Hint: What does $D = j$ correspond to in terms of the values of $X$?
+\end{enumerate}
+\end{tcolorbox}
+
+\noindent \textbf{Solution.} \textbf{(a)} A naive guess assuming uniform distribution across digits $1$ through $9$ would be $\frac{1}{9} \approx 11.1\%$.
+
+\vspace{4pt}
+\noindent \textbf{(b)} In empirical world population data (e.g., Wikipedia list of 225 countries), approximately 63 countries have population starting with digit 1, which is $\frac{63}{225} = 28.0\%$. Benford's law predicts:
+\begin{align*}
+P(D = 1) &= \log_{10}\left(\frac{2}{1}\right) = \log_{10} 2 \approx 0.3010 = 30.1\%.
+\end{align*}
+The empirical percentage ($28.0\%$) agrees remarkably well with Benford's law ($30.1\%$).
+
+\vspace{4pt}
+\noindent \textbf{(c)} Since $f(x) = c/x$ is a valid PDF on $[1, 10]$, its integral over $[1, 10]$ must equal $1$:
+\begin{align*}
+\int_{1}^{10} \frac{c}{x} \, dx &= 1 \\
+c [ \ln x ]_{1}^{10} &= 1 \\
+c (\ln 10 - \ln 1) &= 1 \\
+c \ln 10 &= 1 \\
+c &= \frac{1}{\ln 10} = \log_{10} e.
+\end{align*}
+For a scale transformation $Y = aX$ ($a > 0$), the support transforms from $[1, 10]$ to $[a, 10a]$. Using the change of variables formula $f_Y(y) = f_X(y/a) \left| \frac{dx}{dy} \right|$ with $\frac{dx}{dy} = \frac{1}{a}$:
+\begin{align*}
+f_Y(y) &= \left( \frac{c}{y/a} \right) \left( \frac{1}{a} \right) = \frac{c}{y}, \quad \text{for } a \le y \le 10a.
+\end{align*}
+The PDF of $Y$ takes the exact same $c/y$ functional form over the scaled interval $[a, 10a]$.
+
+\vspace{4pt}
+\noindent \textbf{(d)} In scientific notation $X \times 10^N$ with $1 \le X < 10$, the first digit $D$ is simply the integer part of $X$, meaning $D = j$ if and only if $j \le X < j + 1$. Integrating the PDF $f(x) = \frac{1}{x \ln 10}$ over this interval:
+\begin{align*}
+P(D = j) &= P(j \le X < j + 1) \\
+&= \int_{j}^{j+1} \frac{1}{x \ln 10} \, dx \\
+&= \frac{1}{\ln 10} [ \ln x ]_{j}^{j+1} \\
+&= \frac{\ln(j + 1) - \ln j}{\ln 10} \\
+&= \frac{\ln\left(\frac{j+1}{j}\right)}{\ln 10} \\
+&= \log_{10}\left(\frac{j+1}{j}\right), \quad \text{for } j \in \{1, 2, \dots, 9\}.
+\end{align*}
+This matches Benford's law exactly.
+
+\vspace{10pt}
+\subsection{Book Ch.5, Exercise 57}
+\begin{tcolorbox}[title={Book Ch.5, Exercise 57}]
+\begin{enumerate}[(a)]
+\item Let $X_1, X_2, \dots$ be independent $\mathcal{N}(0, 4)$ r.v.s., and let $J$ be the smallest value of $j$ such that $X_j > 4$ (i.e., the index of the first $X_j$ exceeding 4). In terms of $\Phi$, find $E(J)$.
+\item Let $f$ and $g$ be PDFs with $f(x) > 0$ and $g(x) > 0$ for all $x$. Let $X$ be a random variable with PDF $f$. Find the expected value of the ratio
+\[
+R = \frac{g(X)}{f(X)}.
+\]
+Such ratios come up very often in statistics, when working with a quantity known as a likelihood ratio and when using a computational technique known as importance sampling.
+\item Define
+\[
+F(x) = e^{-e^{-x}}.
+\]
+This is a CDF and is a continuous, strictly increasing function. Let $X$ have CDF $F$, and define $W = F(X)$. What are the mean and variance of $W$?
+\end{enumerate}
+\end{tcolorbox}
+
+\noindent \textbf{Solution.} \textbf{(a)} For $X_j \sim \mathcal{N}(0, 4)$, the standard deviation is $\sigma = \sqrt{4} = 2$. The probability $p$ that any individual $X_j$ exceeds 4 is:
+\begin{align*}
+p &= P(X_j > 4) \\
+&= P\left( \frac{X_j - 0}{2} > \frac{4 - 0}{2} \right) \\
+&= P(Z > 2) \\
+&= 1 - \Phi(2).
+\end{align*}
+Since $J$ counts the trial number of the first success in independent Bernoulli trials, $J$ follows a First Success distribution $J \sim \text{FS}(p)$:
+\begin{align*}
+E(J) &= \frac{1}{p} = \frac{1}{1 - \Phi(2)}.
+\end{align*}
+
+\vspace{4pt}
+\noindent \textbf{(b)} Since $X$ has PDF $f(x)$, we compute the expected value of $R = g(X)/f(X)$ using LOTUS:
+\begin{align*}
+E(R) &= E\left[ \frac{g(X)}{f(X)} \right] \\
+&= \int_{-\infty}^{\infty} \left( \frac{g(x)}{f(x)} \right) f(x) \, dx \\
+&= \int_{-\infty}^{\infty} g(x) \, dx \\
+&= 1,
+\end{align*}
+where $\int_{-\infty}^{\infty} g(x) \, dx = 1$ holds because $g$ is a valid PDF.
+
+\vspace{4pt}
+\noindent \textbf{(c)} By the **Universality of the Uniform** (Probability Integral Transform), if $X$ is a continuous random variable with strictly increasing CDF $F$, then the random variable $W = F(X)$ is uniformly distributed on $(0, 1)$:
+\begin{align*}
+W &\sim \text{Unif}(0, 1).
+\end{align*}
+The mean and variance of a $\text{Unif}(0, 1)$ random variable are:
+\begin{align*}
+E(W) &= \frac{1}{2}, \\
+\text{Var}(W) &= \frac{(1 - 0)^2}{12} = \frac{1}{12}.
+\end{align*}
+
+\vspace{10pt}
+\subsection{Book Ch.5, Exercise 59}
+\begin{tcolorbox}[title={Book Ch.5, Exercise 59}]
+As in Example 5.7.3, athletes compete one at a time at the high jump. Let $X_j$ be how high the $j$th jumper jumped, with $X_1, X_2, \dots$ i.i.d. with a continuous distribution. We say that the $j$th jumper is ``best in recent memory'' if he or she jumps higher than the previous 2 jumpers (for $j \ge 3$; the first 2 jumpers don't qualify).
+\begin{enumerate}[(a)]
+\item Find the expected number of best in recent memory jumpers among the 3rd through $n$th jumpers.
+\item Let $A_j$ be the event that the $j$th jumper is the best in recent memory. Find $P(A_3 \cap A_4)$, $P(A_3)$, and $P(A_4)$. Are $A_3$ and $A_4$ independent?
+\end{enumerate}
+\end{tcolorbox}
+
+\noindent \textbf{Solution.} \textbf{(a)} For each jumper $j \in \{3, 4, \dots, n\}$, let $I_j$ be the indicator that jumper $j$ is best in recent memory ($X_j > \max(X_{j-1}, X_{j-2})$). 
+
+Because $X_{j-2}, X_{j-1},$ and $X_j$ are continuous and i.i.d., all $3! = 6$ height orderings among these three jumpers are equally likely. Jumper $j$ is the highest among the three with probability:
+\begin{align*}
+E(I_j) &= P(A_j) = \frac{1}{3}.
+\end{align*}
+Let $N = \sum_{j=3}^{n} I_j$ be the total number of ``best in recent memory'' jumpers. Since there are $n - 2$ terms in the sum, linearity of expectation gives:
+\begin{align*}
+E(N) &= \sum_{j=3}^{n} E(I_j) \\
+&= \frac{n - 2}{3}.
+\end{align*}
+
+\vspace{4pt}
+\noindent \textbf{(b)} We have $P(A_3) = P(A_4) = \frac{1}{3}$ from part (a). 
+
+The event $A_3 \cap A_4$ occurs when jumper 3 beats jumpers 1 and 2 ($X_3 > \max(X_1, X_2)$) **and** jumper 4 beats jumpers 2 and 3 ($X_4 > \max(X_2, X_3)$). This requires $X_4 > X_3 > \max(X_1, X_2)$, meaning that among the first 4 jumpers, jumper 4 is 1st (highest) and jumper 3 is 2nd highest. 
+
+Since all $4! = 24$ orderings of $(X_1, X_2, X_3, X_4)$ are equally likely, and exactly 2 orderings satisfy this condition (rank orders $(3,4,2,1)$ and $(4,3,2,1)$ where 1 is highest):
+\begin{align*}
+P(A_3 \cap A_4) &= \frac{2}{4!} = \frac{2}{24} = \frac{1}{12}.
+\end{align*}
+Checking the product of marginal probabilities:
+\begin{align*}
+P(A_3) P(A_4) &= \left(\frac{1}{3}\right)\left(\frac{1}{3}\right) = \frac{1}{9}.
+\end{align*}
+Since $P(A_3 \cap A_4) = \frac{1}{12} \neq \frac{1}{9} = P(A_3) P(A_4)$, the events $A_3$ and $A_4$ are \textbf{not} independent.
+
+\vspace{15pt}
+\section{Strategic Practice}
+
+\subsection{SP 5 \S3 $\cdot$ Problem 1}
+\begin{tcolorbox}[title={SP 5 \S3 $\cdot$ Problem 1}]
+Let $Y = e^X$, where $X \sim \mathcal{N}(\mu, \sigma^2)$. Then $Y$ is said to have a Log-Normal distribution; this distribution is of great importance in economics, finance, and elsewhere. Find the CDF and PDF of $Y$ (the CDF should be in terms of $\Phi$).
+\end{tcolorbox}
+
+\noindent \textbf{Solution.} Since $Y = e^X > 0$, the support of $Y$ is $(0, \infty)$, so $F_Y(y) = 0$ for $y \le 0$. For $y > 0$, we find the CDF by taking the natural logarithm of both sides of $Y \le y$:
+\begin{align*}
+F_Y(y) &= P(Y \le y) \\
+&= P(e^X \le y) \\
+&= P(X \le \log y) \\
+&= P\left( \frac{X - \mu}{\sigma} \le \frac{\log y - \mu}{\sigma} \right) \\
+&= \Phi\left( \frac{\log y - \mu}{\sigma} \right).
+\end{align*}
+Differentiating $F_Y(y)$ with respect to $y$ using the chain rule $\frac{d}{dy}[\Phi(g(y))] = \varphi(g(y)) g'(y)$ with $g'(y) = \frac{1}{y\sigma}$:
+\begin{align*}
+f_Y(y) &= \frac{d}{dy} \Phi\left( \frac{\log y - \mu}{\sigma} \right) \\
+&= \varphi\left( \frac{\log y - \mu}{\sigma} \right) \left( \frac{1}{y\sigma} \right) \\
+&= \frac{1}{y \sigma \sqrt{2\pi}} \exp\left[ -\frac{(\log y - \mu)^2}{2\sigma^2} \right], \quad \text{for } y > 0.
+\end{align*}
+
+\vspace{10pt}
+\subsection{SP 5 \S3 $\cdot$ Problem 2}
+\begin{tcolorbox}[title={SP 5 \S3 $\cdot$ Problem 2}]
+Let $U \sim \text{Unif}(0, 1)$. Using $U$, construct a r.v. $X$ whose PDF is $\lambda e^{-\lambda x}$ for $x > 0$ (and 0 otherwise), where $\lambda > 0$ is a constant. Then $X$ is said to have an Exponential distribution; this distribution is of great importance in engineering, chemistry, survival analysis, and elsewhere.
+\end{tcolorbox}
+
+\noindent \textbf{Solution.} The target CDF for $X \sim \text{Expo}(\lambda)$ for $x > 0$ is:
+\begin{align*}
+F_X(x) &= \int_{0}^{x} \lambda e^{-\lambda t} \, dt = 1 - e^{-\lambda x}.
+\end{align*}
+To apply the **Universality of the Uniform**, we find the quantile function $F_X^{-1}(u)$ by solving $u = F_X(x)$ for $x \in (0, 1)$:
+\begin{align*}
+u &= 1 - e^{-\lambda x} \\
+e^{-\lambda x} &= 1 - u \\
+-\lambda x &= \log(1 - u) \\
+x &= -\frac{1}{\lambda} \log(1 - u).
+\end{align*}
+Thus, the random variable $X = -\frac{1}{\lambda} \log(1 - U)$ follows the $\text{Expo}(\lambda)$ distribution. Since $U \sim \text{Unif}(0, 1)$ implies $1 - U \sim \text{Unif}(0, 1)$, we can also write:
+\begin{align*}
+X &= -\frac{1}{\lambda} \log U \sim \text{Expo}(\lambda).
+\end{align*}
+
+\vspace{10pt}
+\subsection{SP 5 \S3 $\cdot$ Problem 3}
+\begin{tcolorbox}[title={SP 5 \S3 $\cdot$ Problem 3}]
+Let $Z \sim \mathcal{N}(0, 1)$. Find $E(\Phi(Z))$ without using LOTUS, where $\Phi$ is the CDF of $Z$.
+\end{tcolorbox}
+
+\noindent \textbf{Solution.} By the **Universality of the Uniform**, for any continuous random variable $X$ with CDF $F$, the random variable $F(X)$ is uniformly distributed on $(0, 1)$. 
+
+Since $Z \sim \mathcal{N}(0, 1)$ has CDF $\Phi$, the random variable $U = \Phi(Z)$ follows a $\text{Unif}(0, 1)$ distribution:
+\begin{align*}
+\Phi(Z) &\sim \text{Unif}(0, 1) \\
+E(\Phi(Z)) &= \frac{1}{2}.
+\end{align*}
+
+\vspace{10pt}
+\subsection{SP 5 \S3 $\cdot$ Problem 4}
+\begin{tcolorbox}[title={SP 5 \S3 $\cdot$ Problem 4}]
+A stick is broken into two pieces, at a uniformly random chosen break point. Find the CDF and average of the length of the longer piece.
+\end{tcolorbox}
+
+\noindent \textbf{Solution.} Choose units so the stick has total length $1$. Let the break point be $U \sim \text{Unif}(0, 1)$, so the piece lengths are $U$ and $1 - U$. The longer piece is $L = \max(U, 1 - U)$, which takes values in $\left[\frac{1}{2}, 1\right]$.
+
+For any $l \in \left[\frac{1}{2}, 1\right]$, the event $L < l$ means both pieces are shorter than $l$:
+\begin{align*}
+F_L(l) &= P(L < l) \\
+&= P(U < l \text{ and } 1 - U < l) \\
+&= P(1 - l < U < l) \\
+&= l - (1 - l) \\
+&= 2l - 1.
+\end{align*}
+Since $F_L(l) = 2l - 1$ is linear on $\left[\frac{1}{2}, 1\right]$, $L \sim \text{Unif}\left(\frac{1}{2}, 1\right)$. Its average length is:
+\begin{align*}
+E(L) &= \frac{1/2 + 1}{2} = \frac{3}{4}.
+\end{align*}
+
+\vspace{10pt}
+\subsection{SP 5 \S4 $\cdot$ Problem 1}
+\begin{tcolorbox}[title={SP 5 \S4 $\cdot$ Problem 1}]
+For $X \sim \text{Pois}(\lambda)$, find $E(X!)$ (the average factorial of $X$), if it is finite.
+\end{tcolorbox}
+
+\noindent \textbf{Solution.} Using LOTUS for $g(X) = X!$ with the PMF of $X \sim \text{Pois}(\lambda)$:
+\begin{align*}
+E(X!) &= \sum_{k=0}^{\infty} k! P(X = k) \\
+&= \sum_{k=0}^{\infty} k! \left( \frac{e^{-\lambda} \lambda^k}{k!} \right) \\
+&= e^{-\lambda} \sum_{k=0}^{\infty} \lambda^k.
+\end{align*}
+For $0 < \lambda < 1$, the geometric series $\sum_{k=0}^{\infty} \lambda^k$ converges to $\frac{1}{1 - \lambda}$:
+\begin{align*}
+E(X!) &= \frac{e^{-\lambda}}{1 - \lambda}.
+\end{align*}
+For $\lambda \ge 1$, the series diverges, so $E(X!) = \infty$.
+
+\vspace{10pt}
+\subsection{SP 5 \S4 $\cdot$ Problem 2}
+\begin{tcolorbox}[title={SP 5 \S4 $\cdot$ Problem 2}]
+Let $Z \sim \mathcal{N}(0, 1)$. Find $E|Z|$.
+\end{tcolorbox}
+
+\noindent \textbf{Solution.} By LOTUS with the standard normal PDF $\varphi(z) = \frac{1}{\sqrt{2\pi}} e^{-z^2/2}$:
+\begin{align*}
+E|Z| &= \int_{-\infty}^{\infty} |z| \varphi(z) \, dz.
+\end{align*}
+Because $|z| \varphi(z)$ is an even function, we integrate over $[0, \infty)$ and multiply by 2:
+\begin{align*}
+E|Z| &= 2 \int_{0}^{\infty} z \varphi(z) \, dz \\
+&= \frac{2}{\sqrt{2\pi}} \int_{0}^{\infty} z e^{-z^2/2} \, dz \\
+&= \sqrt{\frac{2}{\pi}} \left[ -e^{-z^2/2} \right]_{0}^{\infty} \\
+&= \sqrt{\frac{2}{\pi}} (0 - (-1)) \\
+&= \sqrt{\frac{2}{\pi}}.
+\end{align*}
+
+\vspace{10pt}
+\subsection{SP 5 \S4 $\cdot$ Problem 3}
+\begin{tcolorbox}[title={SP 5 \S4 $\cdot$ Problem 3}]
+Let $X \sim \text{Geom}(p)$ and let $t$ be a constant. Find $E(e^{tX})$, as a function of $t$ (this is known as the moment generating function; we will see later how this function is useful).
+\end{tcolorbox}
+
+\noindent \textbf{Solution.} Let $q = 1 - p$. For $X \sim \text{Geom}(p)$ counting failures before the first success ($P(X = k) = p q^k$ for $k \ge 0$), applying LOTUS gives:
+\begin{align*}
+E\left(e^{tX}\right) &= \sum_{k=0}^{\infty} e^{tk} p q^k \\
+&= p \sum_{k=0}^{\infty} \left( q e^t \right)^k.
+\end{align*}
+This geometric series converges if and only if $q e^t < 1$ (equivalently $t < -\log(1 - p)$):
+\begin{align*}
+E\left(e^{tX}\right) &= \frac{p}{1 - q e^t}, \quad \text{for } t < -\log(1 - p).
+\end{align*}
+
+\vspace{10pt}
+\subsection{SP 6 \S1 $\cdot$ Problem 1}
+\begin{tcolorbox}[title={SP 6 \S1 $\cdot$ Problem 1}]
+Fred (the protagonist of HW 6 \#1) wants to sell his car, after moving back to Blissville (where he is happy with the bus system). He decides to sell it to the first person to offer at least \$15,000 for it. Assume that the offers are independent Exponential random variables with mean \$10,000.
+\begin{enumerate}[(a)]
+\item Find the expected number of offers Fred will have.
+\item Find the expected amount of money that Fred gets for the car.
+\end{enumerate}
+\end{tcolorbox}
+
+\noindent \textbf{Solution.} \textbf{(a)} Offers are $X_i \sim \text{Expo}(\lambda)$ with mean $\frac{1}{\lambda} = 10000$. The success probability of an offer reaching $\ge 15000$ is:
+\begin{align*}
+p &= P(X_i \ge 15000) = e^{-15000/10000} = e^{-1.5} \approx 0.22313.
+\end{align*}
+The total number of offers $N$ is $N \sim \text{FS}(p)$:
+\begin{align*}
+E(N) &= \frac{1}{p} = e^{1.5} \approx 4.4817.
+\end{align*}
+\textbf{(b)} The sale price is $Y = (X \mid X \ge 15000)$. By the memoryless property of the Exponential distribution:
+\begin{align*}
+E(Y) &= 15000 + E(X) = 15000 + 10000 = \$25,000.
+\end{align*}
+
+\vspace{10pt}
+\subsection{SP 6 \S1 $\cdot$ Problem 2}
+\begin{tcolorbox}[title={SP 6 \S1 $\cdot$ Problem 2}]
+Find $E(X^3)$ for $X \sim \text{Expo}(\lambda)$, using LOTUS and the fact that $E(X) = 1/\lambda$ and $\text{Var}(X) = 1/\lambda^2$, and integration by parts at most once (see also Problem 1 in the MGF section).
+\end{tcolorbox}
+
+\noindent \textbf{Solution.} We know $E(X^2) = \text{Var}(X) + [E(X)]^2 = \frac{1}{\lambda^2} + \frac{1}{\lambda^2} = \frac{2}{\lambda^2}$. Using LOTUS and integration by parts once with $u = x^3$ ($du = 3x^2 \, dx$) and $dv = \lambda e^{-\lambda x} \, dx$ ($v = -e^{-\lambda x}$):
+\begin{align*}
+E(X^3) &= \int_{0}^{\infty} x^3 \lambda e^{-\lambda x} \, dx \\
+&= \left[ -x^3 e^{-\lambda x} \right]_{0}^{\infty} + \frac{3}{\lambda} \int_{0}^{\infty} x^2 \lambda e^{-\lambda x} \, dx \\
+&= 0 + \frac{3}{\lambda} E(X^2) \\
+&= \frac{3}{\lambda} \left( \frac{2}{\lambda^2} \right) \\
+&= \frac{6}{\lambda^3}.
+\end{align*}
+
+\vspace{10pt}
+\subsection{SP 6 \S1 $\cdot$ Problem 3}
+\begin{tcolorbox}[title={SP 6 \S1 $\cdot$ Problem 3}]
+Let $X_1, \dots, X_n$ be independent, with $X_j \sim \text{Expo}(\lambda_j)$. (They are i.i.d. if all the $\lambda_j$ are equal, but we are not assuming that.) Let $M = \min(X_1, \dots, X_n)$. Show that $M \sim \text{Expo}(\lambda_1 + \dots + \lambda_n)$, and interpret this intuitively.
+\end{tcolorbox}
+
+\noindent \textbf{Solution.} We compute the survival function $P(M > t)$ for any $t > 0$. The minimum is greater than $t$ if and only if every individual random variable is greater than $t$:
+\begin{align*}
+P(M > t) &= P\left( \min(X_1, \dots, X_n) > t \right) \\
+&= P(X_1 > t, X_2 > t, \dots, X_n > t).
+\end{align*}
+By independence of $X_1, \dots, X_n$:
+\begin{align*}
+P(M > t) &= \prod_{j=1}^{n} P(X_j > t) \\
+&= \prod_{j=1}^{n} e^{-\lambda_j t} \\
+&= \exp\left( -(\lambda_1 + \dots + \lambda_n) t \right).
+\end{align*}
+Since this is the survival function of an Exponential distribution with rate parameter $\lambda_{\text{sum}} = \lambda_1 + \dots + \lambda_n$, we conclude $M \sim \text{Expo}(\lambda_1 + \dots + \lambda_n)$.
+
+\textbf{Intuitive Interpretation:} Think of $\lambda_j$ as the arrival rate of event type $j$. The waiting time until the \textit{first} of any of the $n$ event types occurs has a combined arrival rate equal to the sum of the individual rates $\lambda_1 + \dots + \lambda_n$.
+
+\vspace{10pt}
+\subsection{SP 6 \S1 $\cdot$ Problem 4}
+\begin{tcolorbox}[title={SP 6 \S1 $\cdot$ Problem 4}]
+A post office has 2 clerks. Alice enters the post office while 2 other customers, Bob and Claire, are being served by the 2 clerks. She is next in line. Assume that the time a clerk spends serving a customer has the $\text{Exponential}(\lambda)$ distribution.
+\begin{enumerate}[(a)]
+\item What is the probability that Alice is the last of the 3 customers to be done being served?
+Hint: No integrals are needed.
+\item What is the expected total time that Alice needs to spend at the post office?
+\end{enumerate}
+\end{tcolorbox}
+
+\noindent \textbf{Solution.} \textbf{(a)} Alice begins service as soon as the first of Bob or Claire finishes. By the memoryless property, the remaining service time for the other customer is $\text{Expo}(\lambda)$, identical to Alice's own service time $\text{Expo}(\lambda)$. By symmetry between two independent $\text{Expo}(\lambda)$ random variables:
+\begin{align*}
+P(\text{Alice finishes last}) &= \frac{1}{2}.
+\end{align*}
+\textbf{(b)} Alice's total time is $T = W + S$, where waiting time $W = \min(X_{\text{Bob}}, X_{\text{Claire}}) \sim \text{Expo}(2\lambda)$ and service time $S \sim \text{Expo}(\lambda)$. By linearity of expectation:
+\begin{align*}
+E(T) &= E(W) + E(S) = \frac{1}{2\lambda} + \frac{1}{\lambda} = \frac{3}{2\lambda}.
+\end{align*}
+
+\vspace{15pt}
+\section{Homework}
+
+\subsection{HW 5 $\cdot$ Problem 2}
+\begin{tcolorbox}[title={HW 5 $\cdot$ Problem 2}]
+Joe is waiting in continuous time for a book called \textit{The Winds of Winter} to be released. Suppose that the waiting time $T$ until news of the book's release is posted, measured in years relative to some starting point, has PDF $\frac{1}{5}e^{-t/5}$ for $t > 0$ (and 0 otherwise); this is known as the Exponential distribution with parameter $1/5$. The news of the book's release will be posted on a certain website.
+Joe is not so obsessive as to check multiple times a day; instead, he checks the website once at the end of each day. Therefore, he observes the day on which the news was posted, rather than the exact time $T$. Let $X$ be this measurement, where $X = 0$ means that the news was posted within the first day (after the starting point), $X = 1$ means it was posted on the second day, etc. (assume that there are 365 days in a year). Find the PMF of $X$. Is this a distribution we have studied?
+\end{tcolorbox}
+
+\noindent \textbf{Solution.} The continuous waiting time is $T \sim \text{Expo}(1/5)$ with CDF $F_T(t) = 1 - e^{-t/5}$. The discrete day count $X = \lfloor 365T \rfloor$ equals $k \in \{0, 1, 2, \dots\}$ when $T \in \left[\frac{k}{365}, \frac{k+1}{365}\right)$:
+\begin{align*}
+P(X = k) &= F_T\left(\frac{k+1}{365}\right) - F_T\left(\frac{k}{365}\right) \\
+&= e^{-k/1825} - e^{-(k+1)/1825} \\
+&= \left( e^{-1/1825} \right)^k \left( 1 - e^{-1/1825} \right).
+\end{align*}
+Letting $p = 1 - e^{-1/1825}$ and $q = e^{-1/1825}$, we have $P(X = k) = p q^k$. Yes, this is the **Geometric distribution** $X \sim \text{Geom}(p)$ counting failures before the first success.
+
+\vspace{10pt}
+\subsection{HW 5 $\cdot$ Problem 3}
+\begin{tcolorbox}[title={HW 5 $\cdot$ Problem 3}]
+Let $U$ be a Uniform r.v. on the interval $(-1, 1)$ (be careful about minus signs).
+\begin{enumerate}[(a)]
+\item Compute $E(U)$, $\text{Var}(U)$, and $E(U^4)$.
+\item Find the CDF and PDF of $U^2$. Is the distribution of $U^2$ Uniform on $(0, 1)$?
+\end{enumerate}
+\end{tcolorbox}
+
+\noindent \textbf{Solution.} \textbf{(a)} For $U \sim \text{Unif}(-1, 1)$, symmetry gives $E(U) = 0$. By LOTUS with PDF $f(u) = 1/2$:
+\begin{align*}
+E(U^2) &= \frac{1}{2} \int_{-1}^{1} u^2 \, du = \frac{1}{3} \implies \text{Var}(U) = \frac{1}{3}, \\
+E(U^4) &= \frac{1}{2} \int_{-1}^{1} u^4 \, du = \frac{1}{5}.
+\end{align*}
+\textbf{(b)} Let $G(t)$ be the CDF of $U^2$ on $(0, 1)$:
+\begin{align*}
+G(t) &= P(-\sqrt{t} \le U \le \sqrt{t}) = \sqrt{t}.
+\end{align*}
+The PDF is $g(t) = G'(t) = \frac{1}{2\sqrt{t}}$ for $0 < t < 1$. No, it is **not** Uniform on $(0, 1)$ because $g(t)$ is not constant.
+
+\vspace{10pt}
+\subsection{HW 5 $\cdot$ Problem 4}
+\begin{tcolorbox}[title={HW 5 $\cdot$ Problem 4}]
+Let $F$ be a CDF which is continuous and strictly increasing. The inverse function, $F^{-1}$, is known as the quantile function, and has many applications in statistics and econometrics. Find the area under the curve of the quantile function from 0 to 1, in terms of the mean $\mu$ of the distribution $F$. Hint: Universality.
+\end{tcolorbox}
+
+\noindent \textbf{Solution.} The area is given by $\int_{0}^{1} F^{-1}(u) \, du$. Let $U \sim \text{Unif}(0, 1)$. By LOTUS and the **Universality of the Uniform**, $X = F^{-1}(U)$ has CDF $F$:
+\begin{align*}
+\int_{0}^{1} F^{-1}(u) \, du &= E\left( F^{-1}(U) \right) = E(X) = \mu.
+\end{align*}
+The area under the quantile function from 0 to 1 equals the mean $\mu$.
+
+\vspace{10pt}
+\subsection{HW 5 $\cdot$ Problem 5}
+\begin{tcolorbox}[title={HW 5 $\cdot$ Problem 5}]
+Let $Z \sim \mathcal{N}(0, 1)$. A measuring device is used to observe $Z$, but the device can only handle positive values, and gives a reading of 0 if $Z \le 0$---this is an example of censored data. So assume that $X = Z I_{Z > 0}$ is observed rather than $Z$, where $I_{Z > 0}$ is the indicator of $Z > 0$. Find $E(X)$ and $\text{Var}(X)$.
+\end{tcolorbox}
+
+\noindent \textbf{Solution.} By LOTUS with standard normal PDF $\varphi(z) = \frac{1}{\sqrt{2\pi}}e^{-z^2/2}$:
+\begin{align*}
+E(X) &= \frac{1}{\sqrt{2\pi}} \int_{0}^{\infty} z e^{-z^2/2} \, dz = \frac{1}{\sqrt{2\pi}}, \\
+E(X^2) &= \frac{1}{\sqrt{2\pi}} \int_{0}^{\infty} z^2 e^{-z^2/2} \, dz = \frac{1}{2} E(Z^2) = \frac{1}{2}.
+\end{align*}
+The variance is:
+\begin{align*}
+\text{Var}(X) &= E(X^2) - [E(X)]^2 = \frac{1}{2} - \frac{1}{2\pi} = \frac{\pi - 1}{2\pi}.
+\end{align*}
+
+\vspace{10pt}
+\subsection{HW 6 $\cdot$ Problem 1}
+\begin{tcolorbox}[title={HW 6 $\cdot$ Problem 1}]
+Fred lives in Blissville, where buses always arrive exactly on time, with the time between successive buses fixed at 10 minutes. Having lost his watch, he arrives at the bus stop at a random time (assume that buses run 24 hours a day, and that the time that Fred arrives is uniformly random on a particular day).
+\begin{enumerate}[(a)]
+\item What is the distribution of how long Fred has to wait for the next bus? What is the average time that Fred has to wait?
+\item Given that the bus has not yet arrived after 6 minutes, what is the probability that Fred will have to wait at least 3 more minutes?
+\item Fred moves to Blotchville, a city with inferior urban planning and where buses are much more erratic. Now, when any bus arrives, the time until the next bus arrives is an Exponential random variable with mean 10 minutes. Fred arrives at the bus stop at a random time, not knowing how long ago the previous bus came. What is the distribution of Fred's waiting time for the next bus? What is the average time that Fred has to wait? (Hint: Don't forget the memoryless property.)
+\item When Fred complains to a friend how much worse transportation is in Blotchville, the friend says: ``Stop whining so much! You arrive at a uniform instant between the previous bus arrival and the next bus arrival. The average length of that interval between buses is 10 minutes, but since you are equally likely to arrive at any time in that interval, your average waiting time is only 5 minutes.''
+Fred disagrees, both from experience and from solving Part (c) while waiting for the bus. Explain what (if anything) is wrong with the friend's reasoning.
+\end{enumerate}
+\end{tcolorbox}
+
+\noindent \textbf{Solution.} \textbf{(a)} Since buses arrive deterministically every 10 minutes and Fred arrives uniformly at random, his waiting time is $W \sim \text{Unif}(0, 10)$, with average wait $E(W) = 5$ minutes.
+
+\vspace{4pt}
+\noindent \textbf{(b)} For $W \sim \text{Unif}(0, 10)$, we compute the conditional probability $P(W \ge 6 + 3 \mid W > 6)$:
+\begin{align*}
+P(W \ge 9 \mid W > 6) &= \frac{P(W \ge 9)}{P(W > 6)} \\
+&= \frac{(10 - 9)/10}{(10 - 6)/10} \\
+&= \frac{1}{4}.
+\end{align*}
+
+\vspace{4pt}
+\noindent \textbf{(c)} By the **memoryless property** of the Exponential distribution, the remaining time until the next bus arrival is independent of how long ago the previous bus arrived. Thus, Fred's waiting time in Blotchville is $W \sim \text{Expo}(1/10)$, with average wait $E(W) = 10$ minutes.
+
+\vspace{4pt}
+\noindent \textbf{(d) The friend's flaw: Length-Biasing (Inspection Paradox).} 
+While the unweighted average time between buses is 10 minutes, Fred is much more likely to arrive during a **long** interval between buses than a **short** interval. For instance, an interval of length 30 minutes occupies 6 times as much on-clock duration as an interval of length 5 minutes, so Fred is 6 times more likely to fall into the 30-minute interval. 
+
+When intervals are $X \sim \text{Expo}(1/10)$, the length-biased interval $L$ that Fred lands in has expected length $E(L) = \frac{E(X^2)}{E(X)} = \frac{200}{10} = 20$ minutes. Since Fred lands uniformly within this length-biased 20-minute interval, his average waiting time is $\frac{E(L)}{2} = 10$ minutes.
+
+\vspace{10pt}
+\subsection{HW 6 $\cdot$ Problem 2}
+\begin{tcolorbox}[title={HW 6 $\cdot$ Problem 2}]
+Three Stat 110 students are working independently on this pset. All 3 start at 1 pm on a certain day, and each takes an Exponential time with mean 6 hours to complete this pset. What is the earliest time when all 3 students will have completed this pset, on average? (That is, all of the 3 students need to be done with this pset.)
+\end{tcolorbox}
+
+\noindent \textbf{Solution.} Let $X_1, X_2, X_3 \sim \text{Expo}(1/6)$ be the completion times in hours for the three students. We want the expected value of the maximum completion time $T = \max(X_1, X_2, X_3)$.
+
+We decompose $T$ into the sum of inter-completion waiting times:
+\begin{align*}
+T &= T_1 + T_2 + T_3,
+\end{align*}
+where:
+\begin{itemize}
+    \item $T_1 = \min(X_1, X_2, X_3)$ is the time until the 1st student finishes. As the minimum of three independent $\text{Expo}(1/6)$ random variables, $T_1 \sim \text{Expo}\left(\frac{3}{6}\right)$, so $E(T_1) = \frac{6}{3} = 2$ hours.
+    \item $T_2$ is the additional time until the 2nd student finishes. By the memoryless property, the remaining times for the 2 unfinished students are independent $\text{Expo}(1/6)$. Their minimum is $T_2 \sim \text{Expo}\left(\frac{2}{6}\right)$, so $E(T_2) = \frac{6}{2} = 3$ hours.
+    \item $T_3$ is the additional time until the 3rd student finishes. By the memoryless property, the remaining time for the last student is $T_3 \sim \text{Expo}\left(\frac{1}{6}\right)$, so $E(T_3) = 6$ hours.
+\end{itemize}
+By linearity of expectation:
+\begin{align*}
+E(T) &= E(T_1) + E(T_2) + E(T_3) \\
+&= 2 + 3 + 6 \\
+&= 11 \text{ hours}.
+\end{align*}
+Starting at 1:00 pm, adding 11 hours means all 3 students finish on average at **12:00 am (midnight)**.
+
+\vspace{10pt}
+\subsection{HW 6 $\cdot$ Problem 4}
+\begin{tcolorbox}[title={HW 6 $\cdot$ Problem 4}]
+\begin{enumerate}[(a)]
+\item Suppose that we have a list of the populations of every country in the world. Guess, without looking at data yet, what percentage of the populations have the digit 1 as their first digit (e.g., a country with a population of 1,234,567 has first digit 1 and a country with population 89,012,345 does not).
+Note: (a) is a rare problem where the only way to lose points is to find out the right answer rather than guessing!
+\item After having done (a), look through a list of populations such as
+\url{http://en.wikipedia.org/wiki/List_of_countries_by_population}
+and count how many start with a 1. What percentage of countries is this?
+\item Benford's Law states that in a very large variety of real-life data sets, the first digit approximately follows a particular distribution with about a 30\% chance of a 1, an 18\% chance of a 2, and in general
+\[
+P(D = j) = \log_{10}\left(\frac{j+1}{j}\right), \quad \text{for } j \in \{1, 2, 3, \dots, 9\},
+\]
+where $D$ is the first digit of a randomly chosen element. Check that this is a PMF (using properties of logs, not with a calculator).
+\item Suppose that we write the random value in some problem (e.g., the population of a random country) in scientific notation as $X \times 10^N$, where $N$ is a nonnegative integer and $1 \le X < 10$. Assume that $X$ is a continuous r.v. with PDF
+\[
+f(x) = c/x, \quad \text{for } 1 \le x \le 10
+\]
+(and 0 otherwise), with $c$ a constant. What is the value of $c$ (be careful with the bases of logs)? Intuitively, we might hope that the distribution of $X$ does not depend on the choice of units in which $X$ is measured. To see whether this holds, let $Y = aX$ with $a > 0$. What is the PDF of $Y$ (specifying where it is nonzero)?
+\item Show that if we have a random number $X \times 10^N$ (written in scientific notation) and $X$ has the PDF $f(x)$ from (d), then the first digit (which is also the first digit of $X$) has the PMF given in (c).
+Hint: What does $D = j$ correspond to in terms of the values of $X$?
+\end{enumerate}
+\end{tcolorbox}
+
+\noindent \textbf{Solution.} \textbf{(a)} A naive guess assuming uniform distribution across digits $1$ through $9$ would be $\frac{1}{9} \approx 11.1\%$.
+
+\vspace{4pt}
+\noindent \textbf{(b)} In empirical world population data (e.g., Wikipedia list of 225 countries), approximately 63 countries have population starting with digit 1, which is $\frac{63}{225} = 28.0\%$. Benford's law predicts:
+\begin{align*}
+P(D = 1) &= \log_{10}\left(\frac{2}{1}\right) = \log_{10} 2 \approx 0.3010 = 30.1\%.
+\end{align*}
+The empirical percentage ($28.0\%$) agrees remarkably well with Benford's law ($30.1\%$).
+
+\vspace{4pt}
+\noindent \textbf{(c)} Since $f(x) = c/x$ is a valid PDF on $[1, 10]$, its integral over $[1, 10]$ must equal $1$:
+\begin{align*}
+\int_{1}^{10} \frac{c}{x} \, dx &= 1 \\
+c [ \ln x ]_{1}^{10} &= 1 \\
+c (\ln 10 - \ln 1) &= 1 \\
+c \ln 10 &= 1 \\
+c &= \frac{1}{\ln 10} = \log_{10} e.
+\end{align*}
+For a scale transformation $Y = aX$ ($a > 0$), the support transforms from $[1, 10]$ to $[a, 10a]$. Using the change of variables formula $f_Y(y) = f_X(y/a) \left| \frac{dx}{dy} \right|$ with $\frac{dx}{dy} = \frac{1}{a}$:
+\begin{align*}
+f_Y(y) &= \left( \frac{c}{y/a} \right) \left( \frac{1}{a} \right) = \frac{c}{y}, \quad \text{for } a \le y \le 10a.
+\end{align*}
+The PDF of $Y$ takes the exact same $c/y$ functional form over the scaled interval $[a, 10a]$.
+
+\vspace{4pt}
+\noindent \textbf{(d)} In scientific notation $X \times 10^N$ with $1 \le X < 10$, the first digit $D$ is simply the integer part of $X$, meaning $D = j$ if and only if $j \le X < j + 1$. Integrating the PDF $f(x) = \frac{1}{x \ln 10}$ over this interval:
+\begin{align*}
+P(D = j) &= P(j \le X < j + 1) \\
+&= \int_{j}^{j+1} \frac{1}{x \ln 10} \, dx \\
+&= \frac{1}{\ln 10} [ \ln x ]_{j}^{j+1} \\
+&= \frac{\ln(j + 1) - \ln j}{\ln 10} \\
+&= \frac{\ln\left(\frac{j+1}{j}\right)}{\ln 10} \\
+&= \log_{10}\left(\frac{j+1}{j}\right), \quad \text{for } j \in \{1, 2, \dots, 9\}.
+\end{align*}
+This matches Benford's law exactly.
+
+\vspace{10pt}
+\subsection{HW 7 $\cdot$ Problem 5}
+\begin{tcolorbox}[title={HW 7 $\cdot$ Problem 5}]
+The bus company from Blissville decides to start service in Blotchville, sensing a promising business opportunity. Meanwhile, Fred has moved back to Blotchville, inspired by a close reading of \textit{I Had Trouble in Getting to Solla Sollew}. Now when Fred arrives at the bus stop, either of two independent bus lines may come by (both of which take him home). The Blissville company's bus arrival times are exactly 10 minutes apart, whereas the time from one Blotchville company bus to the next is $\text{Expo}\left(\frac{1}{10}\right)$. Fred arrives at a uniformly random time on a certain day.
+\begin{enumerate}[(a)]
+\item What is the probability that the Blotchville company bus arrives first?
+Hint: One good way is to use the continuous Law of Total Probability.
+\item What is the CDF of Fred's waiting time for a bus?
+\end{enumerate}
+\end{tcolorbox}
+
+\noindent \textbf{Solution.} \textbf{(a)} Let $U \sim \text{Unif}(0, 10)$ be the waiting time for the next Blissville bus, and let $X \sim \text{Expo}(1/10)$ be the waiting time for the next Blotchville bus (by the memoryless property). Using the continuous Law of Total Probability conditioning on $U = u$:
+\begin{align*}
+P(X < U) &= \int_{0}^{10} P(X < U \mid U = u) f_U(u) \, du \\
+&= \frac{1}{10} \int_{0}^{10} P(X < u) \, du \\
+&= \frac{1}{10} \int_{0}^{10} \left( 1 - e^{-u/10} \right) \, du \\
+&= \frac{1}{10} \left[ u + 10 e^{-u/10} \right]_{0}^{10} \\
+&= \frac{1}{10} \left( (10 + 10 e^{-1}) - (0 + 10) \right) \\
+&= \frac{1}{10} (10 e^{-1}) \\
+&= \frac{1}{e} \\
+&\approx 0.36788.
+\end{align*}
+
+\vspace{4pt}
+\noindent \textbf{(b)} Let $T = \min(X, U)$ be Fred's waiting time for whichever bus arrives first. We compute the survival function $P(T > t)$ for $0 < t < 10$ using the independence of $X$ and $U$:
+\begin{align*}
+P(T > t) &= P(\min(X, U) > t) \\
+&= P(X > t \text{ and } U > t) \\
+&= P(X > t) P(U > t) \\
+&= e^{-t/10} \left( 1 - \frac{t}{10} \right).
+\end{align*}
+Therefore, the CDF of $T$ is:
+\begin{align*}
+F_T(t) &= 1 - P(T > t) \\
+&= \begin{cases}
+0, & \text{if } t \le 0, \\[4pt]
+1 - e^{-t/10} \left( 1 - \dfrac{t}{10} \right), & \text{if } 0 < t < 10, \\[8pt]
+1, & \text{if } t \ge 10.
+\end{cases}
+\end{align*}
+
+\end{document}

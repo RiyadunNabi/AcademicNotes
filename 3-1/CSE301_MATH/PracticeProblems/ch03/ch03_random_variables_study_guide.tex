@@ -1,0 +1,656 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{mathpazo}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,amsfonts,amsthm,mathtools}
+\usepackage[most]{tcolorbox}
+\usepackage{hyperref}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage{microtype}
+\usepackage{enumitem}
+
+\allowdisplaybreaks
+
+% tcolorbox setup for question statements
+\tcbset{
+  colback=blue!4!white,
+  colframe=blue!35!black,
+  arc=3pt,
+  boxrule=0.8pt,
+  left=12pt,
+  right=12pt,
+  top=10pt,
+  bottom=10pt,
+  fonttitle=\bfseries,
+  enhanced,
+  drop shadow=black!10!white
+}
+
+% Header and Footer setup
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small \textit{Chapter 3: Random Variables --- Worked Study Guide}}
+\fancyhead[R]{\small \textit{Reading-Only Practice}}
+\fancyfoot[C]{\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0pt}
+
+% Section styling
+\titleformat{\section}
+  {\normalfont\Large\bfseries\color{blue!40!black}}{\thesection}{1em}{}
+\titleformat{\subsection}
+  {\normalfont\large\bfseries\color{blue!30!black}}{\thesubsection}{1em}{}
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue!50!black,
+    urlcolor=blue!50!black,
+    pdftitle={Chapter 3: Random Variables - Worked Study Guide}
+}
+
+\begin{document}
+
+\begin{center}
+    {\LARGE \textbf{Chapter 3: Random Variables and Their Distributions}}\\[8pt]
+    {\Large \textbf{Complete Step-by-Step Study Document}}\\[6pt]
+    {\small \textit{Reading-Only Practice $\cdot$ Unnumbered Alignments $\cdot$ Verbatim Question Boxes}}
+\end{center}
+
+\vspace{5pt}
+\hrule
+\vspace{10pt}
+
+\tableofcontents
+
+\vspace{15pt}
+\hrule
+\vspace{15pt}
+
+\section{Textbook Exercises}
+
+\subsection{Book Ch.3, Exercise 6}
+\begin{tcolorbox}[title={Book Ch.3, Exercise 6}]
+Benford's law states that in a very large variety of real-life data sets, the first digit approximately follows a particular distribution with about a 30\% chance of a 1, an 18\% chance of a 2, and in general
+\[
+P(D=j) = \log_{10}\left(\frac{j+1}{j}\right) \quad \text{for } j \in \{1, 2, 3, \dots, 9\},
+\]
+where $D$ is the first digit of a randomly chosen element. Check that this is a valid PMF (using properties of logs, not with a calculator).
+\end{tcolorbox}
+
+\noindent \textbf{Solution.} To verify that $P(D=j)$ is a valid probability mass function (PMF), we must show that $P(D=j) \ge 0$ for all $j \in \{1, 2, \dots, 9\}$ and that the sum of the probabilities over the support equals 1. First, since $\frac{j+1}{j} > 1$ for all positive integers $j$, its base-10 logarithm is strictly positive:
+\begin{align*}
+P(D=j) &= \log_{10}\left(\frac{j+1}{j}\right) > 0 \quad \text{for all } j \in \{1, 2, \dots, 9\}.
+\end{align*}
+Next, computing the sum of all probabilities using the logarithmic quotient rule $\log_{10}(a/b) = \log_{10}(a) - \log_{10}(b)$:
+\begin{align*}
+\sum_{j=1}^{9} P(D=j) &= \sum_{j=1}^{9} \log_{10}\left(\frac{j+1}{j}\right) \\
+&= \sum_{j=1}^{9} \left( \log_{10}(j+1) - \log_{10}(j) \right) \\
+&= (\log_{10} 2 - \log_{10} 1) + (\log_{10} 3 - \log_{10} 2) + \dots + (\log_{10} 10 - \log_{10} 9) \\
+&= \log_{10} 10 - \log_{10} 1 \\
+&= 1 - 0 \\
+&= 1.
+\end{align*}
+Since the terms form a telescoping sum that evaluates to 1 and all probabilities are nonnegative, $P(D=j)$ is a valid PMF.
+
+\vspace{10pt}
+\subsection{Book Ch.3, Exercise 11}
+\begin{tcolorbox}[title={Book Ch.3, Exercise 11}]
+Let $X$ be an r.v. whose possible values are $0, 1, 2, \dots$, with CDF $F$. In some countries, rather than using a CDF, the convention is to use the function $G$ defined by $G(x) = P(X < x)$ to specify a distribution. Find a way to convert from $F$ to $G$, i.e., if $F$ is a known function, show how to obtain $G(x)$ for all real $x$.
+\end{tcolorbox}
+
+\noindent \textbf{Solution.} By definition, the cumulative distribution function is $F(x) = P(X \le x)$, while the strict-inequality function is $G(x) = P(X < x)$. We can express $G(x)$ in terms of $F(x)$ and the point mass at $x$:
+\begin{align*}
+G(x) &= P(X < x) \\
+&= P(X \le x) - P(X = x) \\
+&= F(x) - P(X = x).
+\end{align*}
+Since $X$ takes values only in the nonnegative integers $\{0, 1, 2, \dots\}$, we analyze two cases for any real number $x$:
+\begin{itemize}
+    \item \textbf{Case 1: $x \notin \{0, 1, 2, \dots\}$.} Since $x$ is not an integer in the support of $X$, the probability of $X$ equalling $x$ is zero:
+    \begin{align*}
+    P(X = x) &= 0 \\
+    G(x) &= F(x) - 0 = F(x).
+    \end{align*}
+    \item \textbf{Case 2: $x \in \{0, 1, 2, \dots\}$.} The probability mass at an integer $x$ equals the size of the jump in the CDF at $x$. Using any point strictly between $x-1$ and $x$ (such as $x - 0.5$):
+    \begin{align*}
+    P(X = x) &= F(x) - F(x - 0.5) \\
+    G(x) &= F(x) - \left( F(x) - F(x - 0.5) \right) \\
+    &= F(x - 0.5).
+    \end{align*}
+\end{itemize}
+Combining these cases into a single piecewise formula:
+\begin{align*}
+G(x) &= \begin{cases}
+F(x), & \text{if } x \notin \{0, 1, 2, \dots\}, \\[6pt]
+F(x - 0.5), & \text{if } x \in \{0, 1, 2, \dots\}.
+\end{cases}
+\end{align*}
+Using left-hand limits or the ceiling function $\lceil x \rceil$, this can also be written compactly as:
+\begin{align*}
+G(x) &= \lim_{t \to x^-} F(t) = F(\lceil x \rceil - 1).
+\end{align*}
+
+\vspace{10pt}
+\subsection{Book Ch.3, Exercise 18}
+\begin{tcolorbox}[title={Book Ch.3, Exercise 18}]
+\begin{enumerate}[(a)]
+\item In the World Series of baseball, two teams (call them A and B) play a sequence of games against each other, and the first team to win four games wins the series. Let $p$ be the probability that A wins an individual game, and assume that the games are independent. What is the probability that team A wins the series?
+\item Give a clear intuitive explanation of whether the answer to (a) depends on whether the teams always play 7 games (and whoever wins the majority wins the series), or the teams stop playing more games as soon as one team has won 4 games (as is actually the case in practice: once the match is decided, the two teams do not keep playing more games).
+\end{enumerate}
+\end{tcolorbox}
+
+\noindent \textbf{Solution.} \textbf{(a)} Let $q = 1 - p$. Team A can win the series in exactly 4, 5, 6, or 7 games. By the laws of probability for independent trials:
+\begin{align*}
+P(\text{A wins}) &= P(\text{A wins in 4}) + P(\text{A wins in 5}) + P(\text{A wins in 6}) + P(\text{A wins in 7}).
+\end{align*}
+For A to win the series in exactly $k$ games ($k \in \{4, 5, 6, 7\}$), team A must win exactly 3 of the first $k-1$ games and then win the $k$th game:
+\begin{align*}
+P(\text{A wins in 4}) &= \binom{3}{3} p^3 q^0 \cdot p = p^4 \\
+P(\text{A wins in 5}) &= \binom{4}{3} p^3 q^1 \cdot p = 4 p^4 q \\
+P(\text{A wins in 6}) &= \binom{5}{3} p^3 q^2 \cdot p = 10 p^4 q^2 \\
+P(\text{A wins in 7}) &= \binom{6}{3} p^3 q^3 \cdot p = 20 p^4 q^3.
+\end{align*}
+Summing these probabilities gives:
+\begin{align*}
+P(\text{A wins}) &= p^4 + 4 p^4 q + 10 p^4 q^2 + 20 p^4 q^3.
+\end{align*}
+Alternatively, assuming all 7 games are played regardless of early outcomes, let $X \sim \text{Bin}(7, p)$ be the total number of games won by A in 7 games. Team A wins the series if and only if $X \ge 4$:
+\begin{align*}
+P(X \ge 4) &= \sum_{k=4}^{7} \binom{7}{k} p^k q^{7-k} \\
+&= \binom{7}{4} p^4 q^3 + \binom{7}{5} p^5 q^2 + \binom{7}{6} p^6 q + \binom{7}{7} p^7 q^0 \\
+&= 35 p^4 q^3 + 21 p^5 q^2 + 7 p^6 q + p^7.
+\end{align*}
+
+\vspace{4pt}
+\noindent \textbf{(b) Intuitive Explanation.} The probability does not depend on whether the teams stop at 4 wins or play all 7 games. Imagine that after one team wins its 4th game, the teams continue to play out the remaining games of the 7-game schedule just for fun. Any games played after a team reaches 4 wins cannot change who won the majority of the 7 games. Therefore, the event ``A wins first to 4 games'' is strictly identical to the event ``A wins at least 4 out of 7 games.''
+
+\vspace{10pt}
+\subsection{Book Ch.3, Exercise 21}
+\begin{tcolorbox}[title={Book Ch.3, Exercise 21}]
+Let $X \sim \text{Bin}(n, p)$ and $Y \sim \text{Bin}(m, p)$ independent of $X$. Show that $X - Y$ is not Binomial.
+\end{tcolorbox}
+
+\noindent \textbf{Solution.} Any Binomial random variable $Z \sim \text{Bin}(N, p)$ represents the number of successes in $N$ trials, which means its support is non-negative: $\{0, 1, 2, \dots, N\}$. Consequently, $P(Z < 0) = 0$ for every Binomial distribution. 
+
+For the difference $X - Y$, where $X \sim \text{Bin}(n, p)$ and $Y \sim \text{Bin}(m, p)$ are independent with $p \in (0,1)$, consider the probability that $X - Y < 0$:
+\begin{align*}
+P(X - Y < 0) &\ge P(X = 0 \text{ and } Y = m) \\
+&= P(X = 0) P(Y = m) \\
+&= \left[ \binom{n}{0} p^0 (1-p)^n \right] \left[ \binom{m}{m} p^m (1-p)^0 \right] \\
+&= (1-p)^n p^m > 0.
+\end{align*}
+Since $X - Y$ can take strictly negative values with positive probability, its support is not bounded below by $0$, proving that $X - Y$ cannot follow a Binomial distribution.
+
+\vspace{10pt}
+\subsection{Book Ch.3, Exercise 25}
+\begin{tcolorbox}[title={Book Ch.3, Exercise 25}]
+Alice flips a fair coin $n$ times and Bob flips another fair coin $n+1$ times, resulting in independent $X \sim \text{Bin}\left(n, \frac{1}{2}\right)$ and $Y \sim \text{Bin}\left(n+1, \frac{1}{2}\right)$.
+\begin{enumerate}[(a)]
+\item Show that $P(X < Y) = P(n - X < n + 1 - Y)$.
+\item Compute $P(X < Y)$.
+Hint: Use (a) and the fact that $X$ and $Y$ are integer-valued.
+\end{enumerate}
+\end{tcolorbox}
+
+\noindent \textbf{Solution.} \textbf{(a)} Let $X$ count Alice's Heads and $Y$ count Bob's Heads. Then $n - X$ represents Alice's Tails and $n + 1 - Y$ represents Bob's Tails. Since a fair coin has equal probability $\frac{1}{2}$ for Heads and Tails:
+\begin{align*}
+n - X &\sim \text{Bin}\left(n, \frac{1}{2}\right) \stackrel{d}{=} X, \\
+n + 1 - Y &\sim \text{Bin}\left(n+1, \frac{1}{2}\right) \stackrel{d}{=} Y.
+\end{align*}
+Because the joint distribution of $(n-X, n+1-Y)$ is identical to the joint distribution of $(X, Y)$, the probability of any relational event between them remains unchanged:
+\begin{align*}
+P(X < Y) &= P(n - X < n + 1 - Y).
+\end{align*}
+
+\vspace{4pt}
+\noindent \textbf{(b)} We rearrange the inequality inside the probability from part (a):
+\begin{align*}
+P(X < Y) &= P(n - X < n + 1 - Y) \\
+&= P(-X < 1 - Y) \\
+&= P(Y - 1 < X) \\
+&= P(Y \le X),
+\end{align*}
+where the last step holds because $X$ and $Y$ are integers (so $Y - 1 < X$ is strictly equivalent to $Y \le X$). Since the events $\{X < Y\}$ and $\{Y \le X\}$ are mutually exclusive and exhaustive:
+\begin{align*}
+P(X < Y) + P(Y \le X) &= 1.
+\end{align*}
+Substituting $P(Y \le X) = P(X < Y)$ into this equation:
+\begin{align*}
+P(X < Y) + P(X < Y) &= 1 \\
+2 P(X < Y) &= 1 \\
+P(X < Y) &= \frac{1}{2}.
+\end{align*}
+
+\vspace{10pt}
+\subsection{Book Ch.3, Exercise 28}
+\begin{tcolorbox}[title={Book Ch.3, Exercise 28}]
+There are $n$ eggs, each of which hatches a chick with probability $p$ (independently). Each of these chicks survives with probability $r$, independently. What is the distribution of the number of chicks that hatch? What is the distribution of the number of chicks that survive? (Give the PMFs; also give the names of the distributions and their parameters, if applicable.)
+\end{tcolorbox}
+
+\noindent \textbf{Solution.} Let $H$ denote the number of eggs that hatch. Since there are $n$ independent eggs, each acting as a Bernoulli trial with success probability $p$, $H$ follows a Binomial distribution:
+\begin{align*}
+H &\sim \text{Bin}(n, p).
+\end{align*}
+The probability mass function of $H$ for $k \in \{0, 1, \dots, n\}$ is:
+\begin{align*}
+P(H = k) &= \binom{n}{k} p^k (1-p)^{n-k}.
+\end{align*}
+Let $S$ denote the number of chicks that survive. For any single egg, the event that it hatches and the chick survives requires two independent successes: hatching (probability $p$) and surviving (probability $r$). Thus, the unconditional probability that an individual egg produces a surviving chick is:
+\begin{align*}
+P(\text{egg produces surviving chick}) &= p \cdot r = pr.
+\end{align*}
+Since all $n$ eggs develop independently, $S$ follows a Binomial distribution with number of trials $n$ and success probability $pr$:
+\begin{align*}
+S &\sim \text{Bin}(n, pr).
+\end{align*}
+The probability mass function of $S$ for $k \in \{0, 1, \dots, n\}$ is:
+\begin{align*}
+P(S = k) &= \binom{n}{k} (pr)^k (1 - pr)^{n-k}.
+\end{align*}
+
+\vspace{10pt}
+\subsection{Book Ch.3, Exercise 29}
+\begin{tcolorbox}[title={Book Ch.3, Exercise 29}]
+A sequence of $n$ independent experiments is performed. Each experiment is a success with probability $p$ and a failure with probability $q = 1 - p$. Show that conditional on the number of successes, all valid possibilities for the list of outcomes of the experiment are equally likely.
+\end{tcolorbox}
+
+\noindent \textbf{Solution.} Let $X_i \in \{0, 1\}$ be the indicator variable for the $i$th experiment being a success, and let $X = \sum_{i=1}^{n} X_i$ be the total number of successes, where $X \sim \text{Bin}(n, p)$. Let $(a_1, a_2, \dots, a_n) \in \{0, 1\}^n$ be any specific binary sequence of length $n$ that contains exactly $k$ successes, meaning $\sum_{i=1}^{n} a_i = k$. 
+
+We compute the conditional probability of observing the sequence $(a_1, a_2, \dots, a_n)$ given that the total number of successes is $X = k$:
+\begin{align*}
+P(X_1 = a_1, \dots, X_n = a_n \mid X = k) &= \frac{P(X_1 = a_1, \dots, X_n = a_n, X = k)}{P(X = k)} \\
+&= \frac{P(X_1 = a_1, \dots, X_n = a_n)}{P(X = k)},
+\end{align*}
+where the second equality holds because the event $\{X_1 = a_1, \dots, X_n = a_n\}$ already implies $\{X = k\}$ when $\sum a_i = k$. Since the trials are independent, the probability of any specific sequence with $k$ successes and $n-k$ failures is $p^k q^{n-k}$:
+\begin{align*}
+P(X_1 = a_1, \dots, X_n = a_n \mid X = k) &= \frac{p^k q^{n-k}}{\binom{n}{k} p^k q^{n-k}} \\
+&= \frac{1}{\binom{n}{k}}.
+\end{align*}
+Because $\frac{1}{\binom{n}{k}}$ is constant and does not depend on the specific arrangement of the sequence $(a_1, \dots, a_n)$ nor on the success probability $p$, all $\binom{n}{k}$ valid sequences are equally likely.
+
+\vspace{10pt}
+\subsection{Book Ch.3, Exercise 35}
+\begin{tcolorbox}[title={Book Ch.3, Exercise 35}]
+Players A and B take turns in answering trivia questions, starting with player A answering the first question. Each time A answers a question, she has probability $p_1$ of getting it right. Each time B plays, he has probability $p_2$ of getting it right.
+\begin{enumerate}[(a)]
+\item If A answers $m$ questions, what is the PMF of the number of questions she gets right?
+\item If A answers $m$ times and B answers $n$ times, what is the PMF of the total number of questions they get right (you can leave your answer as a sum)? Describe exactly when/whether this is a Binomial distribution.
+\item Suppose that the first player to answer correctly wins the game (with no predetermined maximum number of questions that can be asked). Find the probability that A wins the game.
+\end{enumerate}
+\end{tcolorbox}
+
+\noindent \textbf{Solution.} \textbf{(a)} Let $X_A$ be the number of questions A gets right out of $m$ independent attempts. Since each attempt has probability $p_1$, $X_A \sim \text{Bin}(m, p_1)$, with PMF for $k \in \{0, 1, \dots, m\}$:
+\begin{align*}
+P(X_A = k) &= \binom{m}{k} p_1^k (1 - p_1)^{m-k}.
+\end{align*}
+
+\vspace{4pt}
+\noindent \textbf{(b)} Let $X_B \sim \text{Bin}(n, p_2)$ be the number of correct answers by B, independent of $X_A$. Let $T = X_A + X_B$ be the total number of correct answers. Using the law of total probability over all possible correct answers $j$ by player A:
+\begin{align*}
+P(T = k) &= \sum_{j=0}^{k} P(X_A = j) P(X_B = k - j) \\
+&= \sum_{j=0}^{k} \binom{m}{j} p_1^j (1 - p_1)^{m-j} \binom{n}{k-j} p_2^{k-j} (1 - p_2)^{n-(k-j)},
+\end{align*}
+for $k \in \{0, 1, \dots, m+n\}$, where binomial coefficients $\binom{n}{r}$ are defined as $0$ if $r < 0$ or $r > n$. 
+This distribution is a Binomial distribution $\text{Bin}(m+n, p)$ \textbf{if and only if} $p_1 = p_2 = p$. When $p_1 \neq p_2$, the sum of two independent binomials with different success probabilities is not Binomial (it is a Poisson-Binomial distribution).
+
+\vspace{4pt}
+\noindent \textbf{(c)} Let $r = P(\text{A wins})$. A can win on her very first turn (probability $p_1$), or both players can fail their first attempts (probability $(1 - p_1)(1 - p_2)$), returning the game to an identical starting state where A's turn begins. By conditioning on the first round:
+\begin{align*}
+r &= p_1 + (1 - p_1) p_2 \cdot (0) + (1 - p_1)(1 - p_2) r \\
+r - (1 - p_1)(1 - p_2) r &= p_1 \\
+r \left[ 1 - (1 - p_1 - p_2 + p_1 p_2) \right] &= p_1 \\
+r (p_1 + p_2 - p_1 p_2) &= p_1 \\
+r &= \frac{p_1}{p_1 + p_2 - p_1 p_2}.
+\end{align*}
+
+\vspace{10pt}
+\subsection{Book Ch.3, Exercise 37}
+\begin{tcolorbox}[title={Book Ch.3, Exercise 37}]
+A message is sent over a noisy channel. The message is a sequence $x_1, x_2, \dots, x_n$ of $n$ bits ($x_i \in \{0, 1\}$). Since the channel is noisy, there is a chance that any bit might be corrupted, resulting in an error (a 0 becomes a 1 or vice versa). Assume that the error events are independent. Let $p$ be the probability that an individual bit has an error ($0 < p < 1/2$). Let $y_1, y_2, \dots, y_n$ be the received message (so $y_i = x_i$ if there is no error in that bit, but $y_i = 1 - x_i$ if there is an error there).
+To help detect errors, the $n$th bit is reserved for a parity check: $x_n$ is defined to be 0 if $x_1 + x_2 + \dots + x_{n-1}$ is even, and 1 if $x_1 + x_2 + \dots + x_{n-1}$ is odd. When the message is received, the recipient checks whether $y_n$ has the same parity as $y_1 + y_2 + \dots + y_{n-1}$. If the parity is wrong, the recipient knows that at least one error occurred; otherwise, the recipient assumes that there were no errors.
+\begin{enumerate}[(a)]
+\item For $n = 5$, $p = 0.1$, what is the probability that the received message has errors which go undetected?
+\item For general $n$ and $p$, write down an expression (as a sum) for the probability that the received message has errors which go undetected.
+\item Give a simplified expression, not involving a sum of a large number of terms, for the probability that the received message has errors which go undetected.
+Hint for (c): Letting
+\[
+a = \sum_{k \text{ even}, k \ge 0} \binom{n}{k} p^k (1-p)^{n-k} \quad \text{and} \quad b = \sum_{k \text{ odd}, k \ge 1} \binom{n}{k} p^k (1-p)^{n-k},
+\]
+the binomial theorem makes it possible to find simple expressions for $a+b$ and $a-b$, which then makes it possible to obtain $a$ and $b$.
+\end{enumerate}
+\end{tcolorbox}
+
+\noindent \textbf{Solution.} \textbf{(a)} By construction, $\sum_{i=1}^{n} x_i$ is an even number. When errors occur, each error flips the parity of the sum of the bits. Therefore, errors go undetected if and only if there is a strictly positive \textbf{even} number of bit errors ($k = 2, 4, 6, \dots$). For $n = 5$ and $p = 0.1$, the number of errors is $K \sim \text{Bin}(5, 0.1)$:
+\begin{align*}
+P(\text{undetected errors}) &= P(K = 2) + P(K = 4) \\
+&= \binom{5}{2} (0.1)^2 (0.9)^3 + \binom{5}{4} (0.1)^4 (0.9)^1 \\
+&= 10 (0.01) (0.729) + 5 (0.0001) (0.9) \\
+&= 0.0729 + 0.00045 \\
+&= 0.07335.
+\end{align*}
+
+\vspace{4pt}
+\noindent \textbf{(b)} For general $n$ and $p$, summing over all positive even integers $k$:
+\begin{align*}
+P(\text{undetected errors}) &= \sum_{\substack{k \text{ even} \\ 2 \le k \le n}} \binom{n}{k} p^k (1-p)^{n-k}.
+\end{align*}
+
+\vspace{4pt}
+\noindent \textbf{(c)} Using the binomial theorem for $(1-p + p)^n$ and $(1-p - p)^n$:
+\begin{align*}
+a + b &= \sum_{k=0}^{n} \binom{n}{k} p^k (1-p)^{n-k} = \left( (1-p) + p \right)^n = 1^n = 1, \\
+a - b &= \sum_{k=0}^{n} \binom{n}{k} (-p)^k (1-p)^{n-k} = \left( (1-p) - p \right)^n = (1-2p)^n.
+\end{align*}
+Adding the two equations eliminates $b$ and allows us to solve for $a$:
+\begin{align*}
+2a &= 1 + (1-2p)^n \\
+a &= \frac{1 + (1-2p)^n}{2}.
+\end{align*}
+Here, $a$ is the probability of an even number of errors ($k = 0, 2, 4, \dots$). To find the probability of undetected errors ($k \ge 2$), we subtract the $k = 0$ term (no errors):
+\begin{align*}
+P(\text{undetected errors}) &= a - \binom{n}{0} p^0 (1-p)^n \\
+&= \frac{1 + (1-2p)^n}{2} - (1-p)^n.
+\end{align*}
+
+\vspace{10pt}
+\subsection{Book Ch.3, Exercise 42}
+\begin{tcolorbox}[title={Book Ch.3, Exercise 42}]
+Let $X$ be a random day of the week, coded so that Monday is 1, Tuesday is 2, etc. (so $X$ takes values $1, 2, \dots, 7$ with equal probabilities). Let $Y$ be the next day after $X$ (again represented as an integer between 1 and 7). Do $X$ and $Y$ have the same distribution? What is $P(X < Y)$?
+\end{tcolorbox}
+
+\noindent \textbf{Solution.} Yes, $X$ and $Y$ have the exact same distribution. Since $X$ is uniformly distributed over $\{1, 2, \dots, 7\}$, every day of the week has probability $\frac{1}{7}$. The next day $Y$ is a one-to-one cyclic shift of $X$:
+\begin{align*}
+P(Y = k) &= P(X = k - 1 \pmod 7) = \frac{1}{7} \quad \text{for all } k \in \{1, 2, \dots, 7\},
+\end{align*}
+so $Y \sim \text{Unif}\{1, 2, \dots, 7\}$.
+
+To compute $P(X < Y)$, note that $Y = X + 1$ for all days except Sunday ($X = 7$), where Monday follows ($Y = 1$):
+\begin{align*}
+X < Y &\iff X \in \{1, 2, 3, 4, 5, 6\} \\
+P(X < Y) &= P(X \neq 7) \\
+&= 1 - P(X = 7) \\
+&= 1 - \frac{1}{7} \\
+&= \frac{6}{7}.
+\end{align*}
+
+\vspace{10pt}
+\subsection{Book Ch.3, Exercise 45}
+\begin{tcolorbox}[title={Book Ch.3, Exercise 45}]
+A new treatment for a disease is being tested, to see whether it is better than the standard treatment. The existing treatment is effective on 50\% of patients. It is believed initially that there is a $2/3$ chance that the new treatment is effective on 60\% of patients, and a $1/3$ chance that the new treatment is effective on 50\% of patients. In a pilot study, the new treatment is given to 20 random patients, and is effective for 15 of them.
+\begin{enumerate}[(a)]
+\item Given this information, what is the probability that the new treatment is better than the standard treatment?
+\item A second study is done later, giving the new treatment to 20 new random patients. Given the results of the first study, what is the PMF for how many of the new patients the new treatment is effective on? (Letting $p$ be the answer to (a), your answer can be left in terms of $p$.)
+\end{enumerate}
+\end{tcolorbox}
+
+\noindent \textbf{Solution.} \textbf{(a)} Let $B$ be the event that the new treatment is better (effective probability $\theta = 0.6$), and $B^c$ be the event that it is not better ($\theta = 0.5$). Let $X$ be the number of successes in the pilot study of 20 patients ($X = 15$). By Bayes' Rule and the Law of Total Probability:
+\begin{align*}
+P(B \mid X = 15) &= \frac{P(X = 15 \mid B) P(B)}{P(X = 15 \mid B) P(B) + P(X = 15 \mid B^c) P(B^c)} \\
+&= \frac{\binom{20}{15} (0.6)^{15} (0.4)^5 \cdot \left(\frac{2}{3}\right)}{\binom{20}{15} (0.6)^{15} (0.4)^5 \cdot \left(\frac{2}{3}\right) + \binom{20}{15} (0.5)^{15} (0.5)^5 \cdot \left(\frac{1}{3}\right)} \\
+&= \frac{(0.6)^{15} (0.4)^5 \cdot \frac{2}{3}}{(0.6)^{15} (0.4)^5 \cdot \frac{2}{3} + (0.5)^{20} \cdot \frac{1}{3}}.
+\end{align*}
+
+\vspace{4pt}
+\noindent \textbf{(b)} Let $Y$ be the number of effective treatments in the second study of 20 new patients, and let $p = P(B \mid X = 15)$ be the posterior probability from part (a). Conditioning on whether the treatment is better ($B$) or not ($B^c$):
+\begin{align*}
+P(Y = k \mid X = 15) &= P(Y = k \mid B, X = 15) P(B \mid X = 15) \\
+&\quad + P(Y = k \mid B^c, X = 15) P(B^c \mid X = 15).
+\end{align*}
+Given the true efficacy rate $B$ or $B^c$, the second study is conditionally independent of the first study:
+\begin{align*}
+P(Y = k \mid X = 15) &= P(Y = k \mid B) p + P(Y = k \mid B^c) (1 - p) \\
+&= \binom{20}{k} (0.6)^k (0.4)^{20-k} p + \binom{20}{k} (0.5)^k (0.5)^{20-k} (1 - p) \\
+&= \binom{20}{k} (0.6)^k (0.4)^{20-k} p + \binom{20}{k} (0.5)^{20} (1 - p),
+\end{align*}
+for $k \in \{0, 1, \dots, 20\}$.
+
+\vspace{15pt}
+\section{Strategic Practice}
+
+\subsection{SP 3 \S4 $\cdot$ Problem 1}
+\begin{tcolorbox}[title={SP 3 \S4 $\cdot$ Problem 1}]
+\begin{enumerate}[(a)]
+\item In the World Series of baseball, two teams (call them A and B) play a sequence of games against each other, and the first team to win four games wins the series. Let $p$ be the probability that A wins an individual game, and assume that the games are independent. What is the probability that team A wins the series?
+\item Give a clear intuitive explanation of whether the answer to (a) depends on whether the teams always play 7 games (and whoever wins the majority wins the series), or the teams stop playing more games as soon as one team has won 4 games (as is actually the case in practice: once the match is decided, the two teams do not keep playing more games).
+\end{enumerate}
+\end{tcolorbox}
+
+\noindent \textbf{Solution.} \textbf{(a)} Let $q = 1 - p$. Summing over the disjoint possibilities that team A wins the series in exactly 4, 5, 6, or 7 games:
+\begin{align*}
+P(\text{A wins}) &= P(\text{in 4}) + P(\text{in 5}) + P(\text{in 6}) + P(\text{in 7}) \\
+&= \binom{3}{3} p^3 q^0 p + \binom{4}{3} p^3 q^1 p + \binom{5}{3} p^3 q^2 p + \binom{6}{3} p^3 q^3 p \\
+&= p^4 + 4 p^4 q + 10 p^4 q^2 + 20 p^4 q^3.
+\end{align*}
+Alternatively, viewing the series as a fixed 7-game match where A needs at least 4 wins ($X \sim \text{Bin}(7, p)$):
+\begin{align*}
+P(\text{A wins}) &= P(X \ge 4) \\
+&= \sum_{k=4}^{7} \binom{7}{k} p^k q^{7-k} \\
+&= \binom{7}{4} p^4 q^3 + \binom{7}{5} p^5 q^2 + \binom{7}{6} p^6 q + \binom{7}{7} p^7 \\
+&= 35 p^4 q^3 + 21 p^5 q^2 + 7 p^6 q + p^7.
+\end{align*}
+
+\vspace{4pt}
+\noindent \textbf{(b) Intuitive Explanation.} The probability is identical under both rules. If we force the teams to play all 7 games even after one team has achieved 4 wins, those extra games cannot alter the fact that the first team to reach 4 wins holds the majority of wins out of 7. Thus, the event of winning the series by stopping at 4 wins is equivalent to winning at least 4 out of 7 games.
+
+\vspace{10pt}
+\subsection{SP 3 \S4 $\cdot$ Problem 2}
+\begin{tcolorbox}[title={SP 3 \S4 $\cdot$ Problem 2}]
+A sequence of $n$ independent experiments is performed. Each experiment is a success with probability $p$ and a failure with probability $q = 1 - p$. Show that conditional on the number of successes, all possibilities for the list of outcomes of the experiment are equally likely (of course, we only consider lists of outcomes where the number of successes is consistent with the information being conditioned on).
+\end{tcolorbox}
+
+\noindent \textbf{Solution.} Let $X_i \in \{0, 1\}$ be the binary outcome of trial $i$, and let $X = \sum_{i=1}^{n} X_i \sim \text{Bin}(n, p)$ be the total success count. Let $(a_1, a_2, \dots, a_n) \in \{0, 1\}^n$ be any fixed sequence such that $\sum_{i=1}^{n} a_i = k$. We calculate the conditional probability of this specific sequence given $X = k$:
+\begin{align*}
+P(X_1 = a_1, \dots, X_n = a_n \mid X = k) &= \frac{P(X_1 = a_1, \dots, X_n = a_n, X = k)}{P(X = k)} \\
+&= \frac{P(X_1 = a_1, \dots, X_n = a_n)}{P(X = k)} \\
+&= \frac{p^k q^{n-k}}{\binom{n}{k} p^k q^{n-k}} \\
+&= \frac{1}{\binom{n}{k}}.
+\end{align*}
+Since this conditional probability equals $\frac{1}{\binom{n}{k}}$ for every valid sequence with $k$ successes, all such lists of outcomes are equally likely.
+
+\vspace{10pt}
+\subsection{SP 3 \S4 $\cdot$ Problem 3}
+\begin{tcolorbox}[title={SP 3 \S4 $\cdot$ Problem 3}]
+Let $X \sim \text{Bin}(n, p)$ and $Y \sim \text{Bin}(m, p)$, independent of $X$.
+\begin{enumerate}[(a)]
+\item Show that $X + Y \sim \text{Bin}(n+m, p)$ using a story proof.
+\item Show that $X - Y$ is not Binomial.
+\item Find $P(X = k \mid X + Y = j)$. How does this relate to the elk problem from HW 1?
+\end{enumerate}
+\end{tcolorbox}
+
+\noindent \textbf{Solution.} \textbf{(a) Story Proof.} Consider performing $n$ independent Bernoulli trials with success probability $p$, where $X$ counts the number of successes. Immediately after, perform an additional $m$ independent Bernoulli trials with the same success probability $p$, where $Y$ counts the successes. Because all $n + m$ trials are independent and have identical success probability $p$, the sum $X + Y$ simply counts the total number of successes in $n + m$ Bernoulli trials, which is the exact definition of a $\text{Bin}(n+m, p)$ random variable.
+
+\vspace{4pt}
+\noindent \textbf{(b)} For any Binomial random variable, the minimum possible value is $0$. However, for $X - Y$:
+\begin{align*}
+P(X - Y < 0) &\ge P(X = 0, Y = m) \\
+&= P(X = 0) P(Y = m) \\
+&= (1-p)^n p^m > 0 \quad \text{for } p \in (0,1).
+\end{align*}
+Because $X - Y$ can take strictly negative values, it cannot be a Binomial random variable.
+
+\vspace{4pt}
+\noindent \textbf{(c)} Using the definition of conditional probability and the independence of $X$ and $Y$:
+\begin{align*}
+P(X = k \mid X + Y = j) &= \frac{P(X = k, X + Y = j)}{P(X + Y = j)} \\
+&= \frac{P(X = k, Y = j - k)}{P(X + Y = j)} \\
+&= \frac{P(X = k) P(Y = j - k)}{P(X + Y = j)} \\
+&= \frac{\left[ \binom{n}{k} p^k (1-p)^{n-k} \right] \left[ \binom{m}{j-k} p^{j-k} (1-p)^{m-(j-k)} \right]}{\binom{n+m}{j} p^j (1-p)^{n+m-j}} \\
+&= \frac{\binom{n}{k} \binom{m}{j-k} p^j (1-p)^{n+m-j}}{\binom{n+m}{j} p^j (1-p)^{n+m-j}} \\
+&= \frac{\binom{n}{k} \binom{m}{j-k}}{\binom{n+m}{j}}.
+\end{align*}
+This is the **Hypergeometric distribution**, which is identical to the elk capture-recapture problem. In that problem, we have a population of $n + m$ elk ($n$ tagged males, $m$ untagged females). If we capture a sample of $j$ elk total ($X + Y = j$), the probability that exactly $k$ of them are tagged ($X = k$) is given by this formula, where the underlying success probability $p$ completely cancels out.
+
+\vspace{15pt}
+\section{Homework}
+
+\subsection{HW 3 $\cdot$ Problem 6}
+\begin{tcolorbox}[title={HW 3 $\cdot$ Problem 6}]
+Players A and B take turns in answering trivia questions, starting with player A answering the first question. Each time A answers a question, she has probability $p_1$ of getting it right. Each time B plays, he has probability $p_2$ of getting it right.
+\begin{enumerate}[(a)]
+\item If A answers $m$ questions, what is the PMF of the number of questions she gets right?
+\item If A answers $m$ times and B answers $n$ times, what is the PMF of the total number of questions they get right (you can leave your answer as a sum)? Describe exactly when/whether this is a Binomial distribution.
+\item Suppose that the first player to answer correctly wins the game (with no predetermined maximum number of questions that can be asked). Find the probability that A wins the game.
+\end{enumerate}
+\end{tcolorbox}
+
+\noindent \textbf{Solution.} \textbf{(a)} Let $X_A$ denote A's correct answers out of $m$ attempts. Then $X_A \sim \text{Bin}(m, p_1)$ with PMF:
+\begin{align*}
+P(X_A = k) &= \binom{m}{k} p_1^k (1 - p_1)^{m-k} \quad \text{for } k \in \{0, 1, \dots, m\}.
+\end{align*}
+
+\vspace{4pt}
+\noindent \textbf{(b)} Let $X_B \sim \text{Bin}(n, p_2)$ be B's correct answers, independent of $X_A$, and let $T = X_A + X_B$. Summing over all possible correct answers $j$ by player A:
+\begin{align*}
+P(T = k) &= \sum_{j=0}^{k} P(X_A = j) P(X_B = k - j) \\
+&= \sum_{j=0}^{k} \binom{m}{j} p_1^j (1 - p_1)^{m-j} \binom{n}{k-j} p_2^{k-j} (1 - p_2)^{n-(k-j)},
+\end{align*}
+for $k \in \{0, 1, \dots, m+n\}$. This is a Binomial distribution $\text{Bin}(m+n, p)$ \textbf{if and only if} $p_1 = p_2 = p$. Otherwise, it is not Binomial because the Bernoulli trials do not share a common probability of success.
+
+\vspace{4pt}
+\noindent \textbf{(c)} Let $r = P(\text{A wins})$. Conditioning on the outcome of the first turn for A and B:
+\begin{align*}
+r &= p_1 + (1 - p_1)(1 - p_2) r \\
+r - (1 - p_1)(1 - p_2) r &= p_1 \\
+r \left[ 1 - (1 - p_1 - p_2 + p_1 p_2) \right] &= p_1 \\
+r &= \frac{p_1}{p_1 + p_2 - p_1 p_2}.
+\end{align*}
+
+\vspace{10pt}
+\subsection{HW 3 $\cdot$ Problem 7}
+\begin{tcolorbox}[title={HW 3 $\cdot$ Problem 7}]
+A message is sent over a noisy channel. The message is a sequence $x_1, x_2, \dots, x_n$ of $n$ bits ($x_i \in \{0, 1\}$). Since the channel is noisy, there is a chance that any bit might be corrupted, resulting in an error (a 0 becomes a 1 or vice versa). Assume that the error events are independent. Let $p$ be the probability that an individual bit has an error ($0 < p < 1/2$). Let $y_1, y_2, \dots, y_n$ be the received message (so $y_i = x_i$ if there is no error in that bit, but $y_i = 1 - x_i$ if there is an error there).
+To help detect errors, the $n$th bit is reserved for a parity check: $x_n$ is defined to be 0 if $x_1 + x_2 + \dots + x_{n-1}$ is even, and 1 if $x_1 + x_2 + \dots + x_{n-1}$ is odd. When the message is received, the recipient checks whether $y_n$ has the same parity as $y_1 + y_2 + \dots + y_{n-1}$. If the parity is wrong, the recipient knows that at least one error occurred; otherwise, the recipient assumes that there were no errors.
+\begin{enumerate}[(a)]
+\item For $n = 5$, $p = 0.1$, what is the probability that the received message has errors which go undetected?
+\item For general $n$ and $p$, write down an expression (as a sum) for the probability that the received message has errors which go undetected.
+\item Give a simplified expression, not involving a sum of a large number of terms, for the probability that the received message has errors which go undetected.
+Hint for (c): Letting
+\[
+a = \sum_{k \text{ even}, k \ge 0} \binom{n}{k} p^k (1-p)^{n-k} \quad \text{and} \quad b = \sum_{k \text{ odd}, k \ge 1} \binom{n}{k} p^k (1-p)^{n-k},
+\]
+the binomial theorem makes it possible to find simple expressions for $a+b$ and $a-b$, which then makes it possible to obtain $a$ and $b$.
+\end{enumerate}
+\end{tcolorbox}
+
+\noindent \textbf{Solution.} \textbf{(a)} Errors go undetected if and only if there is an even, non-zero number of bit errors ($k = 2, 4, \dots$). For $n = 5$ and $p = 0.1$, letting $K \sim \text{Bin}(5, 0.1)$ be the error count:
+\begin{align*}
+P(\text{undetected errors}) &= P(K = 2) + P(K = 4) \\
+&= \binom{5}{2} (0.1)^2 (0.9)^3 + \binom{5}{4} (0.1)^4 (0.9)^1 \\
+&= 10 (0.01) (0.729) + 5 (0.0001) (0.9) \\
+&= 0.07335.
+\end{align*}
+
+\vspace{4pt}
+\noindent \textbf{(b)} For general $n$ and $p$, summing over all even number of errors $k \ge 2$:
+\begin{align*}
+P(\text{undetected errors}) &= \sum_{\substack{k \text{ even} \\ 2 \le k \le n}} \binom{n}{k} p^k (1-p)^{n-k}.
+\end{align*}
+
+\vspace{4pt}
+\noindent \textbf{(c)} Using the binomial theorem:
+\begin{align*}
+a + b &= \sum_{k=0}^{n} \binom{n}{k} p^k (1-p)^{n-k} = ( (1-p) + p )^n = 1, \\
+a - b &= \sum_{k=0}^{n} \binom{n}{k} (-p)^k (1-p)^{n-k} = ( (1-p) - p )^n = (1-2p)^n.
+\end{align*}
+Adding these two equations:
+\begin{align*}
+2a &= 1 + (1-2p)^n \\
+a &= \frac{1 + (1-2p)^n}{2}.
+\end{align*}
+Subtracting the $k = 0$ term (no errors occurred) from $a$:
+\begin{align*}
+P(\text{undetected errors}) &= a - \binom{n}{0} p^0 (1-p)^n \\
+&= \frac{1 + (1-2p)^n}{2} - (1-p)^n.
+\end{align*}
+
+\vspace{10pt}
+\subsection{HW 4 $\cdot$ Problem 1}
+\begin{tcolorbox}[title={HW 4 $\cdot$ Problem 1}]
+Let $X$ be a r.v. whose possible values are $0, 1, 2, \dots$, with CDF $F$. In some countries, rather than using a CDF, the convention is to use the function $G$ defined by $G(x) = P(X < x)$ to specify a distribution. Find a way to convert from $F$ to $G$, i.e., if $F$ is a known function show how to obtain $G(x)$ for all real $x$.
+\end{tcolorbox}
+
+\noindent \textbf{Solution.} By definition, $G(x) = P(X < x) = F(x) - P(X = x)$. Because $X$ takes values only in $\{0, 1, 2, \dots\}$:
+\begin{itemize}
+    \item If $x \notin \{0, 1, 2, \dots\}$, then $P(X = x) = 0$, giving:
+    \begin{align*}
+    G(x) &= F(x).
+    \end{align*}
+    \item If $x \in \{0, 1, 2, \dots\}$, the probability mass at $x$ equals $F(x) - F(x - 0.5)$:
+    \begin{align*}
+    G(x) &= F(x) - \left( F(x) - F(x - 0.5) \right) = F(x - 0.5).
+    \end{align*}
+\end{itemize}
+Combining both cases into a piecewise formula:
+\begin{align*}
+G(x) &= \begin{cases}
+F(x), & \text{if } x \notin \{0, 1, 2, \dots\}, \\[6pt]
+F(x - 0.5), & \text{if } x \in \{0, 1, 2, \dots\}.
+\end{cases}
+\end{align*}
+Equivalently, using the ceiling function $\lceil x \rceil$ or left-hand limits:
+\begin{align*}
+G(x) &= F(\lceil x \rceil - 1) = \lim_{t \to x^-} F(t).
+\end{align*}
+
+\vspace{10pt}
+\subsection{HW 4 $\cdot$ Problem 2}
+\begin{tcolorbox}[title={HW 4 $\cdot$ Problem 2}]
+There are $n$ eggs, each of which hatches a chick with probability $p$ (independently). Each of these chicks survives with probability $r$, independently. What is the distribution of the number of chicks that hatch? What is the distribution of the number of chicks that survive? (Give the PMFs; also give the names of the distributions and their parameters, if they are distributions we have seen in class.)
+\end{tcolorbox}
+
+\noindent \textbf{Solution.} Let $H$ be the number of eggs that hatch. Since each egg hatches independently with probability $p$, $H$ is a Binomial random variable:
+\begin{align*}
+H &\sim \text{Bin}(n, p), \\
+P(H = k) &= \binom{n}{k} p^k (1 - p)^{n-k} \quad \text{for } k \in \{0, 1, \dots, n\}.
+\end{align*}
+Let $S$ be the number of surviving chicks. An individual egg produces a surviving chick if and only if it hatches \textbf{and} the chick survives, which occurs with probability:
+\begin{align*}
+P(\text{egg produces surviving chick}) &= p \cdot r = pr.
+\end{align*}
+Since all $n$ eggs develop independently, $S$ follows a Binomial distribution with parameters $n$ and $pr$:
+\begin{align*}
+S &\sim \text{Bin}(n, pr), \\
+P(S = k) &= \binom{n}{k} (pr)^k (1 - pr)^{n-k} \quad \text{for } k \in \{0, 1, \dots, n\}.
+\end{align*}
+
+\vspace{10pt}
+\subsection{HW 4 $\cdot$ Problem 5}
+\begin{tcolorbox}[title={HW 4 $\cdot$ Problem 5}]
+A scientist wishes to study whether men or women are more likely to have a certain disease, or whether they are equally likely. A random sample of $m$ women and $n$ men is gathered, and each person is tested for the disease (assume for this problem that the test is completely accurate). The numbers of women and men in the sample who have the disease are $X$ and $Y$ respectively, with $X \sim \text{Bin}(m, p_1)$ and $Y \sim \text{Bin}(n, p_2)$. Here $p_1$ and $p_2$ are unknown, and we are interested in testing the ``null hypothesis'' $p_1 = p_2$.
+\begin{enumerate}[(a)]
+\item Consider a 2 by 2 table listing with rows corresponding to disease status and columns corresponding to gender, with each entry the count of how many people have that disease status and gender (so $m+n$ is the sum of all 4 entries). Suppose that it is observed that $X + Y = r$.
+The Fisher exact test is based on conditioning on both the row and column sums, so $m, n, r$ are all treated as fixed, and then seeing if the observed value of $X$ is ``extreme'' compared to this conditional distribution. Assuming the null hypothesis, use Bayes' Rule to find the conditional PMF of $X$ given $X + Y = r$. Is this a distribution we have studied in class? If so, say which (and give its parameters).
+\item Give an intuitive explanation for the distribution of (a), explaining how this problem relates to other problems we've seen, and why $p_1$ disappears (magically?) in the distribution found in (a).
+\end{enumerate}
+\end{tcolorbox}
+
+\noindent \textbf{Solution.} \textbf{(a)} First, we construct the $2 \times 2$ contingency table with fixed margins $m$, $n$, and $r$:
+\begin{center}
+\begin{tabular}{r|cc|c}
+ & \textbf{Women} & \textbf{Men} & \textbf{Total} \\
+\hline
+\textbf{Disease} & $x$ & $r - x$ & $r$ \\
+\textbf{No Disease} & $m - x$ & $n - r + x$ & $m + n - r$ \\
+\hline
+\textbf{Total} & $m$ & $n$ & $m + n$
+\end{tabular}
+\end{center}
+Under the null hypothesis $p_1 = p_2 = p$, we have independent $X \sim \text{Bin}(m, p)$ and $Y \sim \text{Bin}(n, p)$, which implies their sum is $X + Y \sim \text{Bin}(m+n, p)$. Using Bayes' Rule:
+\begin{align*}
+P(X = x \mid X + Y = r) &= \frac{P(X + Y = r \mid X = x) P(X = x)}{P(X + Y = r)} \\
+&= \frac{P(Y = r - x) P(X = x)}{P(X + Y = r)} \\
+&= \frac{\left[ \binom{n}{r-x} p^{r-x} (1-p)^{n-(r-x)} \right] \left[ \binom{m}{x} p^x (1-p)^{m-x} \right]}{\binom{m+n}{r} p^r (1-p)^{m+n-r}} \\
+&= \frac{\binom{m}{x} \binom{n}{r-x} p^r (1-p)^{m+n-r}}{\binom{m+n}{r} p^r (1-p)^{m+n-r}} \\
+&= \frac{\binom{m}{x} \binom{n}{r-x}}{\binom{m+n}{r}}.
+\end{align*}
+This is the **Hypergeometric distribution** with parameters $m$ (number of women), $n$ (number of men), and $r$ (total number of diseased individuals).
+
+\vspace{4pt}
+\noindent \textbf{(b) Intuitive Explanation.} This problem is structurally identical to the elk capture-recapture problem. Think of the $m$ women as ``tagged elk'' and the $n$ men as ``untagged elk'' within a combined population of $m + n$ individuals. Observing $r$ total diseased people corresponds to capturing a sample of size $r$ from this population. The random variable $X$ represents how many ``tagged elk'' (women) are captured in that sample of $r$. 
+
+Under the null hypothesis that disease strikes men and women equally, any subset of $r$ individuals is equally likely to be the diseased group. Consequently, the underlying probability $p$ disappears because conditioning on the total number of diseased people $r$ removes all variability about how frequently the disease occurs overall, leaving only a pure combinatorial counting problem of selecting $x$ women and $r-x$ men out of $m+n$ people.
+
+\end{document}
