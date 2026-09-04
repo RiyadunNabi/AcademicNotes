@@ -752,6 +752,46 @@ Even though the code only requested `sizeof(int)` (4 bytes), the heap pointers d
 
 As annotated on Slide 19: **"Minimum heap allocation unit: 16 Byte"**[cite: 1]. The memory allocator (`malloc`) rounds allocations up to 8-byte or 16-byte alignment boundaries for memory bus efficiency and keeps internal metadata headers (such as chunk size and status flags) alongside each allocation[cite: 1].
 
+===========================
+**“Minimum heap allocation unit: 16 bytes”** means:
+
+If you request a very small amount with `malloc()`, the allocator may **give you at least 16 bytes**.
+
+Example:
+
+```c
+char *p = malloc(1);
+```
+
+You ask for **1 byte**, but the allocator may reserve:
+
+```text
+Requested:        1 byte
+Actual chunk:    16 bytes
+                  ↓
+┌────────────────┐
+│ allocator info │  ← metadata
+├────────────────┤
+│ your 1 byte    │
+├────────────────┤
+│ unused space    │
+└────────────────┘
+     16 bytes
+```
+
+### Why 16 bytes?
+
+Two main reasons:
+
+1. **Alignment** → memory addresses are kept aligned (e.g., 8/16-byte boundaries), which is efficient for the CPU.
+2. **Metadata** → allocator needs some extra space to store information such as **chunk size and whether it's free/used**.
+
+So:
+
+> `malloc(1)` **doesn't necessarily mean only 1 byte of memory is consumed internally**. The allocator may use a minimum-sized chunk such as **16 bytes**.
+
+⚠️ **Important:** “16 bytes” is **allocator/platform-dependent**, not a universal rule for every `malloc` implementation.
+============================================================
 ---
 
 This covers all slides, code walkthroughs, and annotations for Chapter 13: Address Space[cite: 1]. Which chapter are you tackling next?

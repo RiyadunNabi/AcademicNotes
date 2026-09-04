@@ -249,15 +249,15 @@ Virtual Address Space
             |                (Free)                 |    |
             + - - - - - - - - - - - - - - - - - - - +    |
             |                 HEAP                  |    |
-      2KB   +---------------------------------------+ <--+  (Points to heap)
-            |  allocated: index 0 (4 bytes)         |
-    2KB + 4 +---------------------------------------+
-            |  allocated: index 1 (4 bytes)         |
-    2KB + 8 +---------------------------------------+
-            |  allocated: index 2 (4 bytes)         |
-   2KB + 12 +---------------------------------------+
-            |  allocated: index 3 (4 bytes)         |
-   2KB + 16 +---------------------------------------+
+   2KB + 16 +---------------------------------------+    |  (Points to heap)
+            |  allocated: index 3 (4 bytes)         |    |
+   2KB + 12 +---------------------------------------+    |
+            |  allocated: index 2 (4 bytes)         |    |
+    2KB + 8 +---------------------------------------+    |
+            |  allocated: index 1 (4 bytes)         |    |
+    2KB + 4 +---------------------------------------+    |
+            |  allocated: index 0 (4 bytes)         |    |
+       2KB  +---------------------------------------+ <--+
             |               DATA / CODE             |
 0x0000 0000 +---------------------------------------+
 ```
@@ -281,19 +281,26 @@ free(pi);
 
 ```
 Address Space After free(pi)
-            +---------------------------------------+
+0xFFFF FFFF +---------------------------------------+
             |                 STACK                 |
             |   +-------------------------------+   |
-            |   | pi: STILL contains 2KB!       |---|----+ (Dangling Pointer!)
+            |   | pi: STILL contains the        |---|----+ Dangling Pointer!
+            |   | address of the 2KB allocation |   |    |
             |   +-------------------------------+   |    |
+            |                                       |    |
             + - - - - - - - - - - - - - - - - - - - +    |
+            |                                       |    |
             |                (Free)                 |    |
             + - - - - - - - - - - - - - - - - - - - +    |
             |                 HEAP                  |    |
-      2KB   +---------------------------------------+ <--+
-            |  freed / unallocated chunk            |
-            |  (Returned to free list)              |
-   2KB + 16 +---------------------------------------+
+   2KB + 16 +---------------------------------------+    |
+            |      freed / unallocated              |    |
+            |      chunk                            |    |
+            |      (Returned to free list)          |    |
+            |                                       |    |
+        2KB +---------------------------------------+ <--+
+            |               DATA / CODE             |
+0x0000 0000 +---------------------------------------+
 ```
 
 Look at the pointer `pi` after `free(pi)` executes[cite: 2]:
@@ -371,6 +378,55 @@ Virtual Address Space
 * **Why You Almost Always Get a Segmentation Fault (The Math Annotation on Slide 10):**  
   In a 32-bit or 64-bit address space, only a small portion of memory is actually mapped to physical RAM (Code, Data, a small Heap, and a small Stack)[cite: 2]. The vast gap in the middle is completely unmapped and marked illegal by the OS[cite: 2].  
   The probability that an uninitialized pointer lands in unmapped territory is virtually $\sim 1$[cite: 2]. When `strcpy()` tries to write `'h'`, `'e'`, `'l'`, `'l'`, `'o'` to that random address, the CPU hardware catches the illegal access and terminates the program with a **Segmentation Fault**[cite: 2].
+ 
+ Here is an ASCII diagram showing the process address space layout and the unmapped memory gap:
+
+```text
+0xFFFF FFFF (or 0x7FFF FFFF FFFF FFFF)
+            +---------------------------------------+  High Memory
+            |                 STACK                 |  (Grows Downward v)
+            + - - - - - - - - - - - - - - - - - - - +
+            |           STACK GUARD PAGES           |  (OS Protection)
+            +=======================================+
+            |                                       |
+            |                                       |
+            |                                       |
+            |            UNMAPPED GAP               |
+            |                                       |
+            |  - No physical RAM backing            |
+            |  - Marked ILLEGAL by MMU / OS         |
+            |  - Access attempts trigger SIGSEGV /   |
+            |    Segmentation Fault                 |
+            |                                       |
+            |  * An uninitialized / wild pointer    |
+            |    pointing here results in a crash   |
+            |    (Probability ~ 1 in 64-bit space)  |
+            |                                       |
+            |                                       |
+            +=======================================+
+            |                                       |  (Grows Upward ^)
+            |                 HEAP                  |
+            +---------------------------------------+
+            |            BSS (Uninit Data)          |
+            +---------------------------------------+
+            |            DATA (Init Data)           |
+            +---------------------------------------+
+            |                 CODE                  |
+0x0000 0000 +---------------------------------------+  Low Memory
+
+```
+
+### Why the Gap Dominates (Especially in 64-bit)
+
+* **Virtually Infinite Virtual Space:** In a 64-bit architecture (which typically utilizes a 48-bit canonical virtual address space), the total virtual memory available is **256 Terabytes ($2^{48}$ bytes)**.
+* **Minimal Active Allocation:** A typical application might only occupy a few megabytes or gigabytes across its **Code**, **Data**, **Heap**, and **Stack** combined.
+* **Mathematical Probability:**
+
+$$\text{Unmapped Ratio} = 1 - \frac{\text{Mapped Memory}}{\text{Total Address Space}} \approx 1 - \frac{\sim 10\text{ GB}}{256\text{ TB}} \approx 0.99996$$
+
+
+
+Because almost $100\%$ of the valid address space consists of this unmapped void, reading or writing through an uninitialized pointer almost certainly lands in this region, triggering a hardware page fault and an immediate **Segmentation Fault / Access Violation**.
 
 ##### The Fix (Slide 11):
 ```c
@@ -603,6 +659,90 @@ Consider two processes: Process 1 (Producer) and Process 2 (Consumer)[cite: 2].
 * Both processes have completely separate, isolated address spaces[cite: 2].
 * Suppose Process 1 writes data to a disk file, and Process 2 reads it[cite: 2]. Disk operations take milliseconds (~4 ms), whereas CPU memory accesses take nanoseconds (~1 ns)—making memory a million times faster[cite: 2]!
 * If a program writes a million records via `write()` in a loop, it makes 1,000,000 system calls, switching between User and Kernel modes 1,000,000 times[cite: 2].
+====================================
+
+### The Problem: I/O Bottlenecks & Inter-Process Communication
+
+Traditional file I/O requires making standard system calls (`read()` and `write()`) and copying data between kernel buffers and user memory.
+
+```text
+Process 1 (Producer)                                  Process 2 (Consumer)
++-------------------+                                +-------------------+
+|  User Memory      |                                |  User Memory      |
+|  [Data Buffer]    |                                |  [Data Buffer]    |
++---------+---------+                                +---------^---------+
+          |                                                    |
+   write() Syscall                                      read() Syscall
+   (User -> Kernel Mode)                                (Kernel -> User Mode)
+          |                                                    |
+          v                                                    |
++----------------------------------------------------------------+
+|  Kernel Space Page Cache                                       |
++----------------------------------------------------------------+
+          |                                                    ^
+   Slow Disk I/O                                         Slow Disk I/O
+   (~4 milliseconds)                                  (~4 milliseconds)
+          v                                                    |
++----------------------------------------------------------------+
+|  PHYSICAL DISK FILE                                            |
++----------------------------------------------------------------+
+
+```
+
+#### Why This Is Inefficient
+
+* **Excessive Context Switching:** Calling `write()` in a loop $1,000,000$ times causes $1,000,000$ switches from User Mode to Kernel Mode, degrading performance.
+* **Double Buffering / Extra Copying:** Data must first be copied from User Space to Kernel Space, then flushed to disk, and then copied back to User Space for another process to read.
+* **High Latency:** Disk access operates on a **millisecond** scale ($\sim 4\text{ ms}$), whereas RAM operates on a **nanosecond** scale ($\sim 1\text{ ns}$).
+
+---
+
+### The Solution: Direct Memory Mapping with `mmap()`
+
+Instead of routing through system calls and disk buffers, `mmap()` maps a region of a file or shared physical RAM directly into the **Virtual Address Spaces** of both processes.
+
+```text
+Process 1 Address Space                     Process 2 Address Space
++---------------------+                     +---------------------+
+|        STACK        |                     |        STACK        |
++---------------------+                     +---------------------+
+|                     |                     |                     |
+|  mmap() Region      |                     |  mmap() Region      |
+|  [Virtual Pages]----+                     +---->[Virtual Pages]  |
+|                     |     Direct Access   |                     |
++---------------------+     (No Syscalls)   +---------------------+
+|        HEAP         |     (~1ns Memory)   |        HEAP         |
++---------------------+                     +---------------------+
+|     CODE / DATA     |                     |     CODE / DATA     |
++---------------------+                     +---------------------+
+          |                                           |
+          +---------------------+---------------------+
+                                |
+                                v
+                +-------------------------------+
+                |     PHYSICAL RAM PAGE         |
+                |   (Shared Memory Frame)       |
+                +---------------+---------------+
+                                |
+                   Background OS Flush
+                   (MAP_SHARED / Async)
+                                v
+                +-------------------------------+
+                |         PHYSICAL DISK         |
+                +-------------------------------+
+
+```
+
+#### Key Advantages of `mmap()`
+
+1. **Zero System Calls for Data Operations:** Once mapped, reading and writing use direct pointer dereferencing in RAM. No `read()` or `write()` system calls are executed in the data loop.
+2. **Direct Inter-Process Communication (IPC):** With `MAP_SHARED`, Process 1 updates a byte in virtual memory, and Process 2 sees the change instantly in physical RAM without crossing the kernel boundary.
+3. **Lazy Allocation & Performance:** Pages are loaded on-demand via hardware Page Faults, loading only the necessary parts of a file into physical memory.
+
+
+=========================================================
+
+
 * **The Solution:** Use `mmap()` to map a file or shared memory directly into the process's virtual address space[cite: 2]. Once mapped, reading and writing to that memory accesses RAM directly without continuous system calls[cite: 2]!
 
 ##### The `mmap()` Function Signature
